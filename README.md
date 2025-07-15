@@ -143,10 +143,10 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 - "Deep Learning with Python" by François Chollet
 
 ### Papers
-- Attention Is All You Need (Transformers)
-- ResNet: Deep Residual Learning for Image Recognition
-- BERT: Pre-training of Deep Bidirectional Transformers
-- Generative Adversarial Networks
+- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) (Transformers)
+- [ResNet: Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)
+- [BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)
+- [Generative Adversarial Networks](https://arxiv.org/abs/1406.2661)
 
 ## Contributing
 
