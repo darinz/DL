@@ -117,15 +117,6 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 - **Text Generation** - T5, BART, GPT
 - **Question Answering** - BERT, RoBERTa
 
-## Technologies & Frameworks
-
-- **PyTorch** - Primary deep learning framework
-- **TensorFlow/Keras** - Alternative framework
-- **JAX/Flax** - Functional programming for ML
-- **Hugging Face** - Transformers and datasets
-- **Weights & Biases** - Experiment tracking
-- **MLflow** - Model lifecycle management
-
 ## Learning Path
 
 1. **Foundation** - Neural networks, backpropagation, optimization
@@ -135,6 +126,15 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 5. **Generative AI** - GANs, VAEs, diffusion models
 6. **Advanced Topics** - Self-supervised learning, meta-learning
 
+## Technologies & Frameworks
+
+- **[PyTorch](https://pytorch.org/)** - Primary deep learning framework
+- **[TensorFlow/Keras](https://www.tensorflow.org/)** - Alternative framework
+- **[JAX/Flax](https://jax.readthedocs.io/)** - Functional programming for ML
+- **[Hugging Face](https://huggingface.co/)** - Transformers and datasets
+- **[Weights & Biases](https://wandb.ai/)** - Experiment tracking
+- **[MLflow](https://mlflow.org/)** - Model lifecycle management
+
 ## Resources
 
 ### Online Courses
@@ -142,9 +142,9 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 - **[Deep Learning Specialization by DeepLearning.AI](https://www.coursera.org/specializations/deep-learning)** - Andrew Ng's 5-course specialization on neural networks, CNNs, RNNs, and practical applications
 
 ### Books
-- "Deep Learning" by Ian Goodfellow, Yoshua Bengio, Aaron Courville
-- "Hands-On Machine Learning" by Aurélien Géron
-- "Deep Learning with Python" by François Chollet
+- ["Deep Learning"](https://www.deeplearningbook.org/) by Ian Goodfellow, Yoshua Bengio, Aaron Courville
+- ["Deep Learning with Python"](https://www.manning.com/books/deep-learning-with-python-second-edition) by François Chollet
+- ["Generative Deep Learning](https://www.oreilly.com/library/view/generative-deep-learning/9781098134174/) by David Foster
 
 ### Papers
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) (Transformers)
