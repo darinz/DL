@@ -2,7 +2,7 @@
 
 A comprehensive collection of deep learning fundamentals, modern architectures, practical implementations, and learning resources. This curated knowledge base covers everything from neural network basics to cutting-edge generative AI, providing structured learning paths, code examples, and references to help you master deep learning concepts and applications.
 
-> **This repository is currently under construction**  
+> **NOTE: This repository is currently under construction**  
 > We're actively building and organizing comprehensive deep learning resources, tutorials, and implementations.
 
 ---
