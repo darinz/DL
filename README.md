@@ -100,9 +100,7 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 - **Swin Transformers** - Hierarchical vision transformers
 
 ### Generative Models
-- **Generative Adversarial Networks (GANs)**
-  - DCGAN, StyleGAN, CycleGAN
-  - Conditional GANs
+- **Generative Adversarial Networks (GANs)** - DCGAN, StyleGAN, CycleGAN, Conditional GANs
 - **Variational Autoencoders (VAEs)**
 - **Diffusion Models** - DDPM, DDIM, Stable Diffusion
 - **Flow-based Models** - RealNVP, Glow
