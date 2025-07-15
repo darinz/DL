@@ -137,6 +137,10 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ## Resources
 
+### Online Courses
+- **[MIT 6.S191: Introduction to Deep Learning](https://introtodeeplearning.com/)** - MIT's comprehensive deep learning course covering fundamentals, computer vision, NLP, and generative AI
+- **[Deep Learning Specialization by DeepLearning.AI](https://www.coursera.org/specializations/deep-learning)** - Andrew Ng's 5-course specialization on neural networks, CNNs, RNNs, and practical applications
+
 ### Books
 - "Deep Learning" by Ian Goodfellow, Yoshua Bengio, Aaron Courville
 - "Hands-On Machine Learning" by Aurélien Géron
