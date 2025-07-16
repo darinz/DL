@@ -19,7 +19,7 @@
 
 ### What is Probability?
 
-Probability is a measure of the likelihood that an event will occur. It provides a mathematical framework for dealing with uncertainty and randomness.
+Probability is a measure of the likelihood that an event will occur. It provides a mathematical framework for dealing with uncertainty and randomness. In deep learning, probability is used to model data, uncertainty, and predictions.
 
 ### Basic Concepts
 
@@ -43,7 +43,7 @@ The conditional probability of event $`A`$ given event $`B`$ is:
 P(A|B) = \frac{P(A \cap B)}{P(B)}
 ```
 
-This represents the probability of $`A`$ occurring given that $`B`$ has already occurred.
+This represents the probability of $`A`$ occurring given that $`B`$ has already occurred. Conditional probability is crucial for understanding dependencies in data and for Bayesian inference.
 
 ### Bayes' Theorem
 
@@ -55,6 +55,9 @@ P(A|B) = \frac{P(B|A)P(A)}{P(B)}
 
 Where $`P(B) = \sum_i P(B|A_i)P(A_i)`$ (law of total probability).
 
+- **Intuition:** Bayes' theorem allows us to update our beliefs about $`A`$ after observing $`B`$.
+- **Deep learning connection:** Used in probabilistic models, Bayesian neural networks, and uncertainty estimation.
+
 ### Independence
 
 Events $`A`$ and $`B`$ are independent if:
@@ -62,6 +65,8 @@ Events $`A`$ and $`B`$ are independent if:
 ```math
 P(A \cap B) = P(A)P(B)
 ```
+
+- **Intuition:** The occurrence of $`A`$ does not affect the probability of $`B`$.
 
 ### Python Implementation: Basic Probability
 
@@ -157,6 +162,11 @@ print(f"P(B) = P(first die = 6) = {p_b:.3f}")
 print(f"P(A|B) = P(sum > 10 | first die = 6) = {p_a_given_b:.3f}")
 ```
 
+**Code Annotations:**
+- Simulates coin flips and dice rolls to illustrate probability concepts.
+- Visualizes empirical probabilities and compares to theoretical values.
+- Demonstrates conditional probability estimation by simulation.
+
 ---
 
 ## Random Variables and Distributions
@@ -164,12 +174,8 @@ print(f"P(A|B) = P(sum > 10 | first die = 6) = {p_a_given_b:.3f}")
 ### Random Variables
 
 A random variable $`X`$ is a function that assigns a real number to each outcome in the sample space.
-
-#### Discrete Random Variables
-Take on a countable number of values.
-
-#### Continuous Random Variables
-Take on uncountably many values (typically intervals).
+- **Discrete random variables:** Take on a countable number of values (e.g., coin flips, dice rolls).
+- **Continuous random variables:** Take on uncountably many values (e.g., height, weight).
 
 ### Probability Mass Function (PMF)
 
@@ -205,11 +211,22 @@ For continuous $`X`$:
 E[X] = \int_{-\infty}^{\infty} x \cdot f_X(x) dx
 ```
 
+- **Intuition:** The expected value is the long-run average value of $`X`$.
+
 ### Variance
 
 ```math
 \text{Var}(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
 ```
+
+- **Intuition:** Variance measures the spread or dispersion of a random variable.
+
+### Common Distributions
+- **Bernoulli:** Models binary outcomes (success/failure).
+- **Binomial:** Number of successes in $`n`$ independent Bernoulli trials.
+- **Normal (Gaussian):** Bell-shaped, models many natural phenomena.
+- **Exponential:** Time between events in a Poisson process.
+- **Uniform:** All outcomes equally likely.
 
 ### Python Implementation: Common Distributions
 
@@ -373,33 +390,44 @@ def compare_distributions():
 compare_distributions()
 ```
 
+**Code Annotations:**
+- Simulates and visualizes Bernoulli, Binomial, Normal, Exponential, and Uniform distributions.
+- Shows empirical vs theoretical PMF/PDF and CDF.
+- Demonstrates the Central Limit Theorem (CLT).
+
 ---
 
 ## Statistical Inference
 
+Statistical inference is the process of drawing conclusions about populations from data.
+
 ### Descriptive Statistics
 
-#### Mean
+- **Mean:** Average value
+- **Variance:** Spread of data
+- **Standard deviation:** Square root of variance
+- **Covariance:** How two variables vary together
+- **Correlation:** Strength and direction of linear relationship
+
+#### Formulas
+
+Mean:
 ```math
 \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
 ```
-
-#### Variance
+Variance:
 ```math
 s^2 = \frac{1}{n-1}\sum_{i=1}^{n} (x_i - \bar{x})^2
 ```
-
-#### Standard Deviation
+Standard deviation:
 ```math
 s = \sqrt{s^2}
 ```
-
-#### Covariance
+Covariance:
 ```math
 \text{Cov}(X, Y) = \frac{1}{n-1}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
 ```
-
-#### Correlation
+Correlation:
 ```math
 \rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}
 ```
@@ -501,14 +529,20 @@ def central_limit_theorem():
 central_limit_theorem()
 ```
 
+**Code Annotations:**
+- Computes and visualizes mean, variance, covariance, and correlation.
+- Demonstrates the Central Limit Theorem (CLT) with sample means.
+
 ---
 
 ## Hypothesis Testing
 
+Hypothesis testing is a framework for making decisions about populations based on sample data.
+
 ### Null and Alternative Hypotheses
 
-- **Null Hypothesis ($`H_0`$)**: Default assumption (e.g., no effect, no difference)
-- **Alternative Hypothesis ($`H_1`$)**: Research hypothesis (e.g., there is an effect)
+- **Null Hypothesis ($`H_0`$):** Default assumption (e.g., no effect, no difference)
+- **Alternative Hypothesis ($`H_1`$):** Research hypothesis (e.g., there is an effect)
 
 ### P-value
 
@@ -520,19 +554,13 @@ The significance level $`\alpha`$ is the threshold for rejecting the null hypoth
 
 ### Type I and Type II Errors
 
-- **Type I Error**: Rejecting $`H_0`$ when it's true (false positive)
-- **Type II Error**: Failing to reject $`H_0`$ when it's false (false negative)
+- **Type I Error:** Rejecting $`H_0`$ when it's true (false positive)
+- **Type II Error:** Failing to reject $`H_0`$ when it's false (false negative)
 
 ### Common Tests
-
-#### Z-test
-For testing population mean when population standard deviation is known.
-
-#### T-test
-For testing population mean when population standard deviation is unknown.
-
-#### Chi-square test
-For testing independence or goodness of fit.
+- **Z-test:** For population mean with known standard deviation.
+- **T-test:** For population mean with unknown standard deviation.
+- **Chi-square test:** For independence or goodness of fit.
 
 ### Python Implementation: Hypothesis Testing
 
@@ -685,9 +713,15 @@ two_sample_ttest_example()
 chi_square_test_example()
 ```
 
+**Code Annotations:**
+- Demonstrates one-sample and two-sample t-tests, and chi-square test.
+- Visualizes distributions, critical regions, and test statistics.
+
 ---
 
 ## Bayesian Statistics
+
+Bayesian statistics provides a framework for updating beliefs in light of new data.
 
 ### Bayes' Theorem Revisited
 
@@ -703,9 +737,9 @@ Where:
 
 ### Prior, Likelihood, and Posterior
 
-- **Prior**: Initial belief about parameters before seeing data
-- **Likelihood**: How well the data supports different parameter values
-- **Posterior**: Updated belief after seeing the data
+- **Prior:** Initial belief about parameters before seeing data
+- **Likelihood:** How well the data supports different parameter values
+- **Posterior:** Updated belief after seeing the data
 
 ### Python Implementation: Bayesian Inference
 
@@ -859,37 +893,32 @@ bayesian_coin_flip()
 bayesian_linear_regression()
 ```
 
+**Code Annotations:**
+- Demonstrates Bayesian inference for coin flips and linear regression.
+- Visualizes prior, likelihood, and posterior distributions.
+- Shows credible intervals and posterior samples.
+
 ---
 
 ## Applications in Deep Learning
 
+Probability and statistics are deeply integrated into deep learning:
+
 ### Loss Functions
 
-#### Mean Squared Error (MSE)
-```math
-L(y, \hat{y}) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2
-```
-
-#### Cross-Entropy Loss
-```math
-L(y, \hat{y}) = -\sum_{i=1}^{n} y_i \log(\hat{y}_i)
-```
+- **Mean Squared Error (MSE):** Assumes Gaussian noise in regression.
+- **Cross-Entropy Loss:** Assumes Bernoulli or categorical likelihood in classification.
 
 ### Regularization
 
-#### L1 Regularization (Lasso)
-```math
-L_{\text{total}} = L(y, \hat{y}) + \lambda \sum_{i} |w_i|
-```
+- **L1 Regularization (Lasso):** Encourages sparsity in weights.
+- **L2 Regularization (Ridge):** Penalizes large weights, encourages smoothness.
+- **Dropout:** Randomly drops units during training to prevent overfitting; can be interpreted as approximate Bayesian inference.
 
-#### L2 Regularization (Ridge)
-```math
-L_{\text{total}} = L(y, \hat{y}) + \lambda \sum_{i} w_i^2
-```
+### Uncertainty Quantification
 
-### Dropout
-
-Dropout randomly sets a fraction of neurons to zero during training, acting as regularization.
+- **Bayesian neural networks:** Place distributions over weights.
+- **Dropout as Bayesian approximation:** Use dropout at test time to estimate prediction uncertainty.
 
 ### Python Implementation: Deep Learning Applications
 
@@ -1069,6 +1098,11 @@ def dropout_uncertainty():
 compare_regularization()
 dropout_uncertainty()
 ```
+
+**Code Annotations:**
+- Compares L1, L2, and no regularization in logistic regression.
+- Demonstrates uncertainty quantification with dropout in a neural network.
+- Visualizes accuracy, coefficient distributions, and uncertainty.
 
 ---
 
