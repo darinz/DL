@@ -24,26 +24,35 @@ Probability is a measure of the likelihood that an event will occur. It provides
 ### Basic Concepts
 
 #### Sample Space
-The sample space $`\Omega`$ is the set of all possible outcomes of an experiment.
+The sample space $\Omega$ is the set of all possible outcomes of an experiment.
 
 #### Event
-An event $`A`$ is a subset of the sample space.
+An event $A$ is a subset of the sample space.
 
 #### Probability Axioms
-For any event $`A`$:
-1. $`P(A) \geq 0`$ (non-negativity)
-2. $`P(\Omega) = 1`$ (normalization)
-3. For mutually exclusive events $`A_1, A_2, \ldots`$: $`P(\cup_i A_i) = \sum_i P(A_i)`$ (additivity)
+For any event $A$:
+1. $P(A) \geq 0$ (non-negativity)
+2. $P(\Omega) = 1$ (normalization)
+3. For mutually exclusive events $A_1, A_2, \ldots$: $P(\cup_i A_i) = \sum_i P(A_i)$ (additivity)
+
+**Step-by-step:**
+- List all possible outcomes (sample space).
+- Define events as subsets of outcomes.
+- Assign probabilities according to the axioms above.
 
 ### Conditional Probability
 
-The conditional probability of event $`A`$ given event $`B`$ is:
+The conditional probability of event $A$ given event $B$ is:
 
 ```math
 P(A|B) = \frac{P(A \cap B)}{P(B)}
 ```
 
-This represents the probability of $`A`$ occurring given that $`B`$ has already occurred. Conditional probability is crucial for understanding dependencies in data and for Bayesian inference.
+This represents the probability of $A$ occurring given that $B$ has already occurred. Conditional probability is crucial for understanding dependencies in data and for Bayesian inference.
+
+**Step-by-step:**
+- Find the probability that both $A$ and $B$ occur.
+- Divide by the probability that $B$ occurs.
 
 ### Bayes' Theorem
 
@@ -53,20 +62,28 @@ Bayes' theorem relates conditional probabilities:
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
 ```
 
-Where $`P(B) = \sum_i P(B|A_i)P(A_i)`$ (law of total probability).
+Where $P(B) = \sum_i P(B|A_i)P(A_i)$ (law of total probability).
 
-- **Intuition:** Bayes' theorem allows us to update our beliefs about $`A`$ after observing $`B`$.
+- **Intuition:** Bayes' theorem allows us to update our beliefs about $A$ after observing $B$.
 - **Deep learning connection:** Used in probabilistic models, Bayesian neural networks, and uncertainty estimation.
+
+**Step-by-step:**
+- Compute the likelihood $P(B|A)$ and the prior $P(A)$.
+- Compute the evidence $P(B)$ (sum over all possible $A_i$).
+- Divide to get the posterior $P(A|B)$.
 
 ### Independence
 
-Events $`A`$ and $`B`$ are independent if:
+Events $A$ and $B$ are independent if:
 
 ```math
 P(A \cap B) = P(A)P(B)
 ```
 
-- **Intuition:** The occurrence of $`A`$ does not affect the probability of $`B`$.
+- **Intuition:** The occurrence of $A$ does not affect the probability of $B$.
+
+**Step-by-step:**
+- Check if $P(A \cap B) = P(A)P(B)$. If so, $A$ and $B$ are independent.
 
 ### Python Implementation: Basic Probability
 
@@ -167,19 +184,21 @@ print(f"P(A|B) = P(sum > 10 | first die = 6) = {p_a_given_b:.3f}")
 - Visualizes empirical probabilities and compares to theoretical values.
 - Demonstrates conditional probability estimation by simulation.
 
+> **Tip:** Try increasing the number of simulations to see empirical probabilities approach theoretical values.
+
 ---
 
 ## Random Variables and Distributions
 
 ### Random Variables
 
-A random variable $`X`$ is a function that assigns a real number to each outcome in the sample space.
+A random variable $X$ is a function that assigns a real number to each outcome in the sample space.
 - **Discrete random variables:** Take on a countable number of values (e.g., coin flips, dice rolls).
 - **Continuous random variables:** Take on uncountably many values (e.g., height, weight).
 
 ### Probability Mass Function (PMF)
 
-For a discrete random variable $`X`$:
+For a discrete random variable $X$:
 
 ```math
 p_X(x) = P(X = x)
@@ -187,7 +206,7 @@ p_X(x) = P(X = x)
 
 ### Probability Density Function (PDF)
 
-For a continuous random variable $`X`$:
+For a continuous random variable $X$:
 
 ```math
 P(a \leq X \leq b) = \int_a^b f_X(x) dx
@@ -201,17 +220,20 @@ F_X(x) = P(X \leq x)
 
 ### Expected Value
 
-For discrete $`X`$:
+For discrete $X$:
 ```math
 E[X] = \sum_x x \cdot p_X(x)
 ```
 
-For continuous $`X`$:
+For continuous $X$:
 ```math
 E[X] = \int_{-\infty}^{\infty} x \cdot f_X(x) dx
 ```
 
-- **Intuition:** The expected value is the long-run average value of $`X`$.
+- **Intuition:** The expected value is the long-run average value of $X$.
+- **Step-by-step:**
+  - For discrete: Multiply each possible value by its probability, then sum.
+  - For continuous: Integrate $x$ times the PDF over all $x$.
 
 ### Variance
 
@@ -220,13 +242,19 @@ E[X] = \int_{-\infty}^{\infty} x \cdot f_X(x) dx
 ```
 
 - **Intuition:** Variance measures the spread or dispersion of a random variable.
+- **Step-by-step:**
+  - Compute the expected value (mean).
+  - Subtract the mean from each value, square the result.
+  - Take the expected value of these squared differences.
 
 ### Common Distributions
 - **Bernoulli:** Models binary outcomes (success/failure).
-- **Binomial:** Number of successes in $`n`$ independent Bernoulli trials.
+- **Binomial:** Number of successes in $n$ independent Bernoulli trials.
 - **Normal (Gaussian):** Bell-shaped, models many natural phenomena.
 - **Exponential:** Time between events in a Poisson process.
 - **Uniform:** All outcomes equally likely.
+
+> **Tip:** The normal distribution is fundamental in deep learning due to the central limit theorem and its use in weight initialization.
 
 ### Python Implementation: Common Distributions
 
@@ -241,7 +269,7 @@ def bernoulli_example():
     p = 0.6  # probability of success
     n_samples = 1000
     
-    # Generate samples
+    # Generate samples (0 or 1)
     samples = np.random.binomial(1, p, n_samples)
     
     # Theoretical PMF
@@ -388,26 +416,30 @@ def compare_distributions():
     plt.show()
 
 compare_distributions()
+
 ```
 
 **Code Annotations:**
-- Simulates and visualizes Bernoulli, Binomial, Normal, Exponential, and Uniform distributions.
-- Shows empirical vs theoretical PMF/PDF and CDF.
-- Demonstrates the Central Limit Theorem (CLT).
+- Demonstrates Bernoulli, Binomial, Normal, Exponential, and Uniform distributions.
+- Shows how to generate samples, plot histograms, and compare to theoretical PMFs/PDFs.
+- Visualizes empirical vs. theoretical CDFs and Q-Q plots for normality.
+- Compares multiple distributions side by side.
+
+> **Tip:** Try changing the parameters (mean, variance, probability) to see how the distributions change!
 
 ---
 
 ## Statistical Inference
 
-Statistical inference is the process of drawing conclusions about populations from data.
+Statistical inference is the process of drawing conclusions about populations from data. In deep learning, this is crucial for understanding model performance, generalization, and uncertainty.
 
 ### Descriptive Statistics
 
-- **Mean:** Average value
-- **Variance:** Spread of data
-- **Standard deviation:** Square root of variance
-- **Covariance:** How two variables vary together
-- **Correlation:** Strength and direction of linear relationship
+- **Mean:** Average value; gives a sense of the "center" of the data.
+- **Variance:** Spread of data; how much the data varies from the mean.
+- **Standard deviation:** Square root of variance; also measures spread, but in the same units as the data.
+- **Covariance:** How two variables vary together; positive means they increase together, negative means one increases as the other decreases.
+- **Correlation:** Strength and direction of linear relationship; ranges from -1 (perfect negative) to +1 (perfect positive).
 
 #### Formulas
 
@@ -432,6 +464,10 @@ Correlation:
 \rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}
 ```
 
+> **Intuitive Note:**
+> - Variance and standard deviation tell you how "spread out" your data is. If all values are close to the mean, variance is low.
+> - Covariance and correlation help you understand relationships between variables, which is key in feature engineering for deep learning.
+
 ### Python Implementation: Descriptive Statistics
 
 ```python
@@ -446,7 +482,7 @@ n_samples = 1000
 
 # Generate correlated data
 x = np.random.normal(0, 1, n_samples)
-y = 0.7 * x + np.random.normal(0, 0.5, n_samples)
+y = 0.7 * x + np.random.normal(0, 0.5, n_samples)  # y is correlated with x
 
 # Calculate descriptive statistics
 mean_x, mean_y = np.mean(x), np.mean(y)
@@ -494,14 +530,15 @@ plt.show()
 
 # Central Limit Theorem demonstration
 def central_limit_theorem():
-    """Demonstrate the Central Limit Theorem"""
+    """Demonstrate the Central Limit Theorem (CLT):
+    As sample size increases, the distribution of the sample mean approaches a normal distribution, regardless of the original distribution."""
     n_experiments = 1000
     sample_sizes = [1, 5, 10, 30]
     
     plt.figure(figsize=(15, 10))
     
     for i, n in enumerate(sample_sizes):
-        # Generate means of n samples from exponential distribution
+        # Generate means of n samples from exponential distribution (not normal!)
         means = []
         for _ in range(n_experiments):
             samples = np.random.exponential(1, n)
@@ -532,30 +569,41 @@ central_limit_theorem()
 **Code Annotations:**
 - Computes and visualizes mean, variance, covariance, and correlation.
 - Demonstrates the Central Limit Theorem (CLT) with sample means.
+- Shows how non-normal data (exponential) leads to normal sample means as n increases.
+
+> **Deep Learning Note:**
+> - Understanding variance and correlation is key for feature selection and understanding model input relationships.
+> - The CLT explains why neural network weight initializations often use normal distributions.
 
 ---
 
 ## Hypothesis Testing
 
-Hypothesis testing is a framework for making decisions about populations based on sample data.
+Hypothesis testing is a framework for making decisions about populations based on sample data. In deep learning, this is used for model comparison, ablation studies, and validating improvements.
 
 ### Null and Alternative Hypotheses
 
-- **Null Hypothesis ($`H_0`$):** Default assumption (e.g., no effect, no difference)
-- **Alternative Hypothesis ($`H_1`$):** Research hypothesis (e.g., there is an effect)
+- **Null Hypothesis ($H_0$):** Default assumption (e.g., no effect, no difference)
+- **Alternative Hypothesis ($H_1$):** Research hypothesis (e.g., there is an effect)
+
+> **Analogy:**
+> - Think of $H_0$ as the "status quo" and $H_1$ as the "challenger." You need strong evidence to reject the status quo.
 
 ### P-value
 
-The p-value is the probability of observing data as extreme as or more extreme than the observed data, assuming the null hypothesis is true.
+The p-value is the probability of observing data as extreme as or more extreme than the observed data, assuming the null hypothesis is true. A small p-value suggests the observed data is unlikely under $H_0$.
 
 ### Significance Level
 
-The significance level $`\alpha`$ is the threshold for rejecting the null hypothesis (typically 0.05).
+The significance level $\alpha$ is the threshold for rejecting the null hypothesis (typically 0.05). If $p < \alpha$, reject $H_0$.
 
 ### Type I and Type II Errors
 
-- **Type I Error:** Rejecting $`H_0`$ when it's true (false positive)
-- **Type II Error:** Failing to reject $`H_0`$ when it's false (false negative)
+- **Type I Error:** Rejecting $H_0$ when it's true (false positive)
+- **Type II Error:** Failing to reject $H_0$ when it's false (false negative)
+
+> **Pitfall:**
+> - Lowering $\alpha$ reduces Type I errors but increases Type II errors. There's a trade-off!
 
 ### Common Tests
 - **Z-test:** For population mean with known standard deviation.
@@ -571,7 +619,7 @@ from scipy import stats
 
 # One-sample t-test example
 def one_sample_ttest_example():
-    """Example of one-sample t-test"""
+    """Example of one-sample t-test: tests if the sample mean differs from a hypothesized value."""
     # Generate sample data
     np.random.seed(42)
     sample = np.random.normal(5.2, 1.5, 30)  # True mean = 5.2
@@ -623,7 +671,7 @@ def one_sample_ttest_example():
 
 # Two-sample t-test example
 def two_sample_ttest_example():
-    """Example of two-sample t-test"""
+    """Example of two-sample t-test: tests if two sample means are different."""
     # Generate two samples
     np.random.seed(42)
     sample1 = np.random.normal(5.0, 1.0, 25)
@@ -663,7 +711,7 @@ def two_sample_ttest_example():
 
 # Chi-square test example
 def chi_square_test_example():
-    """Example of chi-square goodness of fit test"""
+    """Example of chi-square goodness of fit test: tests if observed categorical data matches expected frequencies."""
     # Generate categorical data
     np.random.seed(42)
     categories = ['A', 'B', 'C', 'D']
@@ -716,12 +764,16 @@ chi_square_test_example()
 **Code Annotations:**
 - Demonstrates one-sample and two-sample t-tests, and chi-square test.
 - Visualizes distributions, critical regions, and test statistics.
+- Shows how to interpret p-values and test results.
+
+> **Deep Learning Note:**
+> - Use hypothesis testing to compare model variants or check if improvements are statistically significant.
 
 ---
 
 ## Bayesian Statistics
 
-Bayesian statistics provides a framework for updating beliefs in light of new data.
+Bayesian statistics provides a framework for updating beliefs in light of new data. In deep learning, Bayesian methods are used for uncertainty estimation and regularization.
 
 ### Bayes' Theorem Revisited
 
@@ -730,16 +782,19 @@ P(\theta|D) = \frac{P(D|\theta)P(\theta)}{P(D)}
 ```
 
 Where:
-- $`P(\theta|D)`$ is the posterior probability
-- $`P(D|\theta)`$ is the likelihood
-- $`P(\theta)`$ is the prior probability
-- $`P(D)`$ is the evidence (marginal likelihood)
+- $P(\theta|D)$ is the posterior probability (updated belief after seeing data)
+- $P(D|\theta)$ is the likelihood (how likely data is given parameters)
+- $P(\theta)$ is the prior probability (belief before seeing data)
+- $P(D)$ is the evidence (normalizing constant)
 
 ### Prior, Likelihood, and Posterior
 
 - **Prior:** Initial belief about parameters before seeing data
 - **Likelihood:** How well the data supports different parameter values
 - **Posterior:** Updated belief after seeing the data
+
+> **Analogy:**
+> - Prior is your initial guess, likelihood is how well your guess explains the data, posterior is your updated guess.
 
 ### Python Implementation: Bayesian Inference
 
@@ -750,7 +805,7 @@ from scipy import stats
 
 # Bayesian inference for coin flip
 def bayesian_coin_flip():
-    """Bayesian inference for coin flip probability"""
+    """Bayesian inference for coin flip probability: updates belief about probability of heads after observing data."""
     # Prior: Beta distribution (conjugate prior for binomial)
     alpha_prior, beta_prior = 2, 2  # Beta(2,2) - slightly favors 0.5
     
@@ -811,7 +866,7 @@ def bayesian_coin_flip():
 
 # Bayesian linear regression
 def bayesian_linear_regression():
-    """Simple Bayesian linear regression"""
+    """Simple Bayesian linear regression: infers a distribution over regression parameters."""
     # Generate synthetic data
     np.random.seed(42)
     n_points = 20
@@ -897,6 +952,10 @@ bayesian_linear_regression()
 - Demonstrates Bayesian inference for coin flips and linear regression.
 - Visualizes prior, likelihood, and posterior distributions.
 - Shows credible intervals and posterior samples.
+- Explains how Bayesian methods quantify uncertainty in predictions and parameters.
+
+> **Deep Learning Note:**
+> - Bayesian neural networks use similar principles to estimate uncertainty in weights and predictions.
 
 ---
 
@@ -1103,6 +1162,11 @@ dropout_uncertainty()
 - Compares L1, L2, and no regularization in logistic regression.
 - Demonstrates uncertainty quantification with dropout in a neural network.
 - Visualizes accuracy, coefficient distributions, and uncertainty.
+- Shows how regularization affects model weights and performance.
+- Illustrates the relationship between prediction uncertainty and error.
+
+> **Deep Learning Note:**
+> - Regularization and uncertainty quantification are essential for robust, generalizable models.
 
 ---
 
