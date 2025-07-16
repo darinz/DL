@@ -8,39 +8,50 @@
 
 A function of several variables takes a vector input and returns a scalar or vector output. For example:
 
-- Scalar-valued: $`f(x, y) = x^2 + y^2`$
-- Vector-valued: $`\vec{F}(x, y) = (x^2, y^2)`$
+- Scalar-valued: $f(x, y) = x^2 + y^2$
+- Vector-valued: $\vec{F}(x, y) = (x^2, y^2)$
 
-In deep learning, the loss function $`L(\theta_1, \theta_2, ..., \theta_n)`$ depends on many parameters $`\theta_i`$.
+In deep learning, the loss function $L(\theta_1, \theta_2, ..., \theta_n)$ depends on many parameters $\theta_i$.
+
+**Step-by-step:**
+- Plug in values for each variable to compute the output.
+- For vector-valued functions, each component is a function of the variables.
 
 ---
 
 ## 2. Partial Derivatives
 
-**Partial derivatives** measure how a function changes as one variable changes, keeping others constant. For $`f(x_1, x_2, ..., x_n)`$:
+**Partial derivatives** measure how a function changes as one variable changes, keeping others constant. For $f(x_1, x_2, ..., x_n)$:
 
 ```math
 \frac{\partial f}{\partial x_i} = \lim_{h \to 0} \frac{f(x_1, ..., x_i + h, ..., x_n) - f(x_1, ..., x_i, ..., x_n)}{h}
 ```
 
-- $`\frac{\partial f}{\partial x_i}`$ is the rate of change of $`f`$ with respect to $`x_i`$.
+- $\frac{\partial f}{\partial x_i}$ is the rate of change of $f$ with respect to $x_i$.
 - All other variables are held constant.
+
+**Step-by-step:**
+- Change $x_i$ by a small amount $h$; keep all other variables fixed.
+- Compute the change in $f$.
+- Divide by $h$ and take the limit as $h \to 0$.
 
 ### Example
 
-Let $`f(x, y) = 3x^2y + 2y`$.
+Let $f(x, y) = 3x^2y + 2y$.
 
-- $`\frac{\partial f}{\partial x} = 6xy`$
-- $`\frac{\partial f}{\partial y} = 3x^2 + 2`$
+- $\frac{\partial f}{\partial x} = 6xy$
+- $\frac{\partial f}{\partial y} = 3x^2 + 2$
 
 **Interpretation:**
-- $`\frac{\partial f}{\partial x}`$ tells us how $`f`$ changes as $`x`$ changes, with $`y`$ fixed.
+- $\frac{\partial f}{\partial x}$ tells us how $f$ changes as $x$ changes, with $y$ fixed.
+
+> **Tip:** In deep learning, partial derivatives are used to compute gradients with respect to each parameter.
 
 ---
 
 ## 3. The Gradient
 
-The **gradient** of a scalar function $`f(x_1, ..., x_n)`$ is the vector of all its partial derivatives:
+The **gradient** of a scalar function $f(x_1, ..., x_n)$ is the vector of all its partial derivatives:
 
 ```math
 \nabla f = \left( \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, ..., \frac{\partial f}{\partial x_n} \right)
@@ -49,13 +60,19 @@ The **gradient** of a scalar function $`f(x_1, ..., x_n)`$ is the vector of all 
 - Points in the direction of steepest ascent.
 - Magnitude gives the rate of increase.
 
+**Step-by-step:**
+- Compute each partial derivative.
+- Collect them into a vector.
+
 ### Example
 
-For $`f(x, y) = x^2 + y^2`$:
+For $f(x, y) = x^2 + y^2$:
 
-- $`\nabla f = (2x, 2y)`$
+- $\nabla f = (2x, 2y)$
 
 **In deep learning:** The gradient tells us how to adjust parameters to decrease the loss.
+
+> **Tip:** The negative gradient points in the direction of steepest descent (used in gradient descent).
 
 ---
 
@@ -63,11 +80,15 @@ For $`f(x, y) = x^2 + y^2`$:
 
 - **Partial derivative:** Slope along one axis, holding others fixed.
 - **Gradient:** Direction and rate of fastest increase.
-- **Level sets (contours):** Curves where $`f(x, y)`$ is constant. The gradient is perpendicular to these.
+- **Level sets (contours):** Curves where $f(x, y)$ is constant. The gradient is perpendicular to these.
+
+**Step-by-step:**
+- Draw the surface or contour plot of $f(x, y)$.
+- The gradient at a point is perpendicular to the contour through that point.
 
 ### Visualization
 
-- 3D surface: Shows how $`f(x, y)`$ changes.
+- 3D surface: Shows how $f(x, y)$ changes.
 - Contour plot: Shows level sets and gradient vectors.
 
 ---
@@ -84,41 +105,58 @@ H_f = \begin{bmatrix}
 \end{bmatrix}
 ```
 
-- The Hessian describes the local curvature of $`f`$.
+- The Hessian describes the local curvature of $f$.
 - Used in second-order optimization (e.g., Newton's method).
+
+**Step-by-step:**
+- Compute all second partial derivatives (with respect to each pair of variables).
+- Arrange them in a square matrix.
 
 ### Example
 
-For $`f(x, y) = x^2 + y^2`$:
+For $f(x, y) = x^2 + y^2$:
 
 ```math
 H_f = \begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix}
 ```
 
+> **Tip:** The Hessian is symmetric if the function is twice continuously differentiable.
+
 ---
 
 ## 6. Directional Derivatives
 
-The **directional derivative** measures the rate of change of $`f`$ in any direction $`\vec{v}`$:
+The **directional derivative** measures the rate of change of $f$ in any direction $\vec{v}$:
 
 ```math
 D_{\vec{v}} f = \nabla f \cdot \vec{v}
 ```
 
-- $`\vec{v}`$ is a unit vector.
-- Shows how $`f`$ changes as we move in direction $`\vec{v}`$.
+- $\vec{v}$ is a unit vector.
+- Shows how $f$ changes as we move in direction $\vec{v}$.
+
+**Step-by-step:**
+- Compute the gradient $\nabla f$ at the point.
+- Take the dot product with the direction vector $\vec{v}$.
 
 ---
 
 ## 7. Chain Rule in Multiple Variables
 
-If $`z = f(x, y)`$ and $`x = g(t), y = h(t)`$, then:
+If $z = f(x, y)$ and $x = g(t), y = h(t)$, then:
 
 ```math
 \frac{dz}{dt} = \frac{\partial f}{\partial x} \frac{dx}{dt} + \frac{\partial f}{\partial y} \frac{dy}{dt}
 ```
 
 - This is crucial for **backpropagation** in neural networks.
+
+**Step-by-step:**
+- Compute the partial derivatives of $f$ with respect to $x$ and $y$.
+- Multiply by the derivatives of $x$ and $y$ with respect to $t$.
+- Add the results.
+
+> **Tip:** The chain rule allows gradients to flow through complex computational graphs.
 
 ---
 
@@ -198,7 +236,7 @@ ax3.plot(x_range, f_fixed_y, 'b-', label=f'f(x, {y_fixed})')
 ax3.plot(x_range, df_dx_fixed_y, 'r--', label=f'∂f/∂x at y={y_fixed}')
 ax3.set_title('Partial Derivative ∂f/∂x')
 ax3.set_xlabel('x')
-ax3.set_ylabel('f(x, y)')
+ax3.set_ylabel('Value')
 ax3.legend()
 ax3.grid(True)
 
@@ -207,36 +245,21 @@ plt.show()
 ```
 
 **Code Annotations:**
-- We define $`f(x, y)`$ and compute its partial derivatives and gradient numerically.
-- The 3D plot shows the surface $`f(x, y)`$.
-- The contour plot overlays gradient vectors, showing the direction of steepest ascent.
-- The last plot shows how $`f`$ and $`\frac{\partial f}{\partial x}`$ change as $`x`$ varies (with $`y`$ fixed).
+- `partial_derivative_x` and `partial_derivative_y` use finite differences to approximate partial derivatives.
+- `gradient` computes the gradient vector at a point.
+- The first plot shows the 3D surface of $f(x, y)$.
+- The second plot shows contours and gradient vectors (arrows point in the direction of steepest ascent).
+- The third plot shows a slice of $f(x, y)$ and its partial derivative with respect to $x$ at fixed $y$.
+
+> **Tip:** Try changing the function $f$ to see how the gradient and Hessian change!
 
 ---
 
-## 9. Applications in Deep Learning
+## Why Multivariable Calculus Matters in Deep Learning
 
-- **Gradients:** Used to update parameters via gradient descent.
-- **Loss surfaces:** Understanding their shape helps explain optimization challenges (e.g., saddle points, local minima).
-- **Backpropagation:** Relies on the chain rule and partial derivatives to compute gradients efficiently.
-- **Hessian:** Used in advanced optimization (e.g., second-order methods, curvature analysis).
+- **Gradients**: Used for optimization (gradient descent, backpropagation).
+- **Curvature**: The Hessian helps analyze and accelerate optimization.
+- **Loss landscapes**: Understanding the geometry of loss functions.
+- **Parameter updates**: All learning is about moving in parameter space using gradients.
 
-### Example: Gradient Descent Step
-
-Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
-
-- Compute $`\frac{\partial L}{\partial w}`$ and $`\frac{\partial L}{\partial b}`$.
-- Update: $`w \leftarrow w - \eta \frac{\partial L}{\partial w}`$, $`b \leftarrow b - \eta \frac{\partial L}{\partial b}`$
-
----
-
-## 10. Summary
-
-- Multivariable calculus generalizes single-variable calculus to higher dimensions.
-- Key concepts: partial derivatives, gradients, Hessians, chain rule.
-- Essential for understanding and training deep learning models.
-
-**Further Reading:**
-- [Gradient Descent and Optimization](https://en.wikipedia.org/wiki/Gradient_descent)
-- [Backpropagation](https://en.wikipedia.org/wiki/Backpropagation)
-- [Hessian Matrix](https://en.wikipedia.org/wiki/Hessian_matrix) 
+> **Summary:** Mastering multivariable calculus is essential for understanding and improving deep learning algorithms! 
