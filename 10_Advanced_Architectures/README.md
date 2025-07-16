@@ -6,7 +6,7 @@ This section explores advanced neural network architectures and learning paradig
 
 Graph Neural Networks are designed to operate on graph-structured data, where relationships between entities are as important as the entities themselves.
 
-### 1.1 Graph Convolutional Networks (GCN)
+### 1.1 [Graph Convolutional Networks (GCN)](01_gcn.md)
 
 GCNs generalize the concept of convolution from grids (like images) to arbitrary graphs. The core idea is to aggregate feature information from a node's neighbors.
 
@@ -21,7 +21,7 @@ where:
 - $`W^{(l)}`$ is the learnable weight matrix
 - $`\sigma`$ is an activation function (e.g., ReLU)
 
-### 1.2 Graph Attention Networks (GAT)
+### 1.2 [Graph Attention Networks (GAT)](02_gat.md)
 
 GATs introduce attention mechanisms to graphs, allowing nodes to weigh the importance of their neighbors during aggregation.
 
@@ -30,7 +30,7 @@ $`\alpha_{ij} = \mathrm{softmax}_j\left( a\left( W h_i, W h_j \right) \right)`$
 
 where $`a(\cdot, \cdot)`$ is a learnable attention function, and $`W`$ is a shared linear transformation.
 
-## 2. Neural Architecture Search (NAS)
+## 2. [Neural Architecture Search (NAS)](03_nas.md)
 
 NAS automates the design of neural network architectures, searching for optimal models given a task and dataset. It typically involves:
 - **Search Space:** Defines possible architectures (e.g., layer types, connections)
@@ -43,7 +43,7 @@ NAS automates the design of neural network architectures, searching for optimal 
 ```
 where $`\mathcal{A}`$ is the set of possible architectures.
 
-## 3. Meta-Learning
+## 3. [Meta-Learning](04_meta_learning.md)
 
 Meta-learning, or "learning to learn," aims to train models that can quickly adapt to new tasks with minimal data.
 
@@ -61,7 +61,7 @@ where $`\alpha`$ and $`\beta`$ are learning rates.
 
 Reptile is a simpler meta-learning algorithm that also learns initial parameters for fast adaptation, using repeated sampling and gradient steps across tasks.
 
-## 4. Few-Shot Learning
+## 4. [Few-Shot Learning](05_few_shot_learning.md)
 
 Few-shot learning focuses on training models that can generalize from a very small number of examples per class.
 
