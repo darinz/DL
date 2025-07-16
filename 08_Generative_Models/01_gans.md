@@ -1,8 +1,12 @@
 # Generative Adversarial Networks (GANs)
 
+> **Key Insight:** GANs pit two neural networks against each other in a game-theoretic framework, leading to powerful generative models capable of producing highly realistic data.
+
 ## 1. Introduction
 
 Generative Adversarial Networks (GANs) are a class of generative models introduced by Ian Goodfellow in 2014. GANs consist of two neural networks, a **generator** and a **discriminator**, which are trained in opposition to each other. The generator tries to create data that mimics the real data distribution, while the discriminator tries to distinguish between real and generated data.
+
+> **Did you know?** GANs have been used to generate photorealistic images, create art, synthesize music, and even design drugs.
 
 ## 2. Mathematical Formulation
 
@@ -17,6 +21,14 @@ The GAN framework is formulated as a minimax game between the generator $`G`$ an
 - $`G(z)`$: Generator output
 - $`D(x)`$: Probability that $`x`$ is real
 
+#### Step-by-Step Derivation
+
+1. **Discriminator's goal:** Maximize the probability of correctly classifying real and fake samples.
+2. **Generator's goal:** Fool the discriminator by generating samples that look real.
+3. **Minimax game:** The generator and discriminator update their parameters in turns, each trying to outsmart the other.
+
+> **Common Pitfall:** If the discriminator becomes too strong, the generator's gradients vanish, making training unstable.
+
 ## 3. Training Process
 
 Training alternates between updating the discriminator and the generator:
@@ -25,6 +37,10 @@ Training alternates between updating the discriminator and the generator:
    - Maximize the probability of assigning the correct label to both real and generated samples.
 2. **Generator step:**
    - Minimize $`\log(1 - D(G(z)))`$ (or maximize $`\log D(G(z))`$ for better gradients).
+
+#### Geometric/Visual Explanation
+
+Imagine a forger (generator) trying to create fake paintings and an art expert (discriminator) trying to spot the fakes. Over time, both improve their skills, resulting in highly realistic forgeries.
 
 ### Pseudocode
 ```python
@@ -48,15 +64,22 @@ for epoch in range(num_epochs):
         optimizer_G.step()
 ```
 
+> **Code Commentary:** The generator and discriminator are updated in alternating steps, each trying to improve against the other.
+
+> **Try it yourself!** Modify the loss functions or architectures and observe how GAN training stability changes.
+
 ## 4. Common Issues in GAN Training
 - **Mode collapse:** Generator produces limited variety.
 - **Non-convergence:** Oscillating or diverging losses.
 - **Vanishing gradients:** Discriminator becomes too strong.
 
-### Solutions
-- Use alternative loss functions (e.g., Wasserstein GAN)
-- Feature matching, minibatch discrimination
-- Careful architecture and hyperparameter choices
+| Issue              | Description                        | Solution(s)                                  |
+|--------------------|------------------------------------|----------------------------------------------|
+| Mode collapse      | Limited diversity in outputs        | Minibatch discrimination, feature matching   |
+| Non-convergence    | Losses oscillate/diverge           | Careful tuning, alternative losses           |
+| Vanishing gradients| Generator stops learning           | Use WGAN, balance D/G training               |
+
+> **Did you know?** Wasserstein GAN (WGAN) uses a different loss function to address vanishing gradients and improve stability.
 
 ## 5. DCGAN (Deep Convolutional GAN)
 
@@ -87,11 +110,15 @@ class DCGANGenerator(nn.Module):
         return self.net(z)
 ```
 
+> **Code Commentary:** The generator uses transposed convolutions to upsample the latent vector into an image.
+
 ## 6. StyleGAN
 
 StyleGAN introduces a style-based generator architecture, enabling control over image features at different levels. It uses adaptive instance normalization (AdaIN) and mapping networks.
 
 - **Key idea:** Separate the latent space from the image synthesis process for better disentanglement.
+
+> **Did you know?** StyleGAN can generate highly realistic faces, and its latent space allows for smooth interpolation between different features.
 
 ## 7. CycleGAN
 
@@ -103,6 +130,8 @@ CycleGAN enables image-to-image translation without paired data by introducing a
 
 - $`G`$: Maps domain X to Y
 - $`F`$: Maps domain Y to X
+
+> **Key Insight:** CycleGAN's cycle-consistency loss ensures that translations are reversible, enabling unpaired image-to-image translation.
 
 ## 8. Conditional GANs (cGANs)
 
@@ -129,6 +158,8 @@ class ConditionalGenerator(nn.Module):
         img = self.model(gen_input)
         return img.view(img.size(0), *img_shape)
 ```
+
+> **Try it yourself!** Train a cGAN on MNIST and generate images of specific digits by conditioning on the label.
 
 ---
 
