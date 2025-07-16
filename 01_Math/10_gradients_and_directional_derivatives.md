@@ -6,61 +6,79 @@
 
 ## 1. The Gradient Vector
 
-The **gradient** of a scalar function $`f(x_1, x_2, \ldots, x_n)`$ is the vector of all its partial derivatives:
+The **gradient** of a scalar function $f(x_1, x_2, \ldots, x_n)$ is the vector of all its partial derivatives:
 
 ```math
 \nabla f = \left[\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_n}\right]^T
 ```
 
 - The gradient points in the direction of **steepest ascent** of the function.
-- The magnitude $`\|\nabla f\|`$ gives the rate of increase in that direction.
+- The magnitude $\|\nabla f\|$ gives the rate of increase in that direction.
 - In deep learning, the negative gradient is used for **gradient descent** (steepest descent).
+
+**Step-by-step:**
+- Compute each partial derivative of $f$ with respect to each variable.
+- Stack them into a column vector.
 
 ### Example
 
-Let $`f(x, y) = 3x^2y + 2y`$.
+Let $f(x, y) = 3x^2y + 2y$.
 
-- $`\frac{\partial f}{\partial x} = 6xy`$
-- $`\frac{\partial f}{\partial y} = 3x^2 + 2`$
-- $`\nabla f = [6xy, 3x^2 + 2]^T`$
+- $\frac{\partial f}{\partial x} = 6xy$
+- $\frac{\partial f}{\partial y} = 3x^2 + 2$
+- $\nabla f = [6xy, 3x^2 + 2]^T$
 
-At $`(x, y) = (1, 2)`$:
-- $`\nabla f = [12, 5]^T`$
+At $(x, y) = (1, 2)$:
+- $\nabla f = [12, 5]^T$
+
+> **Tip:** The negative gradient $-\nabla f$ points in the direction of steepest descent (used in optimization).
 
 ---
 
 ## 2. Directional Derivative
 
-The **directional derivative** of $`f`$ at $`\mathbf{x}`$ in the direction of a unit vector $`\mathbf{u}`$ is:
+The **directional derivative** of $f$ at $\mathbf{x}$ in the direction of a unit vector $\mathbf{u}$ is:
 
 ```math
 D_{\mathbf{u}} f = \nabla f \cdot \mathbf{u}
 ```
 
-- This measures the rate of change of $`f`$ in the direction of $`\mathbf{u}`$.
-- If $`\mathbf{u}`$ is the gradient direction, this is maximized.
-- If $`\mathbf{u}`$ is perpendicular to the gradient, the directional derivative is zero (no change).
+- This measures the rate of change of $f$ in the direction of $\mathbf{u}$.
+- If $\mathbf{u}$ is the gradient direction, this is maximized.
+- If $\mathbf{u}$ is perpendicular to the gradient, the directional derivative is zero (no change).
+
+**Step-by-step:**
+- Compute the gradient $\nabla f$ at the point.
+- Normalize the direction vector $\mathbf{u}$ (make it length 1).
+- Take the dot product $\nabla f \cdot \mathbf{u}$.
 
 ### Step-by-Step Example
 
-Let $`f(x, y) = x^2 + y^2`$, $`\mathbf{x} = (1, 2)`$, $`\mathbf{u} = (3, 4)`$ (not yet normalized).
+Let $f(x, y) = x^2 + y^2$, $\mathbf{x} = (1, 2)$, $\mathbf{u} = (3, 4)$ (not yet normalized).
 
 1. Compute the gradient:
-   - $`\nabla f = [2x, 2y]^T = [2, 4]^T`$
-2. Normalize $`\mathbf{u}`$:
-   - $`\|\mathbf{u}\| = \sqrt{3^2 + 4^2} = 5`$
-   - $`\mathbf{u}_{\text{unit}} = (3/5, 4/5)`$
+   - $\nabla f = [2x, 2y]^T = [2, 4]^T$
+2. Normalize $\mathbf{u}$:
+   - $\|\mathbf{u}\| = \sqrt{3^2 + 4^2} = 5$
+   - $\mathbf{u}_{\text{unit}} = (3/5, 4/5)$
 3. Compute the directional derivative:
-   - $`D_{\mathbf{u}} f = [2, 4] \cdot [3/5, 4/5] = 2\cdot3/5 + 4\cdot4/5 = 6/5 + 16/5 = 22/5 = 4.4`$
+   - $D_{\mathbf{u}} f = [2, 4] \cdot [3/5, 4/5] = 2\cdot3/5 + 4\cdot4/5 = 6/5 + 16/5 = 22/5 = 4.4$
+
+> **Tip:** The directional derivative is largest in the direction of the gradient.
 
 ---
 
 ## 3. Geometric Interpretation
 
-- The gradient $`\nabla f`$ is **perpendicular** (normal) to level curves (contours) of $`f`$.
+- The gradient $\nabla f$ is **perpendicular** (normal) to level curves (contours) of $f$.
 - The **directional derivative** projects the gradient onto any direction:
-  - $`D_{\mathbf{u}} f = \|\nabla f\| \cos\theta`$, where $`\theta`$ is the angle between $`\nabla f`$ and $`\mathbf{u}`$.
+  - $D_{\mathbf{u}} f = \|\nabla f\| \cos\theta$, where $\theta$ is the angle between $\nabla f$ and $\mathbf{u}$.
 - The **steepest ascent** is in the direction of the gradient; **steepest descent** is in the opposite direction.
+
+**Step-by-step:**
+- Draw the contour lines (level sets) of $f$.
+- The gradient at a point is perpendicular to the contour through that point.
+- The directional derivative is the projection of the gradient onto the direction vector.
 
 ### Visualization
 
@@ -79,6 +97,8 @@ Let $`f(x, y) = x^2 + y^2`$, $`\mathbf{x} = (1, 2)`$, $`\mathbf{u} = (3, 4)`$ (n
 ```
 
 - Useful for gradient checking in deep learning.
+
+> **Tip:** Use numerical gradients to verify your backpropagation implementation.
 
 ---
 
@@ -99,7 +119,7 @@ def gradient_2d(f, x, y, h=1e-7):
 def directional_derivative(f, x, y, direction, h=1e-7):
     """Compute directional derivative in given direction"""
     grad = gradient_2d(f, x, y, h)
-    direction = direction / np.linalg.norm(direction)
+    direction = direction / np.linalg.norm(direction)  # Normalize direction
     return np.dot(grad, direction)
 
 # Example function
@@ -154,6 +174,8 @@ plt.show()
 - The quiver plot shows the gradient field; contours show level sets.
 - The test point and its gradient are highlighted.
 
+> **Tip:** Try changing the function $f$ or the test point to see how the gradient and directional derivatives change!
+
 ---
 
 ## 6. Why Gradients and Directional Derivatives Matter in Deep Learning
@@ -165,10 +187,12 @@ plt.show()
 
 ### Example: Gradient Descent Step
 
-Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
+Suppose our loss is $L(w, b) = (wx + b - y)^2$ for a single data point.
 
-- Compute $`\frac{\partial L}{\partial w}`$ and $`\frac{\partial L}{\partial b}`$.
-- Update: $`w \leftarrow w - \eta \frac{\partial L}{\partial w}`$, $`b \leftarrow b - \eta \frac{\partial L}{\partial b}`$
+- Compute $\frac{\partial L}{\partial w}$ and $\frac{\partial L}{\partial b}$.
+- Update: $w \leftarrow w - \eta \frac{\partial L}{\partial w}$, $b \leftarrow b - \eta \frac{\partial L}{\partial b}$
+
+> **Tip:** The learning rate $\eta$ controls the step size in gradient descent.
 
 ---
 
@@ -177,6 +201,8 @@ Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
 - The gradient generalizes the derivative to higher dimensions.
 - The directional derivative measures change in any direction.
 - Both are fundamental for optimization and learning in deep neural networks.
+
+> **Summary:** Mastering gradients and directional derivatives is essential for understanding and improving deep learning algorithms!
 
 **Further Reading:**
 - [Gradient (Wikipedia)](https://en.wikipedia.org/wiki/Gradient)
