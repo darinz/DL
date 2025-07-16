@@ -24,8 +24,10 @@ Modern CNN architectures focus on efficiency, scalability, and deployment on res
 
 EfficientNet, developed by Google Research, introduced compound scaling that uniformly scales network depth, width, and resolution using a compound coefficient. It achieved state-of-the-art accuracy with significantly fewer parameters.
 
+> **Explanation:**
+> EfficientNet's main innovation is to scale all dimensions of a network (depth, width, and input resolution) together in a principled way, rather than arbitrarily. This leads to better accuracy and efficiency.
+
 > **Did you know?**
-> 
 > EfficientNet models are widely used in Kaggle competitions and real-world applications due to their excellent accuracy/efficiency trade-off.
 
 ### Compound Scaling Method
@@ -40,6 +42,11 @@ The key innovation is compound scaling, which scales all three dimensions (depth
 ```
 
 Where $`\phi`$ is the compound coefficient that controls resource scaling.
+
+> **Math Breakdown:**
+> - $\alpha, \beta, \gamma$ are constants that determine how much to scale each dimension.
+> - $\phi$ is a user-chosen parameter that increases model size and accuracy.
+> - The constraint $\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2$ ensures balanced scaling.
 
 ### Mathematical Foundation
 
@@ -61,8 +68,10 @@ Where:
 \text{FLOPs} \propto \alpha \cdot \beta^2 \cdot \gamma^2
 ```
 
+> **Explanation:**
+> These equations show how the number of layers, channels, and input size are scaled at each stage. The total computational cost (FLOPs) grows as all three are increased.
+
 > **Key Insight:**
-> 
 > Compound scaling lets you "dial up" or "dial down" the model for your hardware, keeping the architecture balanced.
 
 ---
@@ -73,8 +82,10 @@ Where:
 
 MobileNet, developed by Google, introduced depthwise separable convolutions to create efficient neural networks for mobile and embedded vision applications.
 
+> **Explanation:**
+> MobileNet's main innovation is to break standard convolution into two simpler operations (depthwise and pointwise), drastically reducing computation and parameters while maintaining accuracy.
+
 > **Try it yourself!**
-> 
 > Compare the number of parameters and FLOPs in a standard convolution vs. a depthwise separable convolution. How much do you save?
 
 ### Depthwise Separable Convolution
@@ -86,10 +97,16 @@ The key innovation is decomposing standard convolution into two steps:
 (I * K_d)(i, j, c) = \sum_{m,n} I(i+m, j+n, c) \cdot K_d(m, n, c)
 ```
 
+> **Math Breakdown:**
+> - Each input channel is convolved with its own filter (no mixing between channels).
+
 **2. Pointwise Convolution:**
 ```math
 (F * K_p)(i, j, k) = \sum_{c} F(i, j, c) \cdot K_p(c, k)
 ```
+
+> **Math Breakdown:**
+> - A $1 \times 1$ convolution mixes the output of the depthwise step across channels, allowing for feature combination.
 
 **Computational Reduction:**
 ```math
@@ -97,8 +114,10 @@ The key innovation is decomposing standard convolution into two steps:
 \text{Depthwise Separable}: O(H \times W \times F \times F \times C_{in} + H \times W \times C_{in} \times C_{out})
 ```
 
+> **Explanation:**
+> Depthwise separable convolution reduces computation by splitting spatial and channel mixing into two steps, making it much more efficient for mobile devices.
+
 > **Key Insight:**
-> 
 > Depthwise separable convolution is the secret sauce behind many mobile-optimized models.
 
 ---
@@ -109,8 +128,10 @@ The key innovation is decomposing standard convolution into two steps:
 
 ShuffleNet, developed by Megvii Inc., introduced channel shuffling to enable efficient group convolutions while maintaining accuracy.
 
+> **Explanation:**
+> ShuffleNet's innovation is to use group convolutions (which are efficient but can block information flow) and then shuffle the channels so that information can mix between groups.
+
 > **Did you know?**
-> 
 > ShuffleNet's channel shuffle operation ensures that information can flow between groups, overcoming a key limitation of group convolutions.
 
 ### Channel Shuffling
@@ -123,8 +144,11 @@ The key innovation is channel shuffling, which enables information flow between 
 
 Where $`g`$ is the number of groups and $`c`$ is the number of channels.
 
+> **Math Breakdown:**
+> - The input tensor is reshaped to separate groups, transposed to mix channels, and then reshaped back.
+> - This operation allows features from different groups to interact, improving accuracy.
+
 > **Try it yourself!**
-> 
 > Implement a group convolution with and without channel shuffling. Compare the accuracy on a small dataset.
 
 ---
