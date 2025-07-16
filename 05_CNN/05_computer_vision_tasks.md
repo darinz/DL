@@ -25,8 +25,10 @@ Computer vision tasks represent different levels of understanding and analysis o
 
 Image classification assigns a single label to an entire image from a predefined set of categories. It's the foundation of computer vision and serves as a building block for more complex tasks.
 
+> **Explanation:**
+> The goal is to determine what object or scene is present in the image as a whole, without worrying about where it is located.
+
 > **Did you know?**
-> 
 > The ImageNet Large Scale Visual Recognition Challenge (ILSVRC) was a major driver of progress in image classification models.
 
 ### Mathematical Formulation
@@ -40,10 +42,12 @@ Image classification assigns a single label to an entire image from a predefined
 L = -\sum_{k=1}^{K} y_k \log(\hat{y}_k)
 ```
 
-Where $`y_k`$ is the ground truth label and $`\hat{y}_k`$ is the predicted probability.
+> **Math Breakdown:**
+> - $y_k$ is the true label (one-hot encoded: 1 for the correct class, 0 otherwise).
+> - $\hat{y}_k$ is the predicted probability for class $k$.
+> - The loss penalizes the model for assigning low probability to the correct class.
 
 > **Key Insight:**
-> 
 > Cross-entropy loss encourages the model to assign high probability to the correct class and low probability to all others.
 
 ---
@@ -54,8 +58,10 @@ Where $`y_k`$ is the ground truth label and $`\hat{y}_k`$ is the predicted proba
 
 Object detection localizes and classifies multiple objects within an image. It outputs bounding boxes with associated class labels and confidence scores.
 
+> **Explanation:**
+> The model must both find (localize) and identify (classify) all objects in the image, not just the most prominent one.
+
 > **Try it yourself!**
-> 
 > Draw bounding boxes on images and label the objects. This is what your model is learning to do!
 
 ### Mathematical Formulation
@@ -77,8 +83,12 @@ Where:
 - $`L_{reg}`$: Regression loss (smooth L1)
 - $`\lambda`$: Balancing parameter
 
+> **Math Breakdown:**
+> - $L_{cls}$ penalizes incorrect class predictions for each detected object.
+> - $L_{reg}$ penalizes inaccurate bounding box coordinates.
+> - $\lambda$ balances the two losses.
+
 > **Common Pitfall:**
-> 
 > Matching predicted boxes to ground truth is tricky—IoU (Intersection over Union) is often used to determine matches.
 
 ---
@@ -89,8 +99,10 @@ Where:
 
 Semantic segmentation assigns a class label to each pixel in the image, creating a pixel-wise classification map.
 
+> **Explanation:**
+> The model must "color in" each pixel with the correct class, enabling fine-grained scene understanding.
+
 > **Did you know?**
-> 
 > Segmentation is used in self-driving cars to distinguish roads, pedestrians, and obstacles at the pixel level.
 
 ### Mathematical Formulation
@@ -106,8 +118,12 @@ L = -\sum_{i,j} \sum_{k=1}^{K} y_{i,j,k} \log(\hat{y}_{i,j,k})
 
 Where $`y_{i,j,k}`$ is the ground truth label for pixel $`(i,j)`$ and class $`k`$.
 
+> **Math Breakdown:**
+> - $y_{i,j,k}$ is 1 if pixel $(i,j)$ belongs to class $k$, 0 otherwise.
+> - $\hat{y}_{i,j,k}$ is the predicted probability for pixel $(i,j)$ and class $k$.
+> - The loss penalizes incorrect pixel-wise predictions.
+
 > **Key Insight:**
-> 
 > Segmentation networks learn to "color in" each pixel with the correct class, enabling fine-grained scene understanding.
 
 ---
@@ -118,8 +134,10 @@ Where $`y_{i,j,k}`$ is the ground truth label for pixel $`(i,j)`$ and class $`k`
 
 Instance segmentation combines object detection and semantic segmentation, providing pixel-level masks for each individual object instance.
 
+> **Explanation:**
+> The model must detect, classify, and segment each object instance, even if they overlap.
+
 > **Try it yourself!**
-> 
 > Use a tool like LabelMe or CVAT to annotate instance masks on images. Notice how each object gets its own mask, even if they overlap!
 
 ### Mathematical Formulation
@@ -138,8 +156,12 @@ L = L_{cls} + L_{reg} + L_{mask}
 
 Where $`L_{mask}`$ is the mask prediction loss.
 
+> **Math Breakdown:**
+> - $L_{cls}$: Classification loss for each detected object.
+> - $L_{reg}$: Bounding box regression loss.
+> - $L_{mask}$: Pixel-wise mask prediction loss for each instance.
+
 > **Key Insight:**
-> 
 > Instance segmentation is the most challenging vision task—models must detect, classify, and segment each object instance.
 
 ---
