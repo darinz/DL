@@ -1,5 +1,14 @@
 # Transformers & Attention
 
+[![Transformers](https://img.shields.io/badge/Transformers-Attention%20Mechanisms-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![Self Attention](https://img.shields.io/badge/Self%20Attention-Multi%20Head-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![BERT](https://img.shields.io/badge/BERT-Bidirectional-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![GPT](https://img.shields.io/badge/GPT-Generative-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![T5](https://img.shields.io/badge/T5-Text%20to%20Text-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![ViT](https://img.shields.io/badge/ViT-Vision%20Transformers-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![Swin](https://img.shields.io/badge/Swin-Hierarchical-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+[![LLMs](https://img.shields.io/badge/LLMs-Large%20Language-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/07_Transformers)
+
 This module covers the foundational concepts and architectures in the field of Transformers and Attention mechanisms, which have revolutionized deep learning for both natural language processing and computer vision.
 
 ## 1. [Transformer Architecture](01_transformer_architecture.md)
