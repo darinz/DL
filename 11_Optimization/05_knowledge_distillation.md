@@ -2,6 +2,9 @@
 
 Knowledge distillation is a technique for transferring knowledge from a large, complex model (teacher) to a smaller, simpler model (student) while maintaining or improving performance.
 
+> **Explanation:**
+> Knowledge distillation is like having a smart teacher (large model) help a student (small model) learn. The teacher not only gives the right answers but also explains the reasoning, helping the student understand better than just memorizing.
+
 > **Key Insight:** Knowledge distillation enables you to deploy efficient models on edge devices without sacrificing much accuracy.
 
 > **Did you know?** Many mobile AI applications (e.g., voice assistants, image recognition) use knowledge distillation to shrink large models for real-time use!
@@ -24,11 +27,11 @@ The teacher's soft predictions are computed using temperature scaling:
 ```math
 q_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}
 ```
-
-where:
-- $`z_i`$ = logit for class $`i`$
-- $`T`$ = temperature parameter
-- $`q_i`$ = soft probability for class $`i`$
+> **Math Breakdown:**
+> - $`z_i`$: Logit (raw output) for class $i$.
+> - $`T`$: Temperature parameter that controls how "soft" the probabilities are.
+> - $`q_i`$: Soft probability for class $i$.
+> - Higher temperature makes the distribution more uniform, lower temperature makes it more peaked.
 
 > **Common Pitfall:** If the temperature $`T`$ is too low, soft targets become too similar to hard labels; if too high, they become too uniform and lose useful information.
 
@@ -38,22 +41,22 @@ The total loss combines hard and soft targets:
 ```math
 L = \alpha L_{\text{hard}} + (1 - \alpha) L_{\text{soft}}
 ```
-
-where:
-- $`L_{\text{hard}}`$ = standard cross-entropy loss with hard labels
-- $`L_{\text{soft}}`$ = KL divergence loss with soft targets
-- $`\alpha`$ = weight balancing parameter
+> **Math Breakdown:**
+> - $`L_{\text{hard}}`$: Standard cross-entropy loss with ground truth labels.
+> - $`L_{\text{soft}}`$: KL divergence loss with teacher's soft predictions.
+> - $`\alpha`$: Weight that balances hard and soft losses.
+> - The student learns from both the correct answers and the teacher's reasoning.
 
 ### KL Divergence Loss
 
 ```math
 L_{\text{soft}} = T^2 \cdot \text{KL}(q^T \| p^T)
 ```
-
-where:
-- $`q^T`$ = teacher's soft predictions
-- $`p^T`$ = student's soft predictions
-- $`T^2`$ = temperature scaling factor
+> **Math Breakdown:**
+> - $`q^T`$: Teacher's soft predictions (with temperature $T$).
+> - $`p^T`$: Student's soft predictions (with temperature $T$).
+> - $`T^2`$: Temperature scaling factor to keep the loss magnitude reasonable.
+> - KL divergence measures how different the student's predictions are from the teacher's.
 
 > **Key Insight:** The KL divergence term encourages the student to match the teacher's output distribution, not just the correct class.
 
@@ -118,6 +121,12 @@ class KnowledgeDistillationTrainer:
         
         return total_loss.item(), hard_loss.item(), soft_loss.item()
 ```
+> **Code Walkthrough:**
+> - Freezes the teacher model so it doesn't change during training.
+> - Computes both hard loss (with ground truth) and soft loss (with teacher predictions).
+> - Combines them with a weight parameter $`\alpha`$.
+> - The student learns from both the correct answers and the teacher's reasoning.
+
 *This trainer combines hard and soft losses to guide the student model using both ground-truth labels and teacher predictions.*
 
 ### 2. Advanced Knowledge Distillation with Feature Matching
@@ -172,6 +181,11 @@ class FeatureDistillationTrainer:
         
         return final_loss.item(), hard_loss.item(), soft_loss.item(), feature_loss.item()
 ```
+> **Code Walkthrough:**
+> - Extracts intermediate features from both teacher and student models.
+> - Adds a feature matching loss to encourage the student to mimic the teacher's internal representations.
+> - This can help the student learn better than just matching the final outputs.
+
 *Feature matching encourages the student to mimic not just the teacher's outputs, but also its internal representations.*
 
 ---
