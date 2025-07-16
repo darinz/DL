@@ -629,7 +629,7 @@ Where:
 ### Books and Courses
 - "Deep Learning" by Ian Goodfellow, Yoshua Bengio, Aaron Courville
 - "Neural Networks and Deep Learning" by Michael Nielsen
-- CS231n: Convolutional Neural Networks for Visual Recognition
+- CS231n: Deep Learning for Computer Vision
 - CS224n: Natural Language Processing with Deep Learning
 
 ### Code Repositories
