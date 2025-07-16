@@ -1,5 +1,14 @@
 # Advanced Architectures
 
+[![Advanced Architectures](https://img.shields.io/badge/Advanced%20Architectures-Cutting%20Edge-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![GNNs](https://img.shields.io/badge/GNNs-Graph%20Neural-green?style=for-the-badge&logo=project-diagram)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![GCN](https://img.shields.io/badge/GCN-Graph%20Convolutional-orange?style=for-the-badge&logo=network-wired)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![GAT](https://img.shields.io/badge/GAT-Graph%20Attention-purple?style=for-the-badge&logo=eye)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![NAS](https://img.shields.io/badge/NAS-Neural%20Architecture%20Search-red?style=for-the-badge&logo=search)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![Meta Learning](https://img.shields.io/badge/Meta%20Learning-Learning%20to%20Learn-yellow?style=for-the-badge&logo=graduation-cap)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![Few Shot](https://img.shields.io/badge/Few%20Shot-Learning-blue?style=for-the-badge&logo=target)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+[![MAML](https://img.shields.io/badge/MAML-Model%20Agnostic-orange?style=for-the-badge&logo=bolt)](https://github.com/yourusername/DL/tree/main/10_Advanced_Architectures)
+
 This section explores advanced neural network architectures and learning paradigms that extend beyond traditional deep learning models. These methods are at the forefront of research and are widely used in cutting-edge applications.
 
 > **Key Insight:** Mastering advanced architectures opens the door to solving complex, real-world problems that go beyond what standard neural networks can handle.
