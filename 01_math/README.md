@@ -185,7 +185,6 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 - **MIT 18.06 Linear Algebra** - Gilbert Strang
 - **MIT 18.01 Single Variable Calculus** - David Jerison
 - **MIT 18.05 Introduction to Probability and Statistics**
-- **Stanford CS229 Machine Learning** - Andrew Ng
 
 ### Interactive Tools
 - **NumPy/SciPy**: Python libraries for numerical computing
