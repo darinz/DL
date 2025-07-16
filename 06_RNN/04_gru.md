@@ -18,6 +18,9 @@ GRU consists of two main gates:
 2. **Reset Gate ($`r_t`$)**: Controls how much of the previous hidden state to forget
 3. **Hidden State ($`h_t`$)**: The output that serves as both memory and output
 
+> **Explanation:**
+> GRUs simplify the LSTM architecture by merging the forget and input gates into a single update gate and removing the separate cell state. This makes GRUs computationally efficient while still addressing the vanishing gradient problem.
+
 #### Geometric/Visual Explanation
 
 Imagine the update gate $`z_t`$ as a valve that decides how much of the past to keep, and the reset gate $`r_t`$ as a filter that determines how much of the past to ignore when computing the new candidate state. This streamlined flow allows GRUs to efficiently manage memory over sequences.
@@ -33,13 +36,23 @@ r_t = \sigma(W_r \cdot [h_{t-1}, x_t] + b_r) \quad \text{(Reset gate)}
 h_t = (1 - z_t) * h_{t-1} + z_t * \tilde{h}_t \quad \text{(Hidden state)}
 ```
 
+> **Math Breakdown:**
+> - $[h_{t-1}, x_t]$: Concatenation of previous hidden state and current input
+> - $\sigma$: Sigmoid activation (outputs values between 0 and 1, used for gates)
+> - $z_t$: Update gate (how much of the previous hidden state to keep)
+> - $r_t$: Reset gate (how much of the previous hidden state to forget)
+> - $r_t * h_{t-1}$: Element-wise product, controlling how much past information is used for the candidate
+> - $\tilde{h}_t$: Candidate hidden state (new memory)
+> - $h_t$: Final hidden state (combines old and new information)
+
 Where:
 - $`[h_{t-1}, x_t]`$: concatenation of previous hidden state and current input
 - $`\sigma`$: sigmoid activation function
 - $`\tanh`$: hyperbolic tangent activation function
 - $`*`$: element-wise multiplication (Hadamard product)
 
-> **Common Pitfall:** Forgetting to apply the reset gate $`r_t`$ to $`h_{t-1}`$ before computing the candidate hidden state can break the GRU's memory mechanism.
+> **Common Pitfall:**
+> Forgetting to apply the reset gate $`r_t`$ to $`h_{t-1}`$ before computing the candidate hidden state can break the GRU's memory mechanism.
 
 #### Step-by-Step Derivation
 
@@ -52,7 +65,8 @@ Where:
 4. **Update Hidden State:**
    - $`h_t = (1 - z_t) * h_{t-1} + z_t * \tilde{h}_t`$
 
-> **Try it yourself!** Write out the GRU equations for a single time step with sample values to see how the gates interact.
+> **Explanation:**
+> The update and reset gates work together to control the flow of information, allowing the GRU to learn what to remember and what to forget at each time step.
 
 ## Python Implementation
 
@@ -97,7 +111,10 @@ class GRUCell(nn.Module):
         return h
 ```
 
-> **Code Commentary:** The update and reset gates control how much past information is retained or forgotten. The candidate hidden state $`\tilde{h}_t`$ is a blend of the new input and the reset-modified memory.
+> **Code Walkthrough:**
+> - The update and reset gates control how much past information is retained or forgotten.
+> - The candidate hidden state $\tilde{h}_t$ is a blend of the new input and the reset-modified memory.
+> - The final hidden state $h_t$ combines the previous hidden state and the candidate, weighted by the update gate.
 
 ### Complete GRU Module
 
