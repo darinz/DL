@@ -23,7 +23,7 @@ Given a context $C$ and a question $Q$, the model predicts the start and end pos
 
 **Explanation:**
 - The model computes the probability of every possible start and end position in the context.
-- The pair $(s^*, e^*)$ with the highest probability is selected as the answer span.
+- The pair $`(s^*, e^*)`$ with the highest probability is selected as the answer span.
 - This approach is used by models like BERT for extractive QA.
 
 ### Example: Using BERT for Extractive QA
