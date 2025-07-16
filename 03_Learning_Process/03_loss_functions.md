@@ -19,6 +19,8 @@
 
 ## Introduction
 
+> **Intuition:** The loss function is like a GPS for learning—it tells the network how far off it is from the goal and which direction to move to get closer.
+
 ### What is a Loss Function?
 
 A loss function $`L(y, \hat{y})`$ quantifies how well a model's predictions $`\hat{y}`$ match the true targets $`y`$. The goal of training is to minimize this loss function.
@@ -41,11 +43,13 @@ L_{total} = \frac{1}{n} \sum_{i=1}^{n} L(y_i, \hat{y}_i)
 > **Did you know?**
 > The loss function is sometimes called the "cost function" or "objective function" in the literature. In deep learning, "loss" is the most common term.
 
+> **Annotation:** Choosing the right loss function is as important as choosing the right model architecture. It directly affects what the network learns.
+
 ---
 
 ## Regression Loss Functions
 
-Regression loss functions are used when the target variable is continuous.
+> **Annotation:** Regression losses measure how close the network's predictions are to continuous targets. Each has its own strengths and weaknesses.
 
 ### Mean Squared Error (MSE)
 
@@ -98,7 +102,7 @@ $`\frac{\partial L_{LogCosh}}{\partial \hat{y}_i} = \tanh(y_i - \hat{y}_i)`$
 
 ## Classification Loss Functions
 
-Classification loss functions are used when the target variable is categorical.
+> **Annotation:** Classification losses measure how well the network predicts discrete categories. Cross-entropy is the most common, but others are useful for special cases.
 
 ### Binary Cross-Entropy
 
@@ -148,6 +152,8 @@ $`\frac{\partial L_{Hinge}}{\partial \hat{y}_i} = \begin{cases} -y_i & y_i \hat{
 
 ## Advanced Loss Functions
 
+> **Annotation:** Advanced losses like focal loss and dice loss are designed for specific challenges, such as class imbalance or segmentation tasks.
+
 ### Focal Loss
 
 **Formula:**
@@ -194,6 +200,8 @@ Where $`d_i`$ is the distance between two samples and $`m`$ is the margin.
 
 ## Loss Function Selection
 
+> **Intuition:** The best loss function depends on your problem type, data distribution, and what you care about most (accuracy, robustness, interpretability, etc.).
+
 ### Problem Type Guidelines
 
 | Problem Type | Recommended Loss Functions |
@@ -219,6 +227,8 @@ Where $`d_i`$ is the distance between two samples and $`m`$ is the margin.
 ---
 
 ## Implementation in Python
+
+> **Annotation:** The code below shows how to implement and use different loss functions in Python. Try extending it with your own custom loss!
 
 ### Basic Loss Functions
 
