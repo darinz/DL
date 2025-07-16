@@ -1,696 +1,1068 @@
 # Image Classification
 
-Image classification is the task of assigning a label to an image from a predefined set of categories. This guide covers CNN architectures, transfer learning, and evaluation techniques.
+## 1. Overview
 
-## Table of Contents
+Image classification is a fundamental computer vision task that involves assigning a label or category to an input image. Modern approaches use deep learning, particularly Convolutional Neural Networks (CNNs), to achieve state-of-the-art performance.
 
-1. [CNN Architectures](#cnn-architectures)
-2. [Transfer Learning](#transfer-learning)
-3. [Data Augmentation](#data-augmentation)
-4. [Evaluation Metrics](#evaluation-metrics)
+**Mathematical Definition:**
+```math
+f: \mathbb{R}^{H \times W \times C} \rightarrow \{1, 2, ..., K\}
+```
 
-## CNN Architectures
+Where:
+- $H, W, C$ are height, width, and channels of the image
+- $K$ is the number of classes
+- $f$ is the classification function
+
+## 2. CNN Architectures
+
+### LeNet-5
+
+LeNet-5 was one of the first successful CNNs for digit recognition.
+
+**Architecture:**
+```math
+\text{Input} \rightarrow \text{Conv1} \rightarrow \text{Pool1} \rightarrow \text{Conv2} \rightarrow \text{Pool2} \rightarrow \text{FC1} \rightarrow \text{FC2} \rightarrow \text{Output}
+```
+
+**Convolution Layer:**
+```math
+y_{i,j} = \sum_{m=0}^{M-1} \sum_{n=0}^{N-1} w_{m,n} \cdot x_{i+m, j+n} + b
+```
+
+### AlexNet
+
+AlexNet introduced deep CNNs with ReLU activation and dropout.
+
+**ReLU Activation:**
+```math
+\text{ReLU}(x) = \max(0, x)
+```
+
+**Dropout:**
+```math
+y_i = \begin{cases}
+\frac{x_i}{1-p} & \text{with probability } 1-p \\
+0 & \text{with probability } p
+\end{cases}
+```
+
+### VGGNet
+
+VGGNet uses small 3×3 filters with increasing depth.
+
+**VGG Block:**
+```math
+\text{VGG Block} = \text{Conv}(3×3) \rightarrow \text{ReLU} \rightarrow \text{Conv}(3×3) \rightarrow \text{ReLU} \rightarrow \text{MaxPool}(2×2)
+```
 
 ### ResNet (Residual Networks)
 
-ResNet uses skip connections to enable training of very deep networks:
+ResNet introduced skip connections to address vanishing gradients.
+
+**Residual Block:**
+```math
+F(x) = H(x) - x
+```
+
+**Forward Pass:**
+```math
+y = F(x) + x = H(x)
+```
+
+**Bottleneck Block:**
+```math
+y = W_2 \cdot \text{ReLU}(W_1 \cdot \text{ReLU}(W_0 \cdot x)) + x
+```
+
+### DenseNet
+
+DenseNet connects each layer to every other layer in a feed-forward fashion.
+
+**Dense Block:**
+```math
+x_l = H_l([x_0, x_1, ..., x_{l-1}])
+```
+
+Where $[x_0, x_1, ..., x_{l-1}]$ is the concatenation of feature maps.
+
+### EfficientNet
+
+EfficientNet uses compound scaling to balance network depth, width, and resolution.
+
+**Compound Scaling:**
+```math
+\text{depth}: d = \alpha^\phi
+```
+```math
+\text{width}: w = \beta^\phi
+```
+```math
+\text{resolution}: r = \gamma^\phi
+```
+
+Where $\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2$.
+
+## 3. Transfer Learning
+
+### Pre-training and Fine-tuning
+
+**Pre-training Loss:**
+```math
+L_{pre} = -\sum_{i=1}^{N} y_i \log(\hat{y}_i)
+```
+
+**Fine-tuning Loss:**
+```math
+L_{fine} = -\sum_{i=1}^{M} y_i \log(\hat{y}_i) + \lambda \|\theta - \theta_{pre}\|_2^2
+```
+
+### Feature Extraction
+
+**Frozen Features:**
+```math
+f(x) = \text{Classifier}(\text{Encoder}(x))
+```
+
+Where Encoder weights are frozen during training.
+
+### Domain Adaptation
+
+**Domain Adversarial Training:**
+```math
+L = L_{task} - \lambda L_{domain}
+```
+
+**Domain Loss:**
+```math
+L_{domain} = -\sum_{i=1}^{N} d_i \log(\hat{d}_i)
+```
+
+Where $d_i$ is the domain label.
+
+## 4. Data Augmentation
+
+### Geometric Transformations
+
+**Rotation:**
+```math
+\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}
+```
+
+**Scaling:**
+```math
+\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}
+```
+
+**Translation:**
+```math
+\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix} x \\ y \end{bmatrix} + \begin{bmatrix} t_x \\ t_y \end{bmatrix}
+```
+
+### Color Augmentation
+
+**Brightness:**
+```math
+I'(x, y) = I(x, y) \cdot \alpha
+```
+
+**Contrast:**
+```math
+I'(x, y) = \alpha \cdot (I(x, y) - \mu) + \mu
+```
+
+**Hue Shift:**
+```math
+H'(x, y) = H(x, y) + \Delta H
+```
+
+### CutMix and MixUp
+
+**CutMix:**
+```math
+I_{mix} = M \odot I_A + (1 - M) \odot I_B
+```
+```math
+y_{mix} = \lambda y_A + (1 - \lambda) y_B
+```
+
+Where $M$ is a binary mask and $\lambda$ is the mixing ratio.
+
+**MixUp:**
+```math
+I_{mix} = \lambda I_A + (1 - \lambda) I_B
+```
+```math
+y_{mix} = \lambda y_A + (1 - \lambda) y_B
+```
+
+## 5. Training Techniques
+
+### Learning Rate Scheduling
+
+**Step Decay:**
+```math
+lr(t) = lr_0 \cdot \gamma^{\lfloor t/s \rfloor}
+```
+
+**Cosine Annealing:**
+```math
+lr(t) = lr_{min} + \frac{1}{2}(lr_{max} - lr_{min})(1 + \cos(\frac{t}{T}\pi))
+```
+
+**Exponential Decay:**
+```math
+lr(t) = lr_0 \cdot e^{-kt}
+```
+
+### Regularization
+
+**L2 Regularization:**
+```math
+L_{reg} = \lambda \sum_{i} \|w_i\|_2^2
+```
+
+**L1 Regularization:**
+```math
+L_{reg} = \lambda \sum_{i} |w_i|
+```
+
+**Label Smoothing:**
+```math
+y_{smooth} = (1 - \alpha) \cdot y + \frac{\alpha}{K}
+```
+
+### Batch Normalization
+
+**Normalization:**
+```math
+\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}
+```
+
+**Scale and Shift:**
+```math
+y = \gamma \hat{x} + \beta
+```
+
+## 6. Evaluation Metrics
+
+### Accuracy
+**Definition:**
+```math
+\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Predictions}}
+```
+
+### Precision and Recall
+**Precision:**
+```math
+\text{Precision} = \frac{TP}{TP + FP}
+```
+
+**Recall:**
+```math
+\text{Recall} = \frac{TP}{TP + FN}
+```
+
+### F1-Score
+**Definition:**
+```math
+F1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+```
+
+### Top-K Accuracy
+**Top-K:**
+```math
+\text{Top-K Accuracy} = \frac{1}{N} \sum_{i=1}^{N} \mathbb{1}[y_i \in \text{Top-K}(\hat{y}_i)]
+```
+
+### Confusion Matrix
+**Matrix Elements:**
+```math
+C_{ij} = \sum_{k=1}^{N} \mathbb{1}[\hat{y}_k = i \land y_k = j]
+```
+
+## 7. Python Implementation Examples
+
+### Basic CNN Implementation
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
 
-def resnet_simulation():
-    # Create synthetic image
-    image = np.random.randint(0, 255, (64, 64, 3), dtype=np.uint8)
+# Create synthetic dataset
+def create_synthetic_dataset(num_samples=1000, num_classes=5, image_size=(32, 32)):
+    """Create synthetic image classification dataset."""
+    images = []
+    labels = []
     
-    # Add some patterns
-    image[20:40, 20:40] = [255, 0, 0]  # Red square
-    image[30:50, 30:50] = [0, 255, 0]  # Green square
+    for i in range(num_samples):
+        # Create random image
+        image = np.random.randn(*image_size, 3)
+        
+        # Add class-specific patterns
+        class_id = i % num_classes
+        
+        if class_id == 0:  # Horizontal lines
+            image[:, :, 0] += np.sin(np.linspace(0, 4*np.pi, image_size[1])) * 0.5
+        elif class_id == 1:  # Vertical lines
+            image[:, :, 1] += np.sin(np.linspace(0, 4*np.pi, image_size[0]))[:, None] * 0.5
+        elif class_id == 2:  # Diagonal pattern
+            for j in range(image_size[0]):
+                for k in range(image_size[1]):
+                    image[j, k, 2] += np.sin((j + k) * 0.2) * 0.3
+        elif class_id == 3:  # Circular pattern
+            center = image_size[0] // 2
+            for j in range(image_size[0]):
+                for k in range(image_size[1]):
+                    dist = np.sqrt((j - center)**2 + (k - center)**2)
+                    image[j, k, 0] += np.sin(dist * 0.3) * 0.4
+        else:  # Random noise pattern
+            image += np.random.randn(*image_size, 3) * 0.2
+        
+        # Normalize
+        image = (image - image.min()) / (image.max() - image.min())
+        
+        images.append(image)
+        labels.append(class_id)
     
-    def residual_block(input_feature, filters, stride=1):
-        """Simulate a residual block"""
-        # Main path
-        conv1 = input_feature  # Simplified convolution
-        conv2 = conv1 + np.random.normal(0, 0.1, conv1.shape)  # Add some transformation
+    return np.array(images), np.array(labels)
+
+# Simple CNN model
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=5):
+        super(SimpleCNN, self).__init__()
         
-        # Skip connection
-        if stride != 1 or input_feature.shape[-1] != filters:
-            # Projection shortcut
-            shortcut = input_feature[:, ::stride, ::stride, :filters]
-        else:
-            shortcut = input_feature
-        
-        # Add residual connection
-        output = conv2 + shortcut
-        return output
-    
-    def resnet_forward(image, num_blocks=3):
-        """Simulate ResNet forward pass"""
-        # Initial convolution
-        features = image.astype(np.float32) / 255.0
-        
-        # Residual blocks
-        for i in range(num_blocks):
-            filters = 64 * (2 ** i)
-            features = residual_block(features, filters)
+        self.features = nn.Sequential(
+            # First conv block
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
             
-            # Add some pooling
-            if i < num_blocks - 1:
-                features = features[::2, ::2, :]  # Simple pooling
-        
-        # Global average pooling
-        global_feature = np.mean(features, axis=(0, 1))
-        
-        # Classification head
-        num_classes = 10
-        weights = np.random.randn(len(global_feature), num_classes)
-        logits = np.dot(global_feature, weights)
-        probabilities = np.exp(logits) / np.sum(np.exp(logits))
-        
-        return features, global_feature, probabilities
-    
-    # Run ResNet simulation
-    features, global_feature, class_probs = resnet_forward(image)
-    
-    # Visualize results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    # Original image
-    axes[0, 0].imshow(image)
-    axes[0, 0].set_title('Input Image')
-    axes[0, 0].axis('off')
-    
-    # Feature maps at different layers
-    for i in range(3):
-        row = i // 3
-        col = i % 3 + 1
-        if i < len(features.shape):
-            feature_map = features[:, :, i*8:(i+1)*8].mean(axis=2)
-            axes[row, col].imshow(feature_map, cmap='viridis')
-            axes[row, col].set_title(f'Feature Map {i+1}')
-            axes[row, col].axis('off')
-    
-    # Global feature
-    axes[1, 0].plot(global_feature)
-    axes[1, 0].set_title('Global Feature Vector')
-    axes[1, 0].set_xlabel('Feature Index')
-    axes[1, 0].set_ylabel('Feature Value')
-    
-    # Classification probabilities
-    axes[1, 1].bar(range(len(class_probs)), class_probs)
-    axes[1, 1].set_title('Classification Probabilities')
-    axes[1, 1].set_xlabel('Class')
-    axes[1, 1].set_ylabel('Probability')
-    
-    # Feature statistics
-    axes[1, 2].hist(global_feature, bins=20)
-    axes[1, 2].set_title('Feature Distribution')
-    axes[1, 2].set_xlabel('Feature Value')
-    axes[1, 2].set_ylabel('Frequency')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"Input image shape: {image.shape}")
-    print(f"Feature map shape: {features.shape}")
-    print(f"Global feature dimension: {len(global_feature)}")
-    print(f"Predicted class: {np.argmax(class_probs)} (confidence: {np.max(class_probs):.3f})")
-
-resnet_simulation()
-```
-
-### EfficientNet
-
-EfficientNet uses compound scaling for optimal performance:
-
-```python
-def efficientnet_simulation():
-    # Create test image
-    image = np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)
-    
-    # Add some patterns
-    cv2.circle(image, (112, 112), 50, (255, 0, 0), -1)
-    cv2.rectangle(image, (50, 50), (100, 100), (0, 255, 0), -1)
-    
-    def compound_scaling(depth, width, resolution, alpha=1.2, beta=1.1, gamma=1.15):
-        """Compound scaling for EfficientNet"""
-        # Scale factors
-        d = alpha ** depth
-        w = beta ** width
-        r = gamma ** resolution
-        
-        return d, w, r
-    
-    def efficient_block(input_feature, filters, kernel_size=3, expansion_ratio=6):
-        """Simulate EfficientNet block (MBConv)"""
-        # Expansion
-        expanded_filters = int(filters * expansion_ratio)
-        expanded = input_feature + np.random.normal(0, 0.1, (input_feature.shape[0], 
-                                                           input_feature.shape[1], 
-                                                           expanded_filters))
-        
-        # Depthwise convolution (simplified)
-        depthwise = expanded + np.random.normal(0, 0.05, expanded.shape)
-        
-        # Squeeze and excitation
-        se_weights = np.random.uniform(0, 1, expanded_filters)
-        se_output = depthwise * se_weights
-        
-        # Projection
-        projected = se_output[:, :, :filters]
-        
-        # Residual connection
-        if input_feature.shape[-1] == filters:
-            output = projected + input_feature
-        else:
-            output = projected
-        
-        return output
-    
-    def efficientnet_forward(image, compound_coefficient=1):
-        """Simulate EfficientNet forward pass"""
-        # Calculate scaling factors
-        d, w, r = compound_scaling(compound_coefficient, compound_coefficient, compound_coefficient)
-        
-        # Scale input resolution
-        scaled_size = int(224 * r)
-        if scaled_size != 224:
-            image = cv2.resize(image, (scaled_size, scaled_size))
-        
-        # Initial convolution
-        features = image.astype(np.float32) / 255.0
-        
-        # EfficientNet blocks
-        block_configs = [
-            (16, 1, 1),   # (filters, repeats, stride)
-            (24, 2, 2),
-            (40, 2, 2),
-            (80, 3, 2),
-            (112, 3, 1),
-            (192, 4, 2),
-            (320, 1, 1)
-        ]
-        
-        for filters, repeats, stride in block_configs:
-            # Scale filters
-            scaled_filters = int(filters * w)
+            # Second conv block
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
             
-            for _ in range(int(repeats * d)):
-                features = efficient_block(features, scaled_filters)
-            
-            # Apply stride
-            if stride > 1:
-                features = features[::stride, ::stride, :]
+            # Third conv block
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+        )
         
-        # Global average pooling
-        global_feature = np.mean(features, axis=(0, 1))
-        
-        # Classification
-        num_classes = 1000
-        weights = np.random.randn(len(global_feature), num_classes)
-        logits = np.dot(global_feature, weights)
-        probabilities = np.exp(logits) / np.sum(np.exp(logits))
-        
-        return features, global_feature, probabilities
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(128 * 4 * 4, 512),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(512, num_classes)
+        )
     
-    # Run EfficientNet simulation
-    features, global_feature, class_probs = efficientnet_forward(image, compound_coefficient=1)
-    
-    # Visualize results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    # Original image
-    axes[0, 0].imshow(image)
-    axes[0, 0].set_title('Input Image')
-    axes[0, 0].axis('off')
-    
-    # Feature maps at different scales
-    for i in range(3):
-        row = i // 3
-        col = i % 3 + 1
-        if i < len(features.shape):
-            feature_map = features[:, :, i*16:(i+1)*16].mean(axis=2)
-            axes[row, col].imshow(feature_map, cmap='viridis')
-            axes[row, col].set_title(f'Feature Map {i+1}')
-            axes[row, col].axis('off')
-    
-    # Global feature
-    axes[1, 0].plot(global_feature[:100])  # Show first 100 features
-    axes[1, 0].set_title('Global Feature Vector (first 100)')
-    axes[1, 0].set_xlabel('Feature Index')
-    axes[1, 0].set_ylabel('Feature Value')
-    
-    # Top predictions
-    top_indices = np.argsort(class_probs)[-10:][::-1]
-    top_probs = class_probs[top_indices]
-    axes[1, 1].bar(range(10), top_probs)
-    axes[1, 1].set_title('Top 10 Predictions')
-    axes[1, 1].set_xlabel('Class Rank')
-    axes[1, 1].set_ylabel('Probability')
-    
-    # Model efficiency metrics
-    axes[1, 2].text(0.1, 0.8, f'Parameters: {len(global_feature) * 1000:,}', fontsize=12)
-    axes[1, 2].text(0.1, 0.6, f'Feature dimension: {len(global_feature)}', fontsize=12)
-    axes[1, 2].text(0.1, 0.4, f'Top-1 accuracy: {np.max(class_probs):.3f}', fontsize=12)
-    axes[1, 2].text(0.1, 0.2, f'Top-5 accuracy: {np.sum(np.sort(class_probs)[-5:]):.3f}', fontsize=12)
-    axes[1, 2].set_xlim(0, 1)
-    axes[1, 2].set_ylim(0, 1)
-    axes[1, 2].set_title('Model Statistics')
-    axes[1, 2].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"Input image shape: {image.shape}")
-    print(f"Feature map shape: {features.shape}")
-    print(f"Global feature dimension: {len(global_feature)}")
-    print(f"Top-1 prediction: Class {np.argmax(class_probs)}")
+    def forward(self, x):
+        x = self.features(x)
+        x = self.classifier(x)
+        return x
 
-efficientnet_simulation()
-```
-
-## Transfer Learning
-
-### Pre-trained Models
-
-```python
-def transfer_learning_simulation():
-    # Create synthetic dataset
-    np.random.seed(42)
-    
-    # Simulate different domains
-    source_domain = np.random.randn(1000, 512)  # ImageNet features
-    source_labels = np.random.randint(0, 1000, 1000)
-    
-    target_domain = np.random.randn(500, 512)  # Target domain features
-    target_labels = np.random.randint(0, 10, 500)  # Fewer classes
-    
-    def pre_train_model(source_features, source_labels, num_classes=1000):
-        """Simulate pre-training on source domain"""
-        # Simple linear classifier
-        weights = np.random.randn(source_features.shape[1], num_classes)
-        biases = np.random.randn(num_classes)
+# ResNet-like model
+class ResBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(ResBlock, self).__init__()
         
-        # Training simulation
-        for epoch in range(10):
-            # Forward pass
-            logits = np.dot(source_features, weights) + biases
-            probabilities = np.exp(logits) / np.sum(np.exp(logits), axis=1, keepdims=True)
-            
-            # Calculate loss
-            loss = -np.mean(np.log(probabilities[np.arange(len(source_labels)), source_labels] + 1e-8))
-            
-            if epoch % 5 == 0:
-                print(f"Epoch {epoch}, Loss: {loss:.4f}")
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, 
+                              stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, 
+                              stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
         
-        return weights, biases
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_channels != out_channels:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, 
+                         stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels)
+            )
     
-    def fine_tune_model(pre_trained_weights, target_features, target_labels, num_classes=10):
-        """Simulate fine-tuning on target domain"""
-        # Initialize with pre-trained weights
-        feature_weights = pre_trained_weights[:, :100]  # Use first 100 dimensions
-        classifier_weights = np.random.randn(100, num_classes)
-        classifier_biases = np.random.randn(num_classes)
-        
-        # Fine-tuning simulation
-        for epoch in range(20):
-            # Forward pass
-            features = np.dot(target_features[:, :100], feature_weights)
-            logits = np.dot(features, classifier_weights) + classifier_biases
-            probabilities = np.exp(logits) / np.sum(np.exp(logits), axis=1, keepdims=True)
-            
-            # Calculate loss
-            loss = -np.mean(np.log(probabilities[np.arange(len(target_labels)), target_labels] + 1e-8))
-            
-            if epoch % 5 == 0:
-                print(f"Fine-tuning Epoch {epoch}, Loss: {loss:.4f}")
-        
-        return feature_weights, classifier_weights, classifier_biases
-    
-    def evaluate_model(feature_weights, classifier_weights, classifier_biases, 
-                      test_features, test_labels):
-        """Evaluate the fine-tuned model"""
-        # Forward pass
-        features = np.dot(test_features[:, :100], feature_weights)
-        logits = np.dot(features, classifier_weights) + classifier_biases
-        probabilities = np.exp(logits) / np.sum(np.exp(logits), axis=1, keepdims=True)
-        
-        # Calculate accuracy
-        predictions = np.argmax(probabilities, axis=1)
-        accuracy = np.mean(predictions == test_labels)
-        
-        return accuracy, probabilities
-    
-    # Pre-train on source domain
-    print("Pre-training on source domain...")
-    pre_trained_weights, pre_trained_biases = pre_train_model(source_domain, source_labels)
-    
-    # Fine-tune on target domain
-    print("\nFine-tuning on target domain...")
-    feature_weights, classifier_weights, classifier_biases = fine_tune_model(
-        pre_trained_weights, target_domain, target_labels)
-    
-    # Evaluate
-    test_features = np.random.randn(100, 512)
-    test_labels = np.random.randint(0, 10, 100)
-    
-    accuracy, probabilities = evaluate_model(feature_weights, classifier_weights, 
-                                           classifier_biases, test_features, test_labels)
-    
-    # Visualize results
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-    
-    # Source domain features
-    axes[0, 0].scatter(source_domain[:, 0], source_domain[:, 1], c=source_labels, alpha=0.6)
-    axes[0, 0].set_title('Source Domain Features')
-    axes[0, 0].set_xlabel('Feature 1')
-    axes[0, 0].set_ylabel('Feature 2')
-    
-    # Target domain features
-    axes[0, 1].scatter(target_domain[:, 0], target_domain[:, 1], c=target_labels, alpha=0.6)
-    axes[0, 1].set_title('Target Domain Features')
-    axes[0, 1].set_xlabel('Feature 1')
-    axes[0, 1].set_ylabel('Feature 2')
-    
-    # Pre-trained weights
-    axes[1, 0].imshow(pre_trained_weights[:50, :50], cmap='viridis')
-    axes[1, 0].set_title('Pre-trained Weights')
-    axes[1, 0].axis('off')
-    
-    # Fine-tuned weights
-    axes[1, 1].imshow(classifier_weights, cmap='viridis')
-    axes[1, 1].set_title('Fine-tuned Classifier Weights')
-    axes[1, 1].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"\nTransfer Learning Results:")
-    print(f"Test Accuracy: {accuracy:.3f}")
-    print(f"Source domain samples: {len(source_domain)}")
-    print(f"Target domain samples: {len(target_domain)}")
-    print(f"Source classes: 1000")
-    print(f"Target classes: 10")
+    def forward(self, x):
+        out = torch.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        out += self.shortcut(x)
+        out = torch.relu(out)
+        return out
 
-transfer_learning_simulation()
-```
-
-## Data Augmentation
-
-```python
-def data_augmentation_demo():
-    # Create synthetic image
-    image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+class ResNet(nn.Module):
+    def __init__(self, num_classes=5):
+        super(ResNet, self).__init__()
+        
+        self.in_channels = 64
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        
+        self.layer1 = self.make_layer(64, 2, stride=1)
+        self.layer2 = self.make_layer(128, 2, stride=2)
+        self.layer3 = self.make_layer(256, 2, stride=2)
+        
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(256, num_classes)
     
-    # Add some patterns
-    cv2.circle(image, (50, 50), 30, (255, 0, 0), -1)
-    cv2.rectangle(image, (20, 20), (40, 40), (0, 255, 0), -1)
+    def make_layer(self, out_channels, num_blocks, stride):
+        strides = [stride] + [1] * (num_blocks - 1)
+        layers = []
+        for stride in strides:
+            layers.append(ResBlock(self.in_channels, out_channels, stride))
+            self.in_channels = out_channels
+        return nn.Sequential(*layers)
     
-    def augment_image(image, augmentation_type):
-        """Apply different augmentation techniques"""
-        if augmentation_type == 'rotation':
-            # Random rotation
-            angle = np.random.uniform(-30, 30)
-            center = (image.shape[1] // 2, image.shape[0] // 2)
-            rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-            augmented = cv2.warpAffine(image, rotation_matrix, (image.shape[1], image.shape[0]))
-            
-        elif augmentation_type == 'flip':
-            # Horizontal flip
-            augmented = cv2.flip(image, 1)
-            
-        elif augmentation_type == 'brightness':
-            # Brightness adjustment
-            factor = np.random.uniform(0.5, 1.5)
-            augmented = np.clip(image * factor, 0, 255).astype(np.uint8)
-            
-        elif augmentation_type == 'noise':
-            # Add noise
-            noise = np.random.normal(0, 20, image.shape)
-            augmented = np.clip(image + noise, 0, 255).astype(np.uint8)
-            
-        elif augmentation_type == 'crop':
-            # Random crop
+    def forward(self, x):
+        out = torch.relu(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.avgpool(out)
+        out = out.view(out.size(0), -1)
+        out = self.fc(out)
+        return out
+
+# Data augmentation
+class ImageAugmentation:
+    def __init__(self):
+        self.rotation_range = 15
+        self.scale_range = (0.8, 1.2)
+        self.brightness_range = (0.8, 1.2)
+        self.contrast_range = (0.8, 1.2)
+    
+    def augment_image(self, image):
+        """Apply random augmentations to image."""
+        import cv2
+        
+        # Convert to numpy if needed
+        if isinstance(image, torch.Tensor):
+            image = image.numpy()
+        
+        # Random rotation
+        if np.random.random() > 0.5:
+            angle = np.random.uniform(-self.rotation_range, self.rotation_range)
             h, w = image.shape[:2]
-            crop_size = min(h, w) // 2
-            x = np.random.randint(0, w - crop_size)
-            y = np.random.randint(0, h - crop_size)
-            augmented = image[y:y+crop_size, x:x+crop_size]
-            augmented = cv2.resize(augmented, (w, h))
-            
-        else:
-            augmented = image.copy()
+            center = (w // 2, h // 2)
+            rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+            image = cv2.warpAffine(image, rotation_matrix, (w, h))
         
-        return augmented
+        # Random scaling
+        if np.random.random() > 0.5:
+            scale = np.random.uniform(*self.scale_range)
+            h, w = image.shape[:2]
+            new_h, new_w = int(h * scale), int(w * scale)
+            image = cv2.resize(image, (new_w, new_h))
+            image = cv2.resize(image, (w, h))
+        
+        # Random brightness
+        if np.random.random() > 0.5:
+            factor = np.random.uniform(*self.brightness_range)
+            image = np.clip(image * factor, 0, 1)
+        
+        # Random contrast
+        if np.random.random() > 0.5:
+            factor = np.random.uniform(*self.contrast_range)
+            mean = np.mean(image)
+            image = np.clip((image - mean) * factor + mean, 0, 1)
+        
+        return image
+
+# Training function
+def train_model(model, train_loader, val_loader, num_epochs=50, learning_rate=0.001):
+    """Train the model."""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
     
-    # Apply different augmentations
-    augmentations = ['rotation', 'flip', 'brightness', 'noise', 'crop']
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
+    
+    train_losses = []
+    val_losses = []
+    train_accuracies = []
+    val_accuracies = []
+    
+    for epoch in range(num_epochs):
+        # Training phase
+        model.train()
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+        
+        for batch_idx, (data, target) in enumerate(train_loader):
+            data, target = data.to(device), target.to(device)
+            
+            optimizer.zero_grad()
+            output = model(data)
+            loss = criterion(output, target)
+            loss.backward()
+            optimizer.step()
+            
+            train_loss += loss.item()
+            _, predicted = output.max(1)
+            train_total += target.size(0)
+            train_correct += predicted.eq(target).sum().item()
+        
+        train_loss /= len(train_loader)
+        train_accuracy = 100. * train_correct / train_total
+        
+        # Validation phase
+        model.eval()
+        val_loss = 0.0
+        val_correct = 0
+        val_total = 0
+        
+        with torch.no_grad():
+            for data, target in val_loader:
+                data, target = data.to(device), target.to(device)
+                output = model(data)
+                loss = criterion(output, target)
+                
+                val_loss += loss.item()
+                _, predicted = output.max(1)
+                val_total += target.size(0)
+                val_correct += predicted.eq(target).sum().item()
+        
+        val_loss /= len(val_loader)
+        val_accuracy = 100. * val_correct / val_total
+        
+        # Update learning rate
+        scheduler.step()
+        
+        # Store metrics
+        train_losses.append(train_loss)
+        val_losses.append(val_loss)
+        train_accuracies.append(train_accuracy)
+        val_accuracies.append(val_accuracy)
+        
+        if epoch % 10 == 0:
+            print(f'Epoch {epoch}: Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, '
+                  f'Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%')
+    
+    return train_losses, val_losses, train_accuracies, val_accuracies
+
+# Evaluation function
+def evaluate_model(model, test_loader):
+    """Evaluate the model on test set."""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.eval()
+    
+    all_predictions = []
+    all_targets = []
+    all_probabilities = []
+    
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            probabilities = torch.softmax(output, dim=1)
+            
+            _, predicted = output.max(1)
+            
+            all_predictions.extend(predicted.cpu().numpy())
+            all_targets.extend(target.cpu().numpy())
+            all_probabilities.extend(probabilities.cpu().numpy())
+    
+    return np.array(all_predictions), np.array(all_targets), np.array(all_probabilities)
+
+# Visualization functions
+def plot_training_history(train_losses, val_losses, train_accuracies, val_accuracies):
+    """Plot training history."""
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    
+    # Plot losses
+    ax1.plot(train_losses, label='Train Loss')
+    ax1.plot(val_losses, label='Validation Loss')
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Loss')
+    ax1.set_title('Training and Validation Loss')
+    ax1.legend()
+    ax1.grid(True)
+    
+    # Plot accuracies
+    ax2.plot(train_accuracies, label='Train Accuracy')
+    ax2.plot(val_accuracies, label='Validation Accuracy')
+    ax2.set_xlabel('Epoch')
+    ax2.set_ylabel('Accuracy (%)')
+    ax2.set_title('Training and Validation Accuracy')
+    ax2.legend()
+    ax2.grid(True)
+    
+    plt.tight_layout()
+    plt.show()
+
+def plot_confusion_matrix(y_true, y_pred, class_names):
+    """Plot confusion matrix."""
+    cm = confusion_matrix(y_true, y_pred)
+    
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                xticklabels=class_names, yticklabels=class_names)
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.show()
+
+def visualize_predictions(model, test_loader, num_samples=16):
+    """Visualize model predictions."""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.eval()
+    
+    fig, axes = plt.subplots(4, 4, figsize=(12, 12))
+    axes = axes.ravel()
+    
+    class_names = ['Horizontal Lines', 'Vertical Lines', 'Diagonal Pattern', 
+                   'Circular Pattern', 'Random Noise']
+    
+    with torch.no_grad():
+        for i, (data, target) in enumerate(test_loader):
+            if i >= num_samples:
+                break
+            
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            probabilities = torch.softmax(output, dim=1)
+            _, predicted = output.max(1)
+            
+            # Get first image from batch
+            image = data[0].cpu().numpy().transpose(1, 2, 0)
+            true_label = target[0].cpu().numpy()
+            pred_label = predicted[0].cpu().numpy()
+            confidence = probabilities[0, pred_label].cpu().numpy()
+            
+            # Plot image
+            axes[i].imshow(image)
+            axes[i].set_title(f'True: {class_names[true_label]}\n'
+                            f'Pred: {class_names[pred_label]} ({confidence:.2f})')
+            axes[i].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Main demonstration
+def demonstrate_image_classification():
+    """Demonstrate image classification with different models."""
+    # Create dataset
+    print("Creating synthetic dataset...")
+    images, labels = create_synthetic_dataset(num_samples=2000, num_classes=5, image_size=(32, 32))
+    
+    # Split dataset
+    train_size = int(0.7 * len(images))
+    val_size = int(0.15 * len(images))
+    
+    train_images = images[:train_size]
+    train_labels = labels[:train_size]
+    val_images = images[train_size:train_size + val_size]
+    val_labels = labels[train_size:train_size + val_size]
+    test_images = images[train_size + val_size:]
+    test_labels = labels[train_size + val_size:]
+    
+    # Apply data augmentation to training set
+    print("Applying data augmentation...")
+    augmenter = ImageAugmentation()
     augmented_images = []
+    augmented_labels = []
     
-    for aug_type in augmentations:
-        augmented = augment_image(image, aug_type)
-        augmented_images.append(augmented)
+    for image, label in zip(train_images, train_labels):
+        # Original image
+        augmented_images.append(image)
+        augmented_labels.append(label)
+        
+        # Augmented versions
+        for _ in range(2):  # Create 2 augmented versions per image
+            aug_image = augmenter.augment_image(image)
+            augmented_images.append(aug_image)
+            augmented_labels.append(label)
     
-    # Visualize results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    train_images = np.array(augmented_images)
+    train_labels = np.array(augmented_labels)
     
-    # Original image
-    axes[0, 0].imshow(image)
-    axes[0, 0].set_title('Original Image')
-    axes[0, 0].axis('off')
+    # Convert to PyTorch tensors
+    train_images = torch.FloatTensor(train_images.transpose(0, 3, 1, 2))
+    train_labels = torch.LongTensor(train_labels)
+    val_images = torch.FloatTensor(val_images.transpose(0, 3, 1, 2))
+    val_labels = torch.LongTensor(val_labels)
+    test_images = torch.FloatTensor(test_images.transpose(0, 3, 1, 2))
+    test_labels = torch.LongTensor(test_labels)
     
-    # Augmented images
-    for i, (aug_type, aug_image) in enumerate(zip(augmentations, augmented_images)):
-        row = (i + 1) // 3
-        col = (i + 1) % 3
-        axes[row, col].imshow(aug_image)
-        axes[row, col].set_title(f'{aug_type.title()} Augmentation')
-        axes[row, col].axis('off')
+    # Create data loaders
+    train_dataset = TensorDataset(train_images, train_labels)
+    val_dataset = TensorDataset(val_images, val_labels)
+    test_dataset = TensorDataset(test_images, test_labels)
+    
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    
+    print(f"Training samples: {len(train_images)}")
+    print(f"Validation samples: {len(val_images)}")
+    print(f"Test samples: {len(test_images)}")
+    
+    # Train Simple CNN
+    print("\nTraining Simple CNN...")
+    simple_cnn = SimpleCNN(num_classes=5)
+    train_losses, val_losses, train_accuracies, val_accuracies = train_model(
+        simple_cnn, train_loader, val_loader, num_epochs=30
+    )
+    
+    # Plot training history
+    plot_training_history(train_losses, val_losses, train_accuracies, val_accuracies)
+    
+    # Evaluate Simple CNN
+    predictions, targets, probabilities = evaluate_model(simple_cnn, test_loader)
+    
+    # Print results
+    accuracy = accuracy_score(targets, predictions)
+    print(f"\nSimple CNN Test Accuracy: {accuracy:.4f}")
+    print("\nClassification Report:")
+    print(classification_report(targets, predictions, 
+                              target_names=['Horizontal', 'Vertical', 'Diagonal', 'Circular', 'Random']))
+    
+    # Plot confusion matrix
+    plot_confusion_matrix(targets, predictions, 
+                         ['Horizontal', 'Vertical', 'Diagonal', 'Circular', 'Random'])
+    
+    # Visualize predictions
+    visualize_predictions(simple_cnn, test_loader)
+    
+    # Train ResNet
+    print("\nTraining ResNet...")
+    resnet = ResNet(num_classes=5)
+    resnet_train_losses, resnet_val_losses, resnet_train_accuracies, resnet_val_accuracies = train_model(
+        resnet, train_loader, val_loader, num_epochs=30
+    )
+    
+    # Evaluate ResNet
+    resnet_predictions, resnet_targets, resnet_probabilities = evaluate_model(resnet, test_loader)
+    resnet_accuracy = accuracy_score(resnet_targets, resnet_predictions)
+    
+    print(f"\nResNet Test Accuracy: {resnet_accuracy:.4f}")
+    
+    # Compare models
+    print(f"\nModel Comparison:")
+    print(f"Simple CNN: {accuracy:.4f}")
+    print(f"ResNet: {resnet_accuracy:.4f}")
+    
+    return simple_cnn, resnet, test_loader
+
+# Advanced techniques
+def demonstrate_advanced_techniques():
+    """Demonstrate advanced classification techniques."""
+    # Create a more challenging dataset
+    images, labels = create_synthetic_dataset(num_samples=3000, num_classes=10, image_size=(64, 64))
+    
+    # Add noise to make it more challenging
+    noise = np.random.normal(0, 0.1, images.shape)
+    images = np.clip(images + noise, 0, 1)
+    
+    # Split dataset
+    train_size = int(0.7 * len(images))
+    val_size = int(0.15 * len(images))
+    
+    train_images = images[:train_size]
+    train_labels = labels[:train_size]
+    val_images = images[train_size:train_size + val_size]
+    val_labels = labels[train_size:train_size + val_size]
+    test_images = images[train_size + val_size:]
+    test_labels = labels[train_size + val_size:]
+    
+    # Convert to PyTorch tensors
+    train_images = torch.FloatTensor(train_images.transpose(0, 3, 1, 2))
+    train_labels = torch.LongTensor(train_labels)
+    val_images = torch.FloatTensor(val_images.transpose(0, 3, 1, 2))
+    val_labels = torch.LongTensor(val_labels)
+    test_images = torch.FloatTensor(test_images.transpose(0, 3, 1, 2))
+    test_labels = torch.LongTensor(test_labels)
+    
+    # Create data loaders
+    train_dataset = TensorDataset(train_images, train_labels)
+    val_dataset = TensorDataset(val_images, val_labels)
+    test_dataset = TensorDataset(test_images, test_labels)
+    
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    
+    # Train with different learning rate schedules
+    print("Training with different learning rate schedules...")
+    
+    # Step decay
+    model_step = SimpleCNN(num_classes=10)
+    optimizer_step = optim.Adam(model_step.parameters(), lr=0.001)
+    scheduler_step = optim.lr_scheduler.StepLR(optimizer_step, step_size=10, gamma=0.5)
+    
+    # Cosine annealing
+    model_cosine = SimpleCNN(num_classes=10)
+    optimizer_cosine = optim.Adam(model_cosine.parameters(), lr=0.001)
+    scheduler_cosine = optim.lr_scheduler.CosineAnnealingLR(optimizer_cosine, T_max=30)
+    
+    # Train both models
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    criterion = nn.CrossEntropyLoss()
+    
+    step_losses = []
+    cosine_losses = []
+    
+    for epoch in range(30):
+        # Train step decay model
+        model_step.train()
+        step_loss = 0.0
+        for data, target in train_loader:
+            data, target = data.to(device), target.to(device)
+            optimizer_step.zero_grad()
+            output = model_step(data)
+            loss = criterion(output, target)
+            loss.backward()
+            optimizer_step.step()
+            step_loss += loss.item()
+        scheduler_step.step()
+        step_losses.append(step_loss / len(train_loader))
+        
+        # Train cosine annealing model
+        model_cosine.train()
+        cosine_loss = 0.0
+        for data, target in train_loader:
+            data, target = data.to(device), target.to(device)
+            optimizer_cosine.zero_grad()
+            output = model_cosine(data)
+            loss = criterion(output, target)
+            loss.backward()
+            optimizer_cosine.step()
+            cosine_loss += loss.item()
+        scheduler_cosine.step()
+        cosine_losses.append(cosine_loss / len(train_loader))
+        
+        if epoch % 10 == 0:
+            print(f'Epoch {epoch}: Step Loss: {step_losses[-1]:.4f}, Cosine Loss: {cosine_losses[-1]:.4f}')
+    
+    # Plot learning rate schedules
+    plt.figure(figsize=(12, 5))
+    
+    plt.subplot(1, 2, 1)
+    plt.plot(step_losses, label='Step Decay')
+    plt.plot(cosine_losses, label='Cosine Annealing')
+    plt.xlabel('Epoch')
+    plt.ylabel('Training Loss')
+    plt.title('Training Loss Comparison')
+    plt.legend()
+    plt.grid(True)
+    
+    # Evaluate both models
+    model_step.eval()
+    model_cosine.eval()
+    
+    step_correct = 0
+    cosine_correct = 0
+    total = 0
+    
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            
+            step_output = model_step(data)
+            cosine_output = model_cosine(data)
+            
+            _, step_pred = step_output.max(1)
+            _, cosine_pred = cosine_output.max(1)
+            
+            step_correct += step_pred.eq(target).sum().item()
+            cosine_correct += cosine_pred.eq(target).sum().item()
+            total += target.size(0)
+    
+    step_accuracy = 100. * step_correct / total
+    cosine_accuracy = 100. * cosine_correct / total
+    
+    plt.subplot(1, 2, 2)
+    plt.bar(['Step Decay', 'Cosine Annealing'], [step_accuracy, cosine_accuracy])
+    plt.ylabel('Test Accuracy (%)')
+    plt.title('Model Performance Comparison')
+    plt.ylim(0, 100)
+    
+    for i, v in enumerate([step_accuracy, cosine_accuracy]):
+        plt.text(i, v + 1, f'{v:.1f}%', ha='center')
     
     plt.tight_layout()
     plt.show()
     
-    # Compare statistics
-    print("Image Statistics Comparison:")
-    print(f"{'Augmentation':<15} {'Mean':<10} {'Std':<10} {'Min':<10} {'Max':<10}")
-    print("-" * 55)
-    
-    original_mean = np.mean(image)
-    original_std = np.std(image)
-    original_min = np.min(image)
-    original_max = np.max(image)
-    print(f"{'Original':<15} {original_mean:<10.2f} {original_std:<10.2f} {original_min:<10} {original_max:<10}")
-    
-    for aug_type, aug_image in zip(augmentations, augmented_images):
-        mean = np.mean(aug_image)
-        std = np.std(aug_image)
-        min_val = np.min(aug_image)
-        max_val = np.max(aug_image)
-        print(f"{aug_type:<15} {mean:<10.2f} {std:<10.2f} {min_val:<10} {max_val:<10}")
+    print(f"Step Decay Accuracy: {step_accuracy:.2f}%")
+    print(f"Cosine Annealing Accuracy: {cosine_accuracy:.2f}%")
 
-data_augmentation_demo()
+# Main execution
+if __name__ == "__main__":
+    # Demonstrate basic image classification
+    simple_cnn, resnet, test_loader = demonstrate_image_classification()
+    
+    # Demonstrate advanced techniques
+    demonstrate_advanced_techniques()
 ```
 
-## Evaluation Metrics
+### Advanced Classification Techniques
 
 ```python
-def classification_evaluation():
-    # Create synthetic classification results
-    np.random.seed(42)
-    
-    # Generate predictions and ground truth
-    n_samples = 1000
-    n_classes = 5
-    
-    # Ground truth
-    y_true = np.random.randint(0, n_classes, n_samples)
-    
-    # Predictions with different accuracy levels
-    accuracy_levels = [0.6, 0.7, 0.8, 0.9]
+# Ensemble methods
+def ensemble_predictions(models, test_loader, method='voting'):
+    """Combine predictions from multiple models."""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     all_predictions = []
+    all_probabilities = []
     
-    for accuracy in accuracy_levels:
-        predictions = y_true.copy()
-        # Flip some predictions to simulate errors
-        n_errors = int(n_samples * (1 - accuracy))
-        error_indices = np.random.choice(n_samples, n_errors, replace=False)
+    for model in models:
+        model.eval()
+        predictions = []
+        probabilities = []
         
-        for idx in error_indices:
-            wrong_class = np.random.randint(0, n_classes)
-            while wrong_class == y_true[idx]:
-                wrong_class = np.random.randint(0, n_classes)
-            predictions[idx] = wrong_class
+        with torch.no_grad():
+            for data, _ in test_loader:
+                data = data.to(device)
+                output = model(data)
+                prob = torch.softmax(output, dim=1)
+                _, pred = output.max(1)
+                
+                predictions.extend(pred.cpu().numpy())
+                probabilities.extend(prob.cpu().numpy())
         
         all_predictions.append(predictions)
+        all_probabilities.append(probabilities)
     
-    def calculate_metrics(y_true, y_pred, n_classes):
-        """Calculate various classification metrics"""
-        # Confusion matrix
-        confusion_matrix = np.zeros((n_classes, n_classes))
-        for i in range(len(y_true)):
-            confusion_matrix[y_true[i], y_pred[i]] += 1
-        
-        # Accuracy
-        accuracy = np.sum(y_true == y_pred) / len(y_true)
-        
-        # Per-class precision and recall
-        precision = np.zeros(n_classes)
-        recall = np.zeros(n_classes)
-        f1_score = np.zeros(n_classes)
-        
-        for i in range(n_classes):
-            tp = confusion_matrix[i, i]
-            fp = np.sum(confusion_matrix[:, i]) - tp
-            fn = np.sum(confusion_matrix[i, :]) - tp
-            
-            precision[i] = tp / (tp + fp) if (tp + fp) > 0 else 0
-            recall[i] = tp / (tp + fn) if (tp + fn) > 0 else 0
-            f1_score[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if (precision[i] + recall[i]) > 0 else 0
-        
-        # Macro averages
-        macro_precision = np.mean(precision)
-        macro_recall = np.mean(recall)
-        macro_f1 = np.mean(f1_score)
-        
-        return {
-            'confusion_matrix': confusion_matrix,
-            'accuracy': accuracy,
-            'precision': precision,
-            'recall': recall,
-            'f1_score': f1_score,
-            'macro_precision': macro_precision,
-            'macro_recall': macro_recall,
-            'macro_f1': macro_f1
-        }
+    all_predictions = np.array(all_predictions)
+    all_probabilities = np.array(all_probabilities)
     
-    # Calculate metrics for all accuracy levels
-    all_metrics = []
-    for predictions in all_predictions:
-        metrics = calculate_metrics(y_true, predictions, n_classes)
-        all_metrics.append(metrics)
+    if method == 'voting':
+        # Majority voting
+        ensemble_predictions = []
+        for i in range(all_predictions.shape[1]):
+            votes = all_predictions[:, i]
+            ensemble_predictions.append(np.bincount(votes).argmax())
     
-    # Visualize results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    elif method == 'averaging':
+        # Average probabilities
+        avg_probabilities = np.mean(all_probabilities, axis=0)
+        ensemble_predictions = np.argmax(avg_probabilities, axis=1)
     
-    # Confusion matrix for best model
-    best_metrics = all_metrics[-1]
-    im = axes[0, 0].imshow(best_metrics['confusion_matrix'], cmap='Blues')
-    axes[0, 0].set_title('Confusion Matrix (90% Accuracy)')
-    axes[0, 0].set_xlabel('Predicted')
-    axes[0, 0].set_ylabel('True')
-    
-    # Add text annotations
-    for i in range(n_classes):
-        for j in range(n_classes):
-            text = axes[0, 0].text(j, i, int(best_metrics['confusion_matrix'][i, j]),
-                                 ha="center", va="center", color="white")
-    
-    # Accuracy comparison
-    accuracies = [metrics['accuracy'] for metrics in all_metrics]
-    axes[0, 1].bar(range(len(accuracy_levels)), accuracies)
-    axes[0, 1].set_title('Accuracy Comparison')
-    axes[0, 1].set_xlabel('Model')
-    axes[0, 1].set_ylabel('Accuracy')
-    axes[0, 1].set_xticks(range(len(accuracy_levels)))
-    axes[0, 1].set_xticklabels([f'{acc*100:.0f}%' for acc in accuracy_levels])
-    
-    # Precision, Recall, F1 for best model
-    x = np.arange(n_classes)
-    width = 0.25
-    axes[0, 2].bar(x - width, best_metrics['precision'], width, label='Precision')
-    axes[0, 2].bar(x, best_metrics['recall'], width, label='Recall')
-    axes[0, 2].bar(x + width, best_metrics['f1_score'], width, label='F1-Score')
-    axes[0, 2].set_title('Per-Class Metrics (90% Accuracy)')
-    axes[0, 2].set_xlabel('Class')
-    axes[0, 2].set_ylabel('Score')
-    axes[0, 2].legend()
-    
-    # Macro averages comparison
-    macro_precisions = [metrics['macro_precision'] for metrics in all_metrics]
-    macro_recalls = [metrics['macro_recall'] for metrics in all_metrics]
-    macro_f1s = [metrics['macro_f1'] for metrics in all_metrics]
-    
-    x = np.arange(len(accuracy_levels))
-    width = 0.25
-    axes[1, 0].bar(x - width, macro_precisions, width, label='Macro Precision')
-    axes[1, 0].bar(x, macro_recalls, width, label='Macro Recall')
-    axes[1, 0].bar(x + width, macro_f1s, width, label='Macro F1')
-    axes[1, 0].set_title('Macro Averages Comparison')
-    axes[1, 0].set_xlabel('Model')
-    axes[1, 0].set_ylabel('Score')
-    axes[1, 0].set_xticks(x)
-    axes[1, 0].set_xticklabels([f'{acc*100:.0f}%' for acc in accuracy_levels])
-    axes[1, 0].legend()
-    
-    # Learning curves (simulated)
-    epochs = np.arange(1, 21)
-    train_acc = 1 - 0.5 * np.exp(-epochs / 5) + np.random.normal(0, 0.02, len(epochs))
-    val_acc = 1 - 0.6 * np.exp(-epochs / 6) + np.random.normal(0, 0.03, len(epochs))
-    
-    axes[1, 1].plot(epochs, train_acc, label='Training Accuracy')
-    axes[1, 1].plot(epochs, val_acc, label='Validation Accuracy')
-    axes[1, 1].set_title('Learning Curves')
-    axes[1, 1].set_xlabel('Epoch')
-    axes[1, 1].set_ylabel('Accuracy')
-    axes[1, 1].legend()
-    axes[1, 1].grid(True)
-    
-    # Top-k accuracy
-    k_values = [1, 3, 5]
-    top_k_accuracies = []
-    
-    for k in k_values:
-        # Simulate top-k predictions
-        top_k_correct = 0
-        for i in range(n_samples):
-            # Simulate top-k predictions
-            top_k_preds = np.random.choice(n_classes, k, replace=False)
-            if y_true[i] in top_k_preds:
-                top_k_correct += 1
-        top_k_accuracies.append(top_k_correct / n_samples)
-    
-    axes[1, 2].bar(k_values, top_k_accuracies)
-    axes[1, 2].set_title('Top-K Accuracy')
-    axes[1, 2].set_xlabel('K')
-    axes[1, 2].set_ylabel('Accuracy')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Print summary statistics
-    print("Classification Evaluation Summary:")
-    print(f"{'Model':<15} {'Accuracy':<10} {'Macro F1':<10} {'Macro Precision':<15} {'Macro Recall':<15}")
-    print("-" * 70)
-    
-    for i, (acc_level, metrics) in enumerate(zip(accuracy_levels, all_metrics)):
-        print(f"{f'{acc_level*100:.0f}%':<15} {metrics['accuracy']:<10.3f} {metrics['macro_f1']:<10.3f} "
-              f"{metrics['macro_precision']:<15.3f} {metrics['macro_recall']:<15.3f}")
+    return np.array(ensemble_predictions)
 
-classification_evaluation()
+# Knowledge distillation
+def knowledge_distillation(student_model, teacher_model, train_loader, 
+                          temperature=4.0, alpha=0.7, num_epochs=20):
+    """Implement knowledge distillation."""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    student_model = student_model.to(device)
+    teacher_model = teacher_model.to(device)
+    
+    optimizer = optim.Adam(student_model.parameters(), lr=0.001)
+    
+    # Knowledge distillation loss
+    def distillation_loss(student_output, teacher_output, target, temperature, alpha):
+        # Soft targets (teacher predictions)
+        soft_loss = nn.KLDivLoss(reduction='batchmean')(
+            torch.log_softmax(student_output / temperature, dim=1),
+            torch.softmax(teacher_output / temperature, dim=1)
+        )
+        
+        # Hard targets (ground truth)
+        hard_loss = nn.CrossEntropyLoss()(student_output, target)
+        
+        return alpha * (temperature ** 2) * soft_loss + (1 - alpha) * hard_loss
+    
+    for epoch in range(num_epochs):
+        student_model.train()
+        total_loss = 0.0
+        
+        for data, target in train_loader:
+            data, target = data.to(device), target.to(device)
+            
+            optimizer.zero_grad()
+            
+            # Get teacher predictions
+            with torch.no_grad():
+                teacher_output = teacher_model(data)
+            
+            # Get student predictions
+            student_output = student_model(data)
+            
+            # Calculate distillation loss
+            loss = distillation_loss(student_output, teacher_output, target, temperature, alpha)
+            
+            loss.backward()
+            optimizer.step()
+            
+            total_loss += loss.item()
+        
+        if epoch % 5 == 0:
+            print(f'Epoch {epoch}: Loss = {total_loss / len(train_loader):.4f}')
+    
+    return student_model
+
+# Mixup training
+def mixup_data(x, y, alpha=0.2):
+    """Implement Mixup data augmentation."""
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+    
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size).to(x.device)
+    
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    
+    return mixed_x, y_a, y_b, lam
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """Mixup loss function."""
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
+
+# CutMix training
+def cutmix_data(x, y, alpha=1.0):
+    """Implement CutMix data augmentation."""
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+    
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size).to(x.device)
+    
+    y_a, y_b = y, y[index]
+    bbx1, bby1, bbx2, bby2 = rand_bbox(x.size(), lam)
+    x[:, :, bbx1:bbx2, bby1:bby2] = x[index, :, bbx1:bbx2, bby1:bby2]
+    
+    # Adjust lambda to exactly match pixel ratio
+    lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (x.size()[-1] * x.size()[-2]))
+    
+    return x, y_a, y_b, lam
+
+def rand_bbox(size, lam):
+    """Generate random bounding box for CutMix."""
+    W = size[2]
+    H = size[3]
+    cut_rat = np.sqrt(1. - lam)
+    cut_w = int(W * cut_rat)
+    cut_h = int(H * cut_rat)
+    
+    # Uniform
+    cx = np.random.randint(W)
+    cy = np.random.randint(H)
+    
+    bbx1 = np.clip(cx - cut_w // 2, 0, W)
+    bby1 = np.clip(cy - cut_h // 2, 0, H)
+    bbx2 = np.clip(cx + cut_w // 2, 0, W)
+    bby2 = np.clip(cy + cut_h // 2, 0, H)
+    
+    return bbx1, bby1, bbx2, bby2
 ```
 
-## Summary
-
-This guide covered image classification techniques:
-
-1. **CNN Architectures**: ResNet, EfficientNet for deep learning
-2. **Transfer Learning**: Pre-training and fine-tuning strategies
-3. **Data Augmentation**: Techniques to improve generalization
-4. **Evaluation Metrics**: Comprehensive performance assessment
-
-### Key Takeaways
-
-- **ResNet** uses skip connections to train very deep networks
-- **EfficientNet** uses compound scaling for optimal performance
-- **Transfer learning** leverages pre-trained models for new tasks
-- **Data augmentation** improves model robustness and generalization
-- **Evaluation metrics** provide comprehensive performance assessment
-
-### Next Steps
-
-With image classification mastered, explore:
-- Semantic segmentation
-- Object detection
-- Few-shot learning
-- Domain adaptation 
+This comprehensive guide covers various image classification techniques, from basic CNN architectures to advanced training methods. The mathematical foundations provide understanding of the algorithms, while the Python implementations demonstrate practical applications in image classification. 
