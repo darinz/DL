@@ -6,34 +6,42 @@
 
 ## What is a Derivative?
 
-The **derivative** of a function $`f(x)`$ at a point $`x`$ measures the rate of change of the function at that point. It represents the slope of the tangent line to the function's graph.
+The **derivative** of a function $f(x)$ at a point $x$ measures the rate of change of the function at that point. It represents the slope of the tangent line to the function's graph.
 
 **Intuition:**
-- The derivative tells you how fast $`f(x)`$ is changing at $`x`$.
-- If $`f(x)`$ is position, the derivative is velocity.
-- If $`f(x)`$ is loss in deep learning, the derivative tells you how to change $`x`$ to decrease the loss.
+- The derivative tells you how fast $f(x)$ is changing at $x$.
+- If $f(x)$ is position, the derivative is velocity.
+- If $f(x)$ is loss in deep learning, the derivative tells you how to change $x$ to decrease the loss.
 
 ### Definition of Derivative
 
-The derivative of $`f(x)`$ is defined as:
+The derivative of $f(x)$ is defined as:
 
 ```math
 f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-This limit represents the instantaneous rate of change of $`f`$ with respect to $`x`$.
+**Step-by-step:**
+- Take a small step $h$ from $x$.
+- Compute the change in $f(x)$: $f(x + h) - f(x)$.
+- Divide by $h$ to get the average rate of change.
+- Take the limit as $h$ approaches 0 to get the instantaneous rate of change.
+
+This limit represents the instantaneous rate of change of $f$ with respect to $x$.
 
 ---
 
 ## Geometric Interpretation
 
-- The derivative $`f'(x)`$ gives:
-  - The slope of the tangent line at point $`x`$
+- The derivative $f'(x)$ gives:
+  - The slope of the tangent line at point $x$
   - The instantaneous rate of change
-  - The velocity if $`f(x)`$ represents position
+  - The velocity if $f(x)$ represents position
 
 **Visualization:**
-- Imagine zooming in on the curve $`y = f(x)`$ at $`x`$. The closer you zoom, the more the curve looks like a straight line—the tangent. The slope of this line is $`f'(x)`$.
+- Imagine zooming in on the curve $y = f(x)$ at $x$. The closer you zoom, the more the curve looks like a straight line—the tangent. The slope of this line is $f'(x)$.
+
+> **Tip:** The sign of the derivative tells you if the function is increasing (positive) or decreasing (negative) at $x$.
 
 ---
 
@@ -67,11 +75,17 @@ This limit represents the instantaneous rate of change of $`f`$ with respect to 
   \frac{d}{dx}\left(\frac{f(x)}{g(x)}\right) = \frac{f'(x)g(x) - f(x)g'(x)}{g(x)^2}
   ```
 
+**Step-by-step (Product Rule):**
+- Differentiate the first function, multiply by the second.
+- Add the first function times the derivative of the second.
+
 **Worked Example:**
-Find the derivative of $`f(x) = x^3 + 2x`$.
-- $`\frac{d}{dx}(x^3) = 3x^2`$
-- $`\frac{d}{dx}(2x) = 2`$
-- So $`f'(x) = 3x^2 + 2`$
+Find the derivative of $f(x) = x^3 + 2x$.
+- $\frac{d}{dx}(x^3) = 3x^2$
+- $\frac{d}{dx}(2x) = 2$
+- So $f'(x) = 3x^2 + 2$
+
+> **Tip:** Practice applying these rules to different functions to build intuition.
 
 ---
 
@@ -85,7 +99,7 @@ import matplotlib.pyplot as plt
 
 def numerical_derivative(f, x, h=1e-7):
     """Compute the numerical derivative of f at x"""
-    return (f(x + h) - f(x)) / h
+    return (f(x + h) - f(x)) / h  # finite difference approximation
 
 # Example function
 def f(x):
@@ -128,6 +142,14 @@ for x in test_points:
     print(f"At x = {x}: Numerical = {numerical:.6f}, Analytical = {analytical}")
 ```
 
+**Code Annotations:**
+- `numerical_derivative` uses the finite difference method to approximate the derivative.
+- The first plot shows the function and its analytical derivative.
+- The second plot compares the numerical and analytical derivatives.
+- The test at specific points shows the accuracy of the numerical method.
+
+> **Tip:** Decrease $h$ for more accuracy, but beware of floating-point errors if $h$ is too small.
+
 ---
 
 ## Python Implementation: Symbolic Differentiation
@@ -159,6 +181,13 @@ df = sp.diff(f, x)
 print(f"\nd/dx({f}) = {df}")
 ```
 
+**Code Annotations:**
+- `sp.Symbol` creates a symbolic variable.
+- `sp.diff` computes the derivative symbolically.
+- The product rule example shows how to differentiate a product of functions.
+
+> **Tip:** Symbolic computation is useful for checking your work and for deriving gradients in deep learning frameworks.
+
 ---
 
 ## Why Single Variable Calculus Matters in Deep Learning
@@ -168,5 +197,4 @@ print(f"\nd/dx({f}) = {df}")
 - **Loss functions**: Understanding how loss changes with respect to parameters is key.
 - **Activation functions**: Many activations (ReLU, sigmoid, tanh) are defined and optimized using derivatives.
 
-**Summary:**
-Mastering single variable calculus is the first step to understanding the mathematics of deep learning! It provides the foundation for all optimization and learning algorithms. 
+> **Summary:** Mastering single variable calculus is the first step to understanding the mathematics of deep learning! It provides the foundation for all optimization and learning algorithms. 
