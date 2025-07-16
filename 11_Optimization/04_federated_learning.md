@@ -2,6 +2,9 @@
 
 Federated learning is a machine learning approach that enables training models on decentralized data without sharing raw data, preserving privacy while leveraging distributed datasets.
 
+> **Explanation:**
+> Federated learning lets you train a model using data that stays on users' devices (like phones or hospitals). Only model updates are shared, not the raw data, so privacy is preserved.
+
 > **Key Insight:** Federated learning allows collaborative model training across many devices or organizations, all while keeping sensitive data local and private.
 
 > **Did you know?** Federated learning is used in real-world applications like keyboard prediction on smartphones, where user data never leaves the device!
@@ -25,12 +28,12 @@ The core algorithm aggregates local model updates:
 ```math
 w_{t+1} = \sum_{k=1}^{K} \frac{n_k}{n} w_t^{(k)}
 ```
-
-where:
-- $`w_{t+1}`$ = global model at round $`t+1`$
-- $`w_t^{(k)}`$ = local model of client $`k`$ at round $`t`$
-- $`n_k`$ = number of samples on client $`k`$
-- $`n`$ = total number of samples across all clients
+> **Math Breakdown:**
+> - $`w_{t+1}`$: The new global model after round $t+1$.
+> - $`w_t^{(k)}`$: The model weights from client $k$ after local training in round $t$.
+> - $`n_k`$: Number of data samples on client $k$.
+> - $`n`$: Total number of samples across all clients.
+> - Each client's model is weighted by its data size, and the global model is the weighted average.
 
 ### Local Training
 
@@ -38,6 +41,11 @@ Each client performs local SGD:
 ```math
 w_{t+1}^{(k)} = w_t^{(k)} - \alpha \nabla L_k(w_t^{(k)})
 ```
+> **Math Breakdown:**
+> - $`w_t^{(k)}`$: Model weights for client $k$ at round $t$.
+> - $`\alpha`$: Learning rate.
+> - $`L_k`$: Loss function for client $k$ (using only its local data).
+> - Each client updates its model using its own data, then sends the updated weights to the server.
 
 ### Convergence Analysis
 
@@ -45,6 +53,10 @@ For FedAvg with $`K`$ clients and $`T`$ rounds:
 ```math
 \mathbb{E}[f(\bar{w}_T)] - f(w^*) \leq O\left(\frac{1}{\sqrt{T}} + \frac{1}{\sqrt{K}}\right)
 ```
+> **Math Breakdown:**
+> - $`f(\bar{w}_T)`$: Expected value of the loss after $T$ rounds.
+> - $`f(w^*)`$: Optimal loss.
+> - The error decreases as the number of rounds $T$ and clients $K$ increases.
 
 > **Common Pitfall:** If client data is highly non-i.i.d. (not identically distributed), convergence can be slow or unstable. Techniques like FedProx or personalization can help.
 
@@ -135,6 +147,12 @@ class FederatedTrainer:
         
         return averaged_weights
 ```
+> **Code Walkthrough:**
+> - Initializes a global model and copies it to each client.
+> - Each client trains locally on its own data.
+> - After local training, the server averages the weights from all clients, weighted by their data size.
+> - The global model and all clients are updated with the new averaged weights.
+
 *This trainer simulates federated learning by training local models and averaging their weights.*
 
 ### 2. Advanced Federated Learning with FedProx
@@ -206,6 +224,11 @@ class FedProxTrainer:
         
         return averaged_weights
 ```
+> **Code Walkthrough:**
+> - Adds a proximal term to the loss, penalizing large deviations from the global model.
+> - This helps stabilize training when client data is very different (non-i.i.d.).
+> - Otherwise, works like basic federated learning.
+
 *FedProx adds a proximal term to the loss, helping stabilize training when client data is highly non-i.i.d.*
 
 ---
