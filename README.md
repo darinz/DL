@@ -1,5 +1,15 @@
 # Deep Learning (DL)
 
+[![Deep Learning](https://img.shields.io/badge/Deep%20Learning-Advanced-blue?style=for-the-badge)](https://github.com/yourusername/DL)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red?style=for-the-badge)](https://pytorch.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.0+-orange?style=for-the-badge)](https://www.tensorflow.org/)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange?style=for-the-badge)](https://jupyter.org/)
+[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://github.com/yourusername/DL)
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-brightgreen?style=for-the-badge)](https://github.com/yourusername/DL/pulls)
+[![Issues](https://img.shields.io/badge/Issues-Open-red?style=for-the-badge)](https://github.com/yourusername/DL/issues)
+[![Stars](https://img.shields.io/badge/Stars-Welcome-yellow?style=for-the-badge)](https://github.com/yourusername/DL/stargazers)
+
 > **Key Insight:** Deep learning is the engine behind modern AI breakthroughs, enabling machines to learn from data at scale and solve problems once thought impossible.
 
 A comprehensive collection of deep learning fundamentals, modern architectures, practical implementations, and learning resources. This curated knowledge base covers everything from neural network basics to cutting-edge generative AI, providing structured learning paths, code examples, and references to help you master deep learning concepts and applications.
