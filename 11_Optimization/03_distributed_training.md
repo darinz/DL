@@ -2,6 +2,9 @@
 
 Distributed training enables training large models across multiple devices, machines, or clusters by distributing computation and data across multiple workers.
 
+> **Explanation:**
+> Distributed training means splitting up the work of training a neural network across several GPUs, computers, or even data centers. This allows you to train much larger models and datasets than would fit on a single device, and to finish training much faster.
+
 > **Key Insight:** Distributed training is essential for scaling deep learning to massive datasets and models that cannot fit on a single device.
 
 > **Did you know?** The largest language models (like GPT-3) are trained on thousands of GPUs using advanced distributed training techniques!
@@ -21,11 +24,20 @@ Distributed training addresses the limitations of single-device training by:
 ### 1. Data Parallelism
 Distributes data across multiple devices, with each device having a complete copy of the model.
 
+> **Explanation:**
+> Each GPU gets a different chunk of the data, but all GPUs have the same model. After each batch, gradients are averaged and the model is synchronized.
+
 ### 2. Model Parallelism
 Splits the model across multiple devices, with each device responsible for different parts of the model.
 
+> **Explanation:**
+> The model itself is too big for one device, so it's split into pieces. Each device computes only its part, and data is passed between devices as needed.
+
 ### 3. Pipeline Parallelism
 Divides the model into stages that are processed sequentially across different devices.
+
+> **Explanation:**
+> Like an assembly line: each device handles a stage of the model, and data flows through the pipeline.
 
 > **Common Pitfall:** Communication overhead can become a bottleneck if not managed properly, especially in model and pipeline parallelism.
 
@@ -37,22 +49,37 @@ Divides the model into stages that are processed sequentially across different d
 ```math
 \theta_{t+1} = \theta_t - \alpha \cdot \frac{1}{N} \sum_{i=1}^{N} \nabla L_i(\theta_t)
 ```
+> **Math Breakdown:**
+> - $`\theta_t`$: Model parameters at step $t$.
+> - $`\alpha`$: Learning rate.
+> - $`N`$: Number of devices (workers).
+> - $`\nabla L_i(\theta_t)`$: Gradient computed on device $i$.
+> - All devices compute gradients on their data, then average them to update the model.
 
 #### Asynchronous SGD
 ```math
 \theta_{t+1} = \theta_t - \alpha \cdot \nabla L_i(\theta_t)
 ```
+> **Math Breakdown:**
+> - Each device updates the model independently, which can lead to faster but less stable training.
 
 ### Model Parallelism
 For a model split across $`K`$ devices:
 ```math
 f(x) = f_K(f_{K-1}(\ldots f_1(x)))
 ```
+> **Explanation:**
+> The input is processed by the first part of the model on one device, then passed to the next device, and so on.
 
 ### Communication Overhead
 ```math
 T_{\text{comm}} = \frac{\text{Model Size}}{\text{Bandwidth}} + \text{Latency}
 ```
+> **Math Breakdown:**
+> - $`T_{\text{comm}}`$: Time spent communicating between devices.
+> - $`\text{Model Size}`$: Amount of data to send.
+> - $`\text{Bandwidth}`$: How fast data can be sent.
+> - $`\text{Latency}`$: Delay before data transfer starts.
 
 > **Key Insight:** The speedup from distributed training depends on both computation and communication costs. Efficient communication is crucial for scaling.
 
@@ -101,6 +128,11 @@ class DistributedTrainer:
         
         return loss.item()
 ```
+> **Code Walkthrough:**
+> - Initializes distributed training and sets the correct device for each process.
+> - Wraps the model in `DistributedDataParallel` to synchronize gradients across devices.
+> - Each process computes gradients on its data, then gradients are averaged and the model is updated.
+
 *PyTorch DDP synchronizes gradients across devices after each backward pass, ensuring consistent model updates.*
 
 ### 2. Horovod Implementation
@@ -147,6 +179,12 @@ class HorovodTrainer:
         
         return loss.item()
 ```
+> **Code Walkthrough:**
+> - Initializes Horovod and sets the device for each process.
+> - Scales the learning rate by the number of workers for faster convergence.
+> - Uses Horovod's distributed optimizer to synchronize gradients.
+> - Broadcasts model parameters from the main process to all others at the start.
+
 *Horovod provides a simple interface for distributed training and can scale to thousands of GPUs.*
 
 ### 3. TensorFlow Distribution Strategies
@@ -171,6 +209,11 @@ def create_distributed_model(strategy):
         
     return model
 ```
+> **Code Walkthrough:**
+> - Uses TensorFlow's distribution strategies to run training across multiple devices or machines.
+> - The model is created and compiled inside the strategy's scope.
+> - Training and evaluation are handled as usual, but distributed across devices.
+
 *TensorFlow's distribution strategies make it easy to scale training across multiple GPUs, machines, or TPUs.*
 
 ---
@@ -222,6 +265,11 @@ def broadcast_example():
     
     return tensor
 ```
+> **Code Walkthrough:**
+> - Shows how to use PyTorch's distributed communication primitives.
+> - `all_reduce` sums tensors across all processes.
+> - `all_gather` collects tensors from all processes into a list.
+> - `broadcast` sends a tensor from one process to all others.
 
 ### 2. Custom Communication
 
@@ -248,28 +296,16 @@ class CustomCommunication:
             # Receive chunk from previous rank
             received_chunk = torch.zeros_like(chunks[self.rank])
             dist.recv(received_chunk, src=recv_rank)
-            
-            # Add received chunk
-            chunks[self.rank] += received_chunk
-        
-        # Allgather phase
-        for step in range(self.world_size - 1):
-            send_rank = (self.rank + 1) % self.world_size
-            recv_rank = (self.rank - 1) % self.world_size
-            
-            # Send chunk to next rank
-            dist.send(chunks[self.rank], dst=send_rank)
-            
-            # Receive chunk from previous rank
-            received_chunk = torch.zeros_like(chunks[self.rank])
-            dist.recv(received_chunk, src=recv_rank)
-            
-            # Replace chunk
-            chunks[self.rank] = received_chunk
-        
-        # Reconstruct tensor
-        return torch.cat(chunks)
 ```
+> **Code Walkthrough:**
+> - Demonstrates a custom ring AllReduce implementation for distributed communication.
+> - Each process sends and receives chunks of data in a ring pattern to efficiently sum tensors across all devices.
+
+---
+
+> **Try it yourself!** Implement your own communication pattern and measure its efficiency compared to built-in operations.
+
+> **Key Insight:** Efficient communication is as important as computation for scaling distributed training.
 
 ## Performance Optimization
 
