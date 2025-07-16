@@ -1,5 +1,14 @@
 # Generative Models
 
+[![Generative Models](https://img.shields.io/badge/Generative%20Models-Data%20Generation-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![GANs](https://img.shields.io/badge/GANs-Adversarial-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![VAEs](https://img.shields.io/badge/VAEs-Variational-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![Diffusion](https://img.shields.io/badge/Diffusion-Denoising-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![Flow Models](https://img.shields.io/badge/Flow%20Models-Invertible-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![StyleGAN](https://img.shields.io/badge/StyleGAN-Style%20Based-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![Stable Diffusion](https://img.shields.io/badge/Stable%20Diffusion-Latent-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+[![Image Synthesis](https://img.shields.io/badge/Image%20Synthesis-Generation-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/08_Generative_Models)
+
 Generative models are a class of machine learning models that learn to model the underlying distribution of data, enabling them to generate new, similar samples. They are fundamental in unsupervised and self-supervised learning, and have applications in image synthesis, data augmentation, and more.
 
 ## 1. Generative Adversarial Networks (GANs)
