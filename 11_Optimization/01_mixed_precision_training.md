@@ -2,6 +2,9 @@
 
 Mixed precision training is a technique that uses both 16-bit and 32-bit floating-point types to reduce memory usage and accelerate training while maintaining model accuracy.
 
+> **Explanation:**
+> Mixed precision training means using both FP16 (16-bit) and FP32 (32-bit) numbers in your model. This saves memory and can make training much faster, especially on modern GPUs, while still keeping the model accurate.
+
 > **Key Insight:** Mixed precision training enables you to train larger models or use bigger batch sizes without running out of GPU memory.
 
 > **Did you know?** Modern GPUs (like NVIDIA Volta, Turing, Ampere) have specialized Tensor Cores that are optimized for FP16 operations, making mixed precision especially effective.
@@ -10,6 +13,9 @@ Mixed precision training is a technique that uses both 16-bit and 32-bit floatin
 
 Traditional deep learning training uses 32-bit floating-point (FP32) for all computations. However, modern hardware (especially NVIDIA GPUs with Tensor Cores) can perform 16-bit operations much faster while using significantly less memory. Mixed precision training leverages this by using FP16 for most operations while keeping FP32 for critical computations that require higher precision.
 
+> **Explanation:**
+> Most calculations are done in FP16 for speed and memory savings, but some sensitive operations (like loss calculation and weight updates) are kept in FP32 to avoid numerical issues.
+
 ## Why Mixed Precision?
 
 ### Memory Benefits
@@ -17,10 +23,16 @@ Traditional deep learning training uses 32-bit floating-point (FP32) for all com
 - **FP16**: 2 bytes per parameter
 - **Memory Savings**: Approximately 50% reduction in memory usage
 
+> **Explanation:**
+> Using FP16 halves the memory needed for model parameters, activations, and gradients, allowing you to train larger models or use bigger batches.
+
 ### Speed Benefits
 - **Tensor Cores**: NVIDIA GPUs (Volta, Turing, Ampere) have specialized hardware for FP16 operations
 - **Bandwidth**: Reduced memory bandwidth requirements
 - **Throughput**: 2-3x faster training on compatible hardware
+
+> **Explanation:**
+> FP16 operations are much faster on supported GPUs, and less data needs to be moved around, speeding up training.
 
 > **Geometric Intuition:** Imagine carrying water in buckets (FP32) vs. cups (FP16). You can carry more cups at once, but each holds less water. Mixed precision lets you use both, optimizing for speed and capacity.
 
@@ -32,19 +44,21 @@ Traditional deep learning training uses 32-bit floating-point (FP32) for all com
 ```math
 \text{FP32} = (-1)^s \times 2^{e-127} \times (1 + m)
 ```
-where:
-- $`s`$ = sign bit (1 bit)
-- $`e`$ = exponent (8 bits, biased by 127)
-- $`m`$ = mantissa (23 bits)
+> **Math Breakdown:**
+> - $`s`$: Sign bit (1 bit)
+> - $`e`$: Exponent (8 bits, biased by 127)
+> - $`m`$: Mantissa (23 bits)
+> - FP32 can represent a wide range of values with high precision.
 
 #### FP16 Format
 ```math
 \text{FP16} = (-1)^s \times 2^{e-15} \times (1 + m)
 ```
-where:
-- $`s`$ = sign bit (1 bit)
-- $`e`$ = exponent (5 bits, biased by 15)
-- $`m`$ = mantissa (10 bits)
+> **Math Breakdown:**
+> - $`s`$: Sign bit (1 bit)
+> - $`e`$: Exponent (5 bits, biased by 15)
+> - $`m`$: Mantissa (10 bits)
+> - FP16 uses less memory but has a smaller range and lower precision than FP32.
 
 ### Dynamic Range Comparison
 
@@ -52,6 +66,9 @@ where:
 |--------|-------------|-----------|-----------|
 | FP32   | 1.18e-38    | 3.4e+38   | ~7 digits |
 | FP16   | 6.0e-8      | 65504     | ~3 digits |
+
+> **Explanation:**
+> FP16 can't represent very small or very large numbers as well as FP32, and is less precise. This can cause problems if not handled carefully.
 
 > **Common Pitfall:** FP16 has a much smaller dynamic range and lower precision than FP32, making it more susceptible to underflow and overflow.
 
@@ -62,23 +79,31 @@ When gradients become too small for FP16 representation:
 ```math
 \text{Underflow occurs when } |g| < 6.0 \times 10^{-8}
 ```
+> **Math Breakdown:**
+> If a gradient is smaller than $6.0 \times 10^{-8}$, it becomes zero in FP16, so the model can't learn from it.
 
 ### Overflow
 When gradients become too large for FP16 representation:
 ```math
 \text{Overflow occurs when } |g| > 65504
 ```
+> **Math Breakdown:**
+> If a gradient is larger than 65504, it becomes infinity in FP16, which can break training.
 
 ### Loss Scaling
 To prevent underflow, we scale the loss by a factor $`S`$:
 ```math
 L_{\text{scaled}} = L \times S
 ```
+> **Explanation:**
+> By multiplying the loss by a large number, we make the gradients bigger so they don't vanish in FP16.
 
 The gradients are then scaled back:
 ```math
 \nabla L = \frac{\nabla L_{\text{scaled}}}{S}
 ```
+> **Explanation:**
+> After computing gradients, we divide by the same scale factor to get the correct values.
 
 > **Key Insight:** Loss scaling is essential for stable mixed precision training, as it prevents small gradients from vanishing in FP16.
 
@@ -141,6 +166,12 @@ class ManualMixedPrecision:
             
         self.optimizer.zero_grad()
 ```
+> **Code Walkthrough:**
+> - Converts input to FP16 for the forward pass.
+> - Scales the loss to avoid underflow, then unscales gradients after backward pass.
+> - Checks for overflow (infinite or NaN gradients) and skips the optimizer step if detected.
+> - This manual approach is educational, but most users should use PyTorch AMP for simplicity and safety.
+
 *This class demonstrates manual loss scaling and overflow detection for mixed precision training.*
 
 ### 2. PyTorch Automatic Mixed Precision (AMP)
@@ -192,6 +223,12 @@ for epoch in range(num_epochs):
         data, target = data.cuda(), target.cuda()
         loss = trainer.train_step(data, target)
 ```
+> **Code Walkthrough:**
+> - Uses PyTorch's AMP to automatically handle mixed precision and loss scaling.
+> - The `autocast` context manager runs operations in FP16 where safe, and FP32 where needed.
+> - The `GradScaler` handles scaling and unscaling of gradients, and skips updates if overflow is detected.
+> - This is the recommended way to use mixed precision in PyTorch.
+
 *PyTorch AMP automates most of the mixed precision workflow, making it easy and robust.*
 
 ### 3. TensorFlow Mixed Precision
@@ -220,6 +257,11 @@ model.compile(
 # Training automatically uses mixed precision
 model.fit(x_train, y_train, epochs=10, batch_size=32)
 ```
+> **Code Walkthrough:**
+> - Sets the global policy to use mixed precision in TensorFlow.
+> - All layers and computations use FP16 where possible.
+> - Training and evaluation are handled as usual, but with the benefits of mixed precision.
+
 *TensorFlow's mixed precision API is simple to use and can provide significant speedups on supported hardware.*
 
 ## Advanced Techniques
@@ -248,37 +290,8 @@ class DynamicLossScaler:
                 self.consecutive_overflows = 0
         else:
             self.consecutive_overflows = 0
-            if self.consecutive_overflows == 0:
-                self.scale = min(self.scale * self.scale_factor, 2**15)
 ```
-*Dynamic loss scaling automatically adjusts the scale factor to balance stability and performance.*
-
-### 2. Master Weights
-
-```python
-class MasterWeightsOptimizer:
-    def __init__(self, model, optimizer):
-        self.model = model
-        self.optimizer = optimizer
-        self.master_weights = {}
-        
-        # Create FP32 master weights
-        for name, param in model.named_parameters():
-            if param.requires_grad:
-                self.master_weights[name] = param.data.clone().float()
-    
-    def step(self):
-        # Update master weights in FP32
-        for name, param in self.model.named_parameters():
-            if param.requires_grad:
-                master_param = self.master_weights[name]
-                master_param.add_(param.grad.data.float(), alpha=-self.optimizer.param_groups[0]['lr'])
-                param.data = master_param.half()
-```
-*Master weights are kept in FP32 to avoid precision loss during updates, even if the model itself uses FP16 for most operations.*
-
-> **Try it yourself!** Benchmark your model with and without mixed precision. How much memory and speed do you save?
-
----
-
-> **Key Insight:** Mixed precision training is a practical way to unlock the full potential of modern hardware for deep learning. 
+> **Code Walkthrough:**
+> - Dynamically adjusts the loss scale based on whether overflow is detected.
+> - If overflows happen too often, the scale is reduced; otherwise, it is kept or increased.
+> - This helps maintain stability and efficiency during training. 
