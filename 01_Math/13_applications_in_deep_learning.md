@@ -13,27 +13,38 @@ Used for regression tasks:
 ```math
 L(y, \hat{y}) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2
 ```
-Gradient with respect to prediction $`\hat{y}_i`$:
+Gradient with respect to prediction $\hat{y}_i$:
 ```math
 \frac{\partial L}{\partial \hat{y}_i} = \frac{2}{n}(\hat{y}_i - y_i)
 ```
 - Penalizes large errors more heavily.
 - Smooth and differentiable, making it easy to optimize.
 
+**Step-by-step:**
+- Subtract the true value from the prediction.
+- Square the result.
+- Average over all data points.
+- The gradient is proportional to the error.
+
 ### Cross-Entropy Loss
 Used for classification tasks:
 ```math
 L(y, \hat{y}) = -\sum_{i=1}^{n} y_i \log(\hat{y}_i)
 ```
-Gradient with respect to prediction $`\hat{y}_i`$:
+Gradient with respect to prediction $\hat{y}_i$:
 ```math
 \frac{\partial L}{\partial \hat{y}_i} = -\frac{y_i}{\hat{y}_i}
 ```
 - Measures the difference between true and predicted probability distributions.
 - Encourages confident, correct predictions.
 
+**Step-by-step:**
+- Take the log of the predicted probability for the true class.
+- Multiply by the true label (1 for correct class, 0 otherwise).
+- Sum over all classes and take the negative.
+
 #### Example: Binary Cross-Entropy
-For $`y \in \{0, 1\}`$ and $`\hat{y} \in (0, 1)`$:
+For $y \in \{0, 1\}$ and $\hat{y} \in (0, 1)$:
 ```math
 L(y, \hat{y}) = -[y \log(\hat{y}) + (1-y)\log(1-\hat{y})]
 ```
@@ -55,6 +66,11 @@ Derivative:
 - Squashes input to (0, 1).
 - Used in binary classification.
 
+**Step-by-step:**
+- Compute $e^{-x}$.
+- Add 1 and take the reciprocal.
+- The derivative is the output times (1 minus the output).
+
 ### ReLU Function
 ```math
 \text{ReLU}(x) = \max(0, x)
@@ -66,6 +82,10 @@ Derivative:
 - Introduces sparsity and helps with vanishing gradients.
 - Most common activation in modern deep networks.
 
+**Step-by-step:**
+- If $x > 0$, output $x$ (derivative is 1).
+- If $x \leq 0$, output 0 (derivative is 0).
+
 ### Softmax Function (for multi-class classification)
 ```math
 \text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j} e^{z_j}}
@@ -74,6 +94,11 @@ Derivative (Jacobian):
 ```math
 \frac{\partial \text{softmax}_i}{\partial z_j} = \text{softmax}_i (\delta_{ij} - \text{softmax}_j)
 ```
+
+**Step-by-step:**
+- Exponentiate each input.
+- Divide by the sum of all exponentials.
+- The derivative is more complex (see Jacobian above).
 
 ---
 
@@ -180,6 +205,8 @@ plt.show()
 - Visualizes activations and their gradients.
 - Compares loss functions for different predicted probabilities.
 
+> **Tip:** Try changing the input values or plotting other activation/loss functions to see their behavior!
+
 ---
 
 ## 4. Why Calculus is Essential in Deep Learning
@@ -191,8 +218,8 @@ plt.show()
 - **Activation and loss design:** Understanding derivatives helps design better functions
 
 ### Example: Backpropagation Step
-Suppose our network outputs $`\hat{y}`$ and we use MSE loss:
-- Compute $`\frac{\partial L}{\partial \hat{y}}`$ using calculus.
+Suppose our network outputs $\hat{y}$ and we use MSE loss:
+- Compute $\frac{\partial L}{\partial \hat{y}}$ using calculus.
 - Use the chain rule to propagate gradients backward through the network.
 - Update parameters using the computed gradients.
 
@@ -202,6 +229,8 @@ Suppose our network outputs $`\hat{y}`$ and we use MSE loss:
 
 - Calculus underpins every aspect of deep learning, from loss to optimization.
 - Mastery of derivatives, gradients, and the chain rule is essential for building, training, and improving neural networks.
+
+> **Summary:** Mastering calculus and its applications is essential for anyone working in deep learning!
 
 **Further Reading:**
 - [Loss Functions (Wikipedia)](https://en.wikipedia.org/wiki/Loss_function)
