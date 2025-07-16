@@ -11,10 +11,18 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 
 ## Table of Contents
 
-1. [Linear Algebra](#linear-algebra)
-2. [Calculus](#calculus)
-3. [Probability & Statistics](#probability--statistics)
-4. [Information Theory](#information-theory)
+### Comprehensive Guides
+1. [Linear Algebra](01_linear_algebra.md) - Complete guide with Python implementations
+2. [Calculus](02_calculus.md) - Derivatives, gradients, optimization, and backpropagation
+3. [Probability & Statistics](03_probability_statistics.md) - Probability theory, statistical inference, and Bayesian methods
+4. [Information Theory](04_information_theory.md) - Entropy, cross-entropy, KL divergence, and mutual information
+5. [Numerical Methods](05_numerical_methods.md) - Numerical stability, optimization algorithms, and computational efficiency
+
+### Quick Reference
+6. [Linear Algebra](#linear-algebra)
+7. [Calculus](#calculus)
+8. [Probability & Statistics](#probability--statistics)
+9. [Information Theory](#information-theory)
 
 ---
 
@@ -206,6 +214,60 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 - **Vectorization**: Use matrix operations instead of loops
 - **Memory management**: Efficient tensor operations
 - **GPU acceleration**: Leverage parallel computing
+
+---
+
+## Comprehensive Learning Resources
+
+For in-depth learning with practical implementations, explore our detailed guides:
+
+### Detailed Mathematical Guides
+
+Each guide includes:
+- **Complete mathematical foundations** with proper LaTeX formatting
+- **Working Python code examples** for every concept
+- **Interactive visualizations** and plots
+- **Real-world deep learning applications**
+- **Step-by-step implementations** from basic to advanced
+
+#### [Linear Algebra Guide](01_linear_algebra.md)
+- Vector and matrix operations
+- Linear transformations and eigendecomposition
+- Neural network layer implementations
+- Complete NumPy examples with visualizations
+
+#### [Calculus Guide](02_calculus.md)
+- Derivatives, gradients, and chain rule
+- Backpropagation implementation from scratch
+- Optimization algorithms (SGD, Adam, Momentum)
+- Complete neural network training example
+
+#### [Probability & Statistics Guide](03_probability_statistics.md)
+- Probability theory and distributions
+- Statistical inference and hypothesis testing
+- Bayesian statistics and uncertainty quantification
+- Loss functions and regularization techniques
+
+#### [Information Theory Guide](04_information_theory.md)
+- Entropy, cross-entropy, and KL divergence
+- Mutual information and feature selection
+- Information bottleneck principle
+- Model compression and representation learning
+
+#### [Numerical Methods Guide](05_numerical_methods.md)
+- Numerical stability and floating-point arithmetic
+- Log-sum-exp trick and stable softmax
+- Computational efficiency and vectorization
+- GPU acceleration and memory management
+
+### Learning Path
+
+We recommend studying the guides in this order:
+1. **Linear Algebra** → Foundation for neural network operations
+2. **Calculus** → Understanding gradients and optimization
+3. **Probability & Statistics** → Loss functions and uncertainty
+4. **Information Theory** → Advanced loss functions and compression
+5. **Numerical Methods** → Practical implementation considerations
 
 ---
 
