@@ -62,7 +62,7 @@ A = QR
 - Orthogonalizing vectors (Gram-Schmidt process).
 
 **Example:**
-If $A = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$, $Q$ and $R$ can be computed so that $A = QR$ (see NumPy's `np.linalg.qr`).
+If $`A = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}`$, $`Q$ and $R`$ can be computed so that $`A = QR`$ (see NumPy's `np.linalg.qr`).
 
 > **Tip:** QR is numerically stable and widely used in regression and optimization.
 
