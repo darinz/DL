@@ -1,5 +1,14 @@
 # Computer Vision
 
+[![Computer Vision](https://img.shields.io/badge/Computer%20Vision-Image%20Understanding-blue?style=for-the-badge&logo=eye)](https://github.com/yourusername/DL)
+[![Object Detection](https://img.shields.io/badge/Object%20Detection-YOLO%20RCNN-green?style=for-the-badge&logo=search)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![Image Classification](https://img.shields.io/badge/Image%20Classification-ResNet%20ViT-orange?style=for-the-badge&logo=image)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![Semantic Segmentation](https://img.shields.io/badge/Semantic%20Segmentation-U-Net%20DeepLab-purple?style=for-the-badge&logo=puzzle-piece)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![Instance Segmentation](https://img.shields.io/badge/Instance%20Segmentation-Mask%20RCNN-red?style=for-the-badge&logo=mask)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![Pose Estimation](https://img.shields.io/badge/Pose%20Estimation-HRNet%20MediaPipe-yellow?style=for-the-badge&logo=user)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![3D Vision](https://img.shields.io/badge/3D%20Vision-PointNet%20VoxelNet-blue?style=for-the-badge&logo=cube)](https://github.com/yourusername/DL/tree/main/12_CV)
+[![Video Analysis](https://img.shields.io/badge/Video%20Analysis-Action%20Recognition-orange?style=for-the-badge&logo=video)](https://github.com/yourusername/DL/tree/main/12_CV)
+
 > **Key Insight:** Computer vision enables machines to perceive and interpret the visual world, bridging the gap between pixels and understanding. It powers technologies from self-driving cars to medical diagnostics.
 
 Computer Vision is a field of artificial intelligence that enables machines to interpret and understand visual information from the world. This section covers fundamental concepts, architectures, and applications in computer vision, with a focus on both mathematical foundations and practical intuition.
