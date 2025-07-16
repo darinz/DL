@@ -18,6 +18,9 @@ Given an input sequence of vectors $`X = [x_1, x_2, \ldots, x_n]`$, the self-att
 Q = XW^Q, \quad K = XW^K, \quad V = XW^V
 ```
 
+> **Explanation:**
+> Each input vector is projected into three different spaces: queries (Q), keys (K), and values (V). These projections allow the model to compare each position in the sequence to every other position.
+
 where $`W^Q, W^K, W^V`$ are learnable weight matrices.
 
 The attention scores are computed as:
@@ -26,13 +29,20 @@ The attention scores are computed as:
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 ```
 
+> **Math Breakdown:**
+> - $QK^T$: Computes similarity between queries and keys for all positions.
+> - $\sqrt{d_k}$: Scaling factor to prevent large dot products from making the softmax too sharp.
+> - $\text{softmax}$: Converts similarities to probabilities (attention weights).
+> - The output is a weighted sum of the values $V$.
+
 where $`d_k`$ is the dimension of the key vectors. This operation allows each position to attend to all others, weighted by similarity.
 
 #### Geometric/Visual Explanation
 
 Imagine each word in a sentence "looking around" at all other words and deciding which ones are most relevant for its own representation. This is what self-attention enables.
 
-> **Common Pitfall:** Forgetting to scale by $`\sqrt{d_k}`$ can cause the softmax to become too sharp or too flat, hurting learning.
+> **Common Pitfall:**
+> Forgetting to scale by $`\sqrt{d_k}`$ can cause the softmax to become too sharp or too flat, hurting learning.
 
 ### Python Example: Scaled Dot-Product Attention
 ```python
@@ -53,6 +63,11 @@ output = scaled_dot_product_attention(Q, K, V)
 print(output.shape)  # (2, 4, 8)
 ```
 
+> **Code Walkthrough:**
+> - Computes attention scores between all pairs of positions in the sequence.
+> - Applies softmax to get attention weights, then computes a weighted sum of the values.
+> - The output shape matches the input shape, preserving sequence length and feature dimension.
+
 > **Try it yourself!** Change the values of $`Q`$, $`K`$, and $`V`$ and observe how the attention output changes.
 
 ## 3. Multi-Head Attention
@@ -62,6 +77,9 @@ Instead of performing a single attention function, the Transformer uses multiple
 ```math
 \text{MultiHead}(Q, K, V) = [\text{head}_1; \ldots; \text{head}_h]W^O
 ```
+
+> **Explanation:**
+> Each head in multi-head attention learns to focus on different types of relationships in the sequence (e.g., syntax, semantics, position). Concatenating their outputs allows the model to capture richer information.
 
 where each $`\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)`$ and $`W^O`$ is a learnable output projection.
 
@@ -92,6 +110,11 @@ class MultiHeadAttention(torch.nn.Module):
         return self.W_o(attn)
 ```
 
+> **Code Walkthrough:**
+> - Projects the input into multiple sets of queries, keys, and values (one per head).
+> - Computes attention for each head independently.
+> - Concatenates the outputs and projects them back to the original dimension.
+
 > **Did you know?** Multi-head attention is the reason why Transformers can model complex relationships in language and vision tasks.
 
 ## 4. Positional Encoding
@@ -104,6 +127,9 @@ Since Transformers lack recurrence, they use positional encodings to inject info
 ```math
 \text{PE}_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{model}}}\right)
 ```
+
+> **Explanation:**
+> Positional encoding gives each position in the sequence a unique signature, so the model can distinguish between, for example, the first and last word. The use of sine and cosine functions of different frequencies allows the model to learn relative and absolute positions.
 
 where $`pos`$ is the position and $`i`$ is the dimension.
 
@@ -129,6 +155,11 @@ pe = positional_encoding(10, 16)
 print(pe.shape)  # (10, 16)
 ```
 
+> **Code Walkthrough:**
+> - Computes a unique positional encoding for each position and dimension.
+> - Alternates sine and cosine functions to encode position information.
+> - The resulting matrix can be added to the input embeddings.
+
 > **Try it yourself!** Visualize the positional encodings for different positions and dimensions to see their patterns.
 
 ## 5. Encoder and Decoder Structure
@@ -138,11 +169,15 @@ The Transformer consists of an encoder and a decoder, each composed of stacked l
 - **Encoder:** Processes the input sequence and outputs representations for each position.
 - **Decoder:** Generates the output sequence, attending to both previous outputs and encoder outputs.
 
+> **Explanation:**
+> The encoder builds a contextual representation of the input, while the decoder generates the output step by step, using both the encoder's output and its own previous outputs. Layer normalization and residual connections help stabilize and speed up training.
+
 #### Geometric/Visual Explanation
 
 Think of the encoder as a team of experts, each analyzing the input from a different perspective, and the decoder as a team that generates the output step by step, consulting both the input and what has been generated so far.
 
-> **Common Pitfall:** Forgetting to mask future positions in the decoder's self-attention can cause information leakage during training.
+> **Common Pitfall:**
+> Forgetting to mask future positions in the decoder's self-attention can cause information leakage during training.
 
 ## 6. Summary & Next Steps
 
