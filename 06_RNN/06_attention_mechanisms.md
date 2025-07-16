@@ -14,6 +14,9 @@ Attention mechanisms are a crucial innovation in neural networks that allow mode
 
 Attention is a mechanism that enables a model to selectively focus on different parts of the input sequence when generating each element of the output sequence. Instead of treating all input elements equally, the model learns to assign different weights (attention scores) to different parts of the input.
 
+> **Explanation:**
+> Attention allows neural networks to dynamically focus on the most relevant parts of the input, much like how humans pay more attention to important words or regions when reading or looking at an image.
+
 #### Geometric/Visual Explanation
 
 Imagine reading a sentence and focusing on different words depending on the context. Attention lets the model "look back" at relevant parts of the input, much like a person re-reading important words.
@@ -38,6 +41,13 @@ e_{ij} = a(s_{i-1}, h_j) \quad \text{(Alignment score)}
 c_i = \sum_{j=1}^{T_x} \alpha_{ij} h_j \quad \text{(Context vector)}
 ```
 
+> **Math Breakdown:**
+> - $e_{ij}$: Alignment score between decoder state $s_{i-1}$ and encoder state $h_j$
+> - $\alpha_{ij}$: Attention weight for input position $j$ when generating output $i$
+> - $c_i$: Context vector for output $i$, computed as a weighted sum of encoder states
+> - $a$: Alignment function (e.g., dot product, additive)
+> - $T_x$: Length of the input sequence
+
 Where:
 - $`s_{i-1}`$: decoder hidden state at step $`i-1`$
 - $`h_j`$: encoder hidden state at position $`j`$
@@ -45,7 +55,8 @@ Where:
 - $`T_x`$: length of the input sequence
 - $`\alpha_{ij}`$: attention weight for position $`j`$ when generating output at position $`i`$
 
-> **Common Pitfall:** Forgetting to mask out padding tokens in the attention computation can lead to incorrect context vectors.
+> **Common Pitfall:**
+> Forgetting to mask out padding tokens in the attention computation can lead to incorrect context vectors.
 
 #### Step-by-Step Derivation
 
@@ -61,13 +72,23 @@ The most common form of attention used in transformers:
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 ```
 
+> **Math Breakdown:**
+> - $Q$: Query matrix (what we're looking for)
+> - $K$: Key matrix (what's available)
+> - $V$: Value matrix (the information)
+> - $d_k$: Dimension of the keys (used for scaling)
+> - $QK^T$: Similarity between queries and keys
+> - $\text{softmax}$: Converts similarities to probabilities (attention weights)
+> - The output is a weighted sum of the values $V$.
+
 Where:
 - $`Q`$: query matrix
 - $`K`$: key matrix
 - $`V`$: value matrix
 - $`d_k`$: dimension of the keys
 
-> **Try it yourself!** Compute the attention output for a small $`Q`$, $`K`$, $`V`$ by hand to see how the weights are distributed.
+> **Try it yourself!**
+> Compute the attention output for a small $Q$, $K$, $V$ by hand to see how the weights are distributed.
 
 ## Python Implementation
 
@@ -100,7 +121,9 @@ class BasicAttention(nn.Module):
         return context, attention_weights
 ```
 
-> **Code Commentary:** The context vector is a weighted sum of encoder outputs, where the weights are learned dynamically for each output step.
+> **Code Walkthrough:**
+> - The context vector is a weighted sum of encoder outputs, where the weights are learned dynamically for each output step.
+> - The mask ensures that padding tokens do not contribute to the context.
 
 ### Scaled Dot-Product Attention
 
@@ -120,7 +143,10 @@ class ScaledDotProductAttention(nn.Module):
         return output, attention_weights
 ```
 
-> **Key Insight:** Scaling by $`\sqrt{d_k}`$ prevents the softmax from becoming too sharp for large $`d_k`$.
+> **Code Walkthrough:**
+> - Computes similarity between queries and keys, scales by $\sqrt{d_k}$, and applies softmax to get attention weights.
+> - The output is a weighted sum of the values $V$.
+> - The mask can be used to ignore certain positions (e.g., padding).
 
 ### Multi-Head Attention
 
