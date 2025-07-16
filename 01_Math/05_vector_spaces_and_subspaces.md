@@ -15,13 +15,26 @@ Formally, a vector space $`V`$ over $`\mathbb{R}`$ (the real numbers) satisfies:
 - **Additive inverse:** For every $`\mathbf{v}`$, there is $`-\mathbf{v}`$ such that $`\mathbf{v} + (-\mathbf{v}) = \mathbf{0}`$.
 - **Distributive, associative, and commutative properties** (see any linear algebra text for full list).
 
+**Intuition:**
+- A vector space is like a "playground" where you can add vectors and scale them, and you never leave the playground.
+- Examples: $`\mathbb{R}^2`$ (the plane), $`\mathbb{R}^3`$ (3D space), the set of all $`n`$-dimensional real vectors, the set of all polynomials, the set of all $`m \times n`$ matrices.
+- Non-examples: The set of all vectors with positive entries (not closed under scalar multiplication by negative numbers).
+
 ---
 
 ## Subspaces
 
 A **subspace** is a subset of a vector space that is itself a vector space (with the same operations).
 
+**How to check if $`W`$ is a subspace of $`V`$:**
+1. $`\mathbf{0} \in W`$
+2. If $`\mathbf{u}, \mathbf{v} \in W`$, then $`\mathbf{u} + \mathbf{v} \in W`$
+3. If $`\mathbf{v} \in W`$ and $`c \in \mathbb{R}`$, then $`c\mathbf{v} \in W`$
+
 **Example:** The set of all vectors in $`\mathbb{R}^3`$ where the third component is zero forms a subspace (the $`xy`$-plane).
+
+**Visualization:**
+- In $`\mathbb{R}^3`$, subspaces are lines through the origin, planes through the origin, or the whole space.
 
 ---
 
@@ -37,6 +50,14 @@ implies $`c_1 = c_2 = \cdots = c_n = 0`$.
 
 If not, the vectors are **linearly dependent** (at least one can be written as a combination of the others).
 
+**Intuition:**
+- Linearly independent vectors "point in new directions"—none can be built from the others.
+- If you can write one as a combination of the others, they are dependent.
+
+**Example:**
+- $`[1, 0, 0], [0, 1, 0], [0, 0, 1]`$ in $`\mathbb{R}^3`$ are independent.
+- $`[1, 2], [2, 4]`$ in $`\mathbb{R}^2`$ are dependent (second is a multiple of the first).
+
 ---
 
 ## Basis and Dimension
@@ -44,6 +65,11 @@ If not, the vectors are **linearly dependent** (at least one can be written as a
 A **basis** of a vector space is a set of linearly independent vectors that span the space (every vector in the space can be written as a combination of basis vectors).
 
 The **dimension** of a vector space is the number of vectors in any basis.
+
+**Example:**
+- The standard basis for $`\mathbb{R}^3`$ is $`[1,0,0], [0,1,0], [0,0,1]`$.
+- Any three independent vectors in $`\mathbb{R}^3`$ form a basis.
+- The dimension of $`\mathbb{R}^3`$ is 3.
 
 ---
 
@@ -72,6 +98,10 @@ else:
     print("Vectors are linearly dependent")
 ```
 
+**Visualization:**
+- In 2D, plot two vectors. If they are not multiples of each other, they are independent.
+- In 3D, three vectors are independent if they do not all lie in the same plane.
+
 ---
 
 ## Why Vector Spaces and Subspaces Matter in Deep Learning
@@ -79,5 +109,7 @@ else:
 - **Feature spaces**: Data is represented as vectors in high-dimensional spaces.
 - **Hidden layers**: Each layer in a neural network transforms data into a new subspace.
 - **Understanding capacity**: The dimension of a space relates to the expressive power of a model.
+- **Embeddings**: Word embeddings, image embeddings, etc., live in vector spaces.
 
-Grasping vector spaces and subspaces is key to understanding the structure and power of deep learning models! 
+**Summary:**
+Grasping vector spaces and subspaces is key to understanding the structure and power of deep learning models! They provide the language for all data, features, and learned representations. 
