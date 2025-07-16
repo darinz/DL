@@ -21,9 +21,13 @@ A comprehensive guide to understanding different network topologies and how they
 
 ## Introduction
 
+> **Intuition:** The topology of a neural network is like the blueprint of a city—it determines how information (traffic) flows, where shortcuts exist, and how efficiently different parts can communicate.
+
 Network topology defines how layers and neurons are connected, determining the flow of information and the types of patterns the network can learn. Different topologies are suited for different types of data and tasks.
 
 ### What is Network Topology?
+
+> **Annotation:** The way neurons and layers are connected encodes assumptions about the data. For example, convolutional layers assume spatial locality, while recurrent layers assume temporal dependencies.
 
 Network topology refers to:
 - **Connection patterns** between layers and neurons
@@ -46,13 +50,20 @@ Network topology refers to:
 > **Key Insight:**
 > The choice of topology is crucial: it encodes assumptions about the data (e.g., images have spatial structure, text has sequence, etc.) and can dramatically affect learning efficiency and generalization.
 
+> **Common Pitfall:**
+> Using the wrong topology for your data (e.g., fully connected layers for images) can lead to poor performance and inefficiency.
+
 ---
 
 ## Fully Connected Layers
 
+> **Intuition:** Fully connected layers are like a social network where everyone is friends with everyone else—maximum flexibility, but not always efficient!
+
 Fully connected (dense) layers are the most basic topology where every neuron connects to all neurons in adjacent layers.
 
 ### Mathematical Representation
+
+> **Annotation:** Each output neuron computes a weighted sum of all inputs, adds a bias, and applies an activation function. This is the most general form of a neural layer.
 
 For a fully connected layer with $`n`$ inputs and $`m`$ outputs:
 
@@ -72,7 +83,11 @@ Where:
 2. Sum the weighted inputs and add the bias $`b_j`$.
 3. Apply the activation function $`f()`$ to get the output $`y_j`$.
 
+> **Intuition:** This is like every student in a class voting on every decision—lots of input, but not always the most efficient way to get things done!
+
 ### Matrix Form
+
+> **Annotation:** Matrix notation allows for efficient computation and is the foundation for deep learning libraries like NumPy, PyTorch, and TensorFlow.
 
 ```math
 \mathbf{y} = f(\mathbf{W}\mathbf{x} + \mathbf{b})
@@ -93,6 +108,9 @@ Where:
 
 ### Characteristics
 
+> **Key Insight:**
+> Fully connected layers are powerful but can be wasteful for data with structure (like images or sequences). Use them wisely!
+
 **Advantages:**
 - **Maximum flexibility**: Can learn any input-output mapping
 - **Simple implementation**: Straightforward forward and backward passes
@@ -108,6 +126,8 @@ Where:
 > Using fully connected layers for high-dimensional data (like images) leads to huge parameter counts and overfitting. Use convolutional layers for spatial data!
 
 ### Implementation
+
+> **Annotation:** The code below shows both a NumPy and a PyTorch implementation. Notice how PyTorch makes it easy to stack layers and add activations.
 
 ```python
 import numpy as np
@@ -229,7 +249,6 @@ def fully_connected_example():
 
 # Run example
 fully_connected_example()
-```
 
 > **Try it yourself!**
 > Change the number of layers or neurons and see how the parameter count and output shapes change. Try using different activation functions and observe their effect on the network's outputs.
@@ -238,9 +257,13 @@ fully_connected_example()
 
 ## Convolutional Layers
 
+> **Intuition:** Convolutional layers are like a team of detectives, each focusing on a small patch of the image to find clues. By sharing parameters, they efficiently detect patterns regardless of position.
+
 Convolutional layers are designed to exploit spatial locality and translation invariance in data, commonly used for image processing.
 
 ### Mathematical Foundation
+
+> **Annotation:** The convolution operation slides a small filter (kernel) over the input, computing a weighted sum at each position. This captures local patterns and enables parameter sharing.
 
 #### 2D Convolution
 
