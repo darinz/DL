@@ -48,6 +48,8 @@ A perceptron is a mathematical model that:
 
 ## Mathematical Foundation
 
+> **Intuition:** The perceptron is like a judge who listens to several witnesses (inputs), weighs their testimonies (weights), and then makes a decision (output) based on whether the total evidence crosses a certain threshold (bias).
+
 ### Basic Structure
 
 A perceptron with $`n`$ inputs can be represented mathematically as:
@@ -65,8 +67,11 @@ Where:
 
 #### Step-by-Step Calculation
 1. **Weighted Sum**: Multiply each input $`x_i`$ by its weight $`w_i`$ and sum them all: $`\sum_{i=1}^{n} w_i x_i`$
+   - *Annotation:* This is like adding up the influence of each input, considering how important (weighty) each one is.
 2. **Add Bias**: Add the bias $`b`$ to the sum.
+   - *Annotation:* The bias shifts the decision boundary, allowing the perceptron to make decisions even when all inputs are zero.
 3. **Activation**: Apply the activation function $`f()`$ to the result.
+   - *Annotation:* This is the final decision step—should the perceptron "fire" or not?
 
 #### Geometric Interpretation
 The perceptron computes a weighted sum of the inputs and compares it to a threshold. This is equivalent to drawing a hyperplane in the input space:
@@ -74,6 +79,8 @@ The perceptron computes a weighted sum of the inputs and compares it to a thresh
 - All points on the other side are classified as 0.
 
 ### Activation Function
+
+> **Annotation:** The step function is a hard threshold. In practice, this means the perceptron makes a sharp, all-or-nothing decision. Later neural networks use smoother functions to allow for gradient-based learning.
 
 The most common activation function for perceptrons is the **step function** (also called the Heaviside function):
 
@@ -88,6 +95,8 @@ f(x) = \begin{cases}
 > The step function is *not differentiable* at $`x = 0`$, which is why more advanced neural networks use differentiable activation functions (like sigmoid or ReLU) for gradient-based optimization.
 
 ### Decision Boundary
+
+> **Intuition:** Imagine drawing a line on a piece of paper to separate red dots from blue dots. The perceptron tries to find the best line (or plane/hyperplane) to do this.
 
 The perceptron creates a linear decision boundary in the input space:
 
@@ -105,6 +114,8 @@ This equation defines a hyperplane that separates the input space into two regio
 > If you plot the data points and the decision boundary, the perceptron tries to adjust the weights so that all points of one class are on one side of the line, and all points of the other class are on the other side.
 
 ### Vector Notation
+
+> **Annotation:** Vector notation is not just mathematical elegance—it allows for efficient computation on modern hardware (think GPUs and matrix libraries like NumPy, PyTorch, TensorFlow).
 
 Using vector notation, the perceptron can be written more compactly:
 
@@ -126,6 +137,8 @@ Where:
 ---
 
 ## Biological Inspiration
+
+> **Intuition:** The perceptron is a mathematical cartoon of a real neuron. While real neurons are vastly more complex, the analogy helps us understand why neural networks are so powerful.
 
 The perceptron is inspired by the structure and function of biological neurons in the brain. Understanding this analogy helps demystify why neural networks are called "neural" in the first place!
 
@@ -152,6 +165,8 @@ A biological neuron consists of:
 
 #### Firing Mechanism
 
+> **Annotation:** The threshold in a biological neuron is like a minimum voltage needed to trigger a signal. In the perceptron, it's the bias.
+
 A biological neuron fires (produces an output) when the sum of incoming signals exceeds a threshold. This is modeled mathematically as:
 
 ```math
@@ -167,6 +182,8 @@ A biological neuron fires (produces an output) when the sum of incoming signals 
 ---
 
 ## Perceptron Learning Algorithm
+
+> **Intuition:** The perceptron learns by trial and error. If it makes a mistake, it tweaks its weights to be less wrong next time. This is the essence of all machine learning!
 
 The perceptron learning algorithm is a simple, yet powerful, iterative method for finding the optimal weights and bias that allow the perceptron to correctly classify training data.
 
@@ -187,6 +204,8 @@ The perceptron learning algorithm is a simple, yet powerful, iterative method fo
 > If the data is *not* linearly separable (e.g., XOR problem), the perceptron will never converge—no matter how many iterations you run!
 
 ### Weight Update Rule
+
+> **Annotation:** The update rule is simple but powerful. If the perceptron gets the answer wrong, it adjusts its weights in the direction that would have made the correct answer more likely.
 
 The weight update rule is:
 
@@ -209,6 +228,8 @@ w_1^{\text{new}} = 0.2 + 0.1 \times (1 - 0) \times 0.5 = 0.25
 
 ### Bias Update Rule
 
+> **Annotation:** The bias update is like shifting the decision boundary up or down (or left/right in higher dimensions).
+
 Similarly, the bias is updated as:
 
 ```math
@@ -216,6 +237,8 @@ b^{\text{new}} = b^{\text{old}} + \alpha \cdot (y_{\text{target}} - y_{\text{pre
 ```
 
 ### Convergence
+
+> **Intuition:** If you can draw a straight line that separates your data, the perceptron will eventually find it. If not, it will keep searching forever!
 
 The perceptron algorithm converges if the data is **linearly separable**. This means there exists a hyperplane that perfectly separates the two classes.
 
@@ -225,6 +248,8 @@ The perceptron algorithm converges if the data is **linearly separable**. This m
 ---
 
 ## Implementation in Python
+
+> **Annotation:** Let's walk through the code step by step. Comments are added to clarify each part.
 
 Let's break down a basic implementation of the perceptron in Python, step by step.
 
@@ -243,16 +268,16 @@ class Perceptron:
             learning_rate (float): Step size for weight updates
             max_iterations (int): Maximum number of training iterations
         """
-        self.learning_rate = learning_rate
-        self.max_iterations = max_iterations
-        self.weights = None
-        self.bias = None
-        self.training_history = []
+        self.learning_rate = learning_rate  # How much to change weights on each mistake
+        self.max_iterations = max_iterations  # How many times to go through the data
+        self.weights = None  # Will be initialized later
+        self.bias = None  # Will be initialized later
+        self.training_history = []  # Track errors for visualization
     
     def initialize_weights(self, n_features):
         """Initialize weights and bias to small random values"""
-        self.weights = np.random.randn(n_features) * 0.01
-        self.bias = 0.0
+        self.weights = np.random.randn(n_features) * 0.01  # Small random weights
+        self.bias = 0.0  # Start bias at zero
     
     def predict(self, X):
         """
@@ -264,10 +289,10 @@ class Perceptron:
         Returns:
             np.array: Binary predictions (0 or 1)
         """
-        # Compute weighted sum
+        # Compute weighted sum (dot product)
         linear_output = np.dot(X, self.weights) + self.bias
         
-        # Apply step function
+        # Apply step function (threshold at 0)
         predictions = (linear_output > 0).astype(int)
         
         return predictions
@@ -305,7 +330,7 @@ class Perceptron:
                 if prediction != y[i]:
                     errors += 1
                     
-                    # Update weights and bias
+                    # Update weights and bias (move towards correct answer)
                     error = y[i] - prediction
                     self.weights += self.learning_rate * error * X[i]
                     self.bias += self.learning_rate * error
@@ -483,6 +508,8 @@ class EnhancedPerceptron(Perceptron):
 
 ## Limitations and Extensions
 
+> **Common Pitfall:** The perceptron cannot solve problems where the classes are not linearly separable (e.g., XOR). This is a fundamental limitation, not a bug!
+
 ### The XOR Problem
 
 The most famous limitation of the perceptron is its inability to solve the XOR (exclusive OR) problem.
@@ -497,6 +524,8 @@ The most famous limitation of the perceptron is its inability to solve the XOR (
 | 1       | 1       | 0      |
 
 #### Why XOR Cannot Be Solved
+
+> **Intuition:** No matter how you draw a line, you can't separate the XOR outputs. This is why we need more complex networks!
 
 - The XOR problem is **not linearly separable**. No single straight line (or hyperplane) can separate the points (0,1) and (1,0) from (0,0) and (1,1).
 - The perceptron can only create a linear decision boundary, so it fails on this task.
@@ -541,6 +570,9 @@ demonstrate_xor_limitation()
 The XOR problem can be solved by using multiple perceptrons arranged in layers—a **multi-layer perceptron (MLP)**.
 
 #### How Does an MLP Solve XOR?
+
+> **Annotation:** By stacking perceptrons in layers, the network can create new features in the hidden layer that make the problem linearly separable for the output layer.
+
 - The hidden layer allows the network to create intermediate representations that are not linearly separable in the original input space, but are separable after transformation.
 - Each neuron in the hidden layer can learn to detect a different pattern (e.g., $`x_1 \text{ OR } x_2`$, $`x_1 \text{ AND NOT } x_2`$, etc.), and the output neuron combines these to solve XOR.
 
@@ -595,7 +627,7 @@ class MultiLayerPerceptron:
         """Backward propagation"""
         m = X.shape[1]
         
-        # Compute gradients
+        # Compute gradients (difference between prediction and target)
         delta = self.activations[-1] - y.reshape(-1, 1)
         
         for i in range(len(self.weights) - 1, -1, -1):
@@ -666,6 +698,8 @@ test_xor_with_mlp()
 
 ## Historical Context
 
+> **Did you know?** The perceptron was once so famous that it made the cover of the New York Times in 1958!
+
 ### Timeline of Development
 
 1. **1943 - McCulloch-Pitts Neuron**: Warren McCulloch and Walter Pitts created the first mathematical model of a neuron, showing that simple logical functions could be computed by networks of artificial neurons.
@@ -701,9 +735,13 @@ The perceptron's limitations led to the "AI Winter" of the 1970s, but also paved
 
 ## Practical Examples
 
+> **Try it yourself!** Run these code examples and tweak the data or parameters to see how the perceptron behaves. This is the best way to build intuition!
+
 Let's see the perceptron in action on some classic problems.
 
 ### Example 1: AND Gate
+
+> **Annotation:** The AND gate is a classic example of a linearly separable problem. The perceptron should always succeed here.
 
 The AND gate outputs 1 only if both inputs are 1. This is a linearly separable problem.
 
@@ -740,6 +778,8 @@ and_gate_example()
 
 ### Example 2: OR Gate
 
+> **Annotation:** The OR gate is also linearly separable. The perceptron should learn this quickly.
+
 The OR gate outputs 1 if either input is 1. This is also linearly separable.
 
 ```python
@@ -773,6 +813,8 @@ or_gate_example()
 - The decision boundary will separate (0,0) from the other points.
 
 ### Example 3: Simple Classification Problem
+
+> **Annotation:** This example shows how the perceptron works on real-valued, 2D data. Try changing the cluster centers or adding noise to see what happens!
 
 Let's try a more realistic example with synthetic data.
 
@@ -818,6 +860,8 @@ simple_classification_example()
 ---
 
 ## Summary
+
+> **Key Takeaway:** The perceptron is simple, powerful for linearly separable problems, and foundational for all of deep learning. Its limitations are just as important as its strengths!
 
 The perceptron is the fundamental building block of neural networks, providing:
 
