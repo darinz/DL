@@ -8,33 +8,33 @@ Modern deep learning training requires sophisticated optimization techniques to 
 
 ## Topics Covered
 
-### 1. Mixed Precision Training
+### 1. [Mixed Precision Training](01_mixed_precision_training.md)
 - **FP16/BF16 Training**: Using lower precision formats to reduce memory usage and accelerate training
 - **Automatic Mixed Precision (AMP)**: Dynamic precision scaling for optimal performance
 - **Numerical Stability**: Handling underflow and overflow in reduced precision
 - **Implementation Strategies**: PyTorch AMP, TensorFlow mixed precision
 
-### 2. Gradient Accumulation
+### 2. [Gradient Accumulation](02_gradient_accumulation.md)
 - **Large Batch Training**: Simulating large batch sizes with limited memory
 - **Memory Efficiency**: Training with effective large batches on constrained hardware
 - **Implementation Patterns**: Accumulating gradients across multiple forward/backward passes
 - **Batch Size Scaling**: Relationship between accumulation steps and effective batch size
 
-### 3. Distributed Training
+### 3. [Distributed Training](03_distributed_training.md)
 - **Data Parallelism**: Distributing data across multiple devices/workers
 - **Model Parallelism**: Splitting model across devices for very large models
 - **Pipeline Parallelism**: Sequential processing across device stages
 - **Communication Strategies**: AllReduce, AllGather, and other collective operations
 - **Frameworks**: PyTorch Distributed, Horovod, TensorFlow Distribution Strategies
 
-### 4. Federated Learning
+### 4. [Federated Learning](04_federated_learning.md)
 - **Privacy-Preserving Training**: Training on decentralized data without sharing raw data
 - **Client-Server Architecture**: Coordinating training across multiple parties
 - **Aggregation Strategies**: FedAvg, FedProx, and other federated averaging methods
 - **Communication Efficiency**: Reducing communication rounds and bandwidth usage
 - **Robustness**: Handling stragglers and Byzantine attacks
 
-### 5. Knowledge Distillation
+### 5. [Knowledge Distillation](05_knowledge_distillation.md)
 - **Teacher-Student Framework**: Transferring knowledge from large to small models
 - **Soft Targets**: Using probability distributions instead of hard labels
 - **Temperature Scaling**: Controlling the softness of teacher predictions
@@ -130,10 +130,10 @@ Modern deep learning training requires sophisticated optimization techniques to 
 ## Getting Started
 
 1. **Single Device Training**: Master basic training loops and optimization
-2. **Mixed Precision**: Implement FP16/BF16 training for memory efficiency
-3. **Gradient Accumulation**: Scale to larger effective batch sizes
-4. **Multi-GPU Training**: Implement data parallelism
-5. **Distributed Training**: Scale across multiple machines
-6. **Advanced Techniques**: Explore federated learning and knowledge distillation
+2. **[Mixed Precision](01_mixed_precision_training.md)**: Implement FP16/BF16 training for memory efficiency
+3. **[Gradient Accumulation](02_gradient_accumulation.md)**: Scale to larger effective batch sizes
+4. **[Distributed Training](03_distributed_training.md)**: Scale across multiple machines
+5. **[Federated Learning](04_federated_learning.md)**: Explore privacy-preserving training
+6. **[Knowledge Distillation](05_knowledge_distillation.md)**: Learn model compression techniques
 
 This section provides the foundation for understanding and implementing advanced optimization techniques in deep learning, enabling efficient training of large-scale models across diverse computational environments. 
