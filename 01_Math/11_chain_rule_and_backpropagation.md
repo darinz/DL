@@ -4,46 +4,85 @@
 
 ---
 
-## Chain Rule for Single Variable Functions
+## 1. Chain Rule for Single Variable Functions
 
-For composite functions $`f(g(x))`$:
+The **chain rule** tells us how to differentiate composite functions. If $`y = f(g(x))`$:
 
 ```math
-\frac{d}{dx}f(g(x)) = f'(g(x)) \cdot g'(x)
+\frac{dy}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
+
+- This means: to find how $`y`$ changes with $`x`$, multiply how $`y`$ changes with $`g`$ by how $`g`$ changes with $`x`$.
+
+### Example
+
+Let $`f(u) = u^2`$, $`u = 3x + 1`$.
+- $`\frac{df}{du} = 2u`$, $`\frac{du}{dx} = 3`$
+- $`\frac{df}{dx} = 2u \cdot 3 = 6u = 6(3x+1)`$
 
 ---
 
-## Chain Rule for Multivariable Functions
+## 2. Chain Rule for Multivariable Functions
 
-For $`f(x_1, x_2, \ldots, x_n)`$ where each $`x_i`$ depends on $`t`$:
+Suppose $`f(x_1, x_2, ..., x_n)`$ and each $`x_i`$ depends on $`t`$:
 
 ```math
 \frac{df}{dt} = \sum_{i=1}^{n} \frac{\partial f}{\partial x_i} \cdot \frac{dx_i}{dt}
 ```
 
+- This generalizes the chain rule to functions of many variables.
+- Each path from $`t`$ to $`f`$ contributes a term.
+
+### Example
+
+Let $`f(x, y) = x^2 + y^2`$, $`x = t^2`$, $`y = \sin t`$.
+- $`\frac{\partial f}{\partial x} = 2x`$, $`\frac{dx}{dt} = 2t`$
+- $`\frac{\partial f}{\partial y} = 2y`$, $`\frac{dy}{dt} = \cos t`$
+- $`\frac{df}{dt} = 2x \cdot 2t + 2y \cdot \cos t = 4t^3 + 2\sin t \cos t`$
+
 ---
 
-## Matrix Form of Chain Rule
+## 3. Matrix Form of the Chain Rule
 
-In neural networks, the chain rule is often expressed in matrix form:
+In neural networks, we often deal with vectors and matrices. The chain rule can be written in matrix notation:
 
 ```math
 \frac{\partial L}{\partial W} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W}
 ```
 
+- $`L`$ is the loss, $`y`$ is the output, $`W`$ is a weight matrix.
+- This expresses how the loss changes with respect to the weights, via the output.
+
 ---
 
-## Backpropagation in Neural Networks
+## 4. Backpropagation in Neural Networks
 
-Backpropagation is the algorithm for efficiently computing gradients in neural networks using the chain rule.
+**Backpropagation** is the algorithm for efficiently computing gradients in neural networks using the chain rule.
 
 - It propagates the error backward from the output layer to the input layer.
 - At each layer, it applies the chain rule to compute gradients with respect to weights and biases.
+- This enables efficient training of deep networks.
+
+### Step-by-Step Intuition
+
+1. **Forward pass:** Compute outputs layer by layer.
+2. **Compute loss:** Measure how far output is from target.
+3. **Backward pass:**
+   - Compute gradient of loss with respect to output.
+   - Use chain rule to propagate gradients backward through each layer.
+   - At each layer, compute gradients with respect to weights and biases.
+4. **Update parameters:** Use gradients to adjust weights (e.g., via gradient descent).
+
+### Example: Two-Layer Neural Network
+
+Let $`a = \sigma(Wx + b)`$, $`y = \sigma(Va + c)`$, $`L = \frac{1}{2}(y - t)^2`$.
+- Compute $`\frac{\partial L}{\partial V}`$, $`\frac{\partial L}{\partial W}`$, etc., using the chain rule.
 
 ---
 
-## Python Implementation: Chain Rule and Backpropagation
+## 5. Python Implementation: Chain Rule and Backpropagation
+
+Let's see a simple neural network and how backpropagation applies the chain rule at each layer.
 
 ```python
 import numpy as np
@@ -60,6 +99,7 @@ class SimpleNeuralNetwork:
         return 1 / (1 + np.exp(-x))
     
     def sigmoid_derivative(self, x):
+        # x is already sigmoid(x)
         return x * (1 - x)
     
     def forward(self, X):
@@ -73,11 +113,11 @@ class SimpleNeuralNetwork:
     def backward(self, X, y, learning_rate=0.1):
         m = X.shape[0]
         # Output layer
-        dz2 = self.a2 - y
+        dz2 = self.a2 - y  # dL/da2 * da2/dz2
         dW2 = (self.a1.T @ dz2) / m
         db2 = np.sum(dz2, axis=0) / m
         # Hidden layer
-        dz1 = (dz2 @ self.W2.T) * self.sigmoid_derivative(self.a1)
+        dz1 = (dz2 @ self.W2.T) * self.sigmoid_derivative(self.a1)  # chain rule
         dW1 = (X.T @ dz1) / m
         db1 = np.sum(dz1, axis=0) / m
         # Update weights
@@ -116,12 +156,35 @@ for i, (x, pred) in enumerate(zip(test_X, test_predictions)):
     print(f"Input: {x}, Prediction: {pred[0]:.4f}")
 ```
 
+**Code Annotations:**
+- The `backward` method applies the chain rule at each layer to compute gradients.
+- Gradients are used to update weights and biases.
+- The loss decreases as the network learns.
+
 ---
 
-## Why the Chain Rule and Backpropagation Matter in Deep Learning
+## 6. Why the Chain Rule and Backpropagation Matter in Deep Learning
 
-- **Training**: Backpropagation is the core algorithm for training neural networks.
-- **Efficiency**: The chain rule allows efficient computation of gradients for complex models.
-- **Understanding**: Knowing how gradients flow helps debug and design better architectures.
+- **Training:** Backpropagation is the core algorithm for training neural networks.
+- **Efficiency:** The chain rule allows efficient computation of gradients for complex models.
+- **Understanding:** Knowing how gradients flow helps debug and design better architectures.
+- **Gradient checking:** Numerical gradients can verify backpropagation implementations.
 
-Mastering the chain rule and backpropagation is essential for building and training deep learning models! 
+### Example: Gradient Descent Step
+
+Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
+- Compute $`\frac{\partial L}{\partial w}`$ and $`\frac{\partial L}{\partial b}`$ using the chain rule.
+- Update: $`w \leftarrow w - \eta \frac{\partial L}{\partial w}`$, $`b \leftarrow b - \eta \frac{\partial L}{\partial b}`$
+
+---
+
+## 7. Summary
+
+- The chain rule is the backbone of gradient computation in deep learning.
+- Backpropagation applies the chain rule efficiently to train neural networks.
+- Mastery of these concepts is essential for building and understanding deep models.
+
+**Further Reading:**
+- [Chain Rule (Wikipedia)](https://en.wikipedia.org/wiki/Chain_rule)
+- [Backpropagation (Wikipedia)](https://en.wikipedia.org/wiki/Backpropagation)
+- [Neural Network Training](https://www.deeplearningbook.org/contents/ml.html) 
