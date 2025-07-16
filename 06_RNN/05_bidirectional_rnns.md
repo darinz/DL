@@ -18,6 +18,9 @@ A bidirectional RNN consists of two separate RNN layers:
 
 The outputs from both directions are typically combined (concatenated, added, or averaged) to produce the final representation.
 
+> **Explanation:**
+> Bidirectional RNNs allow each position in a sequence to access both past and future context, leading to richer representations and improved performance on many sequence tasks. This is especially useful in tasks like language modeling, where the meaning of a word can depend on both previous and subsequent words.
+
 #### Geometric/Visual Explanation
 
 Imagine reading a sentence both forwards and backwards. At each word, you have information from both the words before and after, allowing for a more complete understanding of context.
@@ -32,24 +35,31 @@ For a bidirectional RNN, the forward and backward passes are defined as:
 h_t = [\overrightarrow{h}_t, \overleftarrow{h}_t] \quad \text{(Combined representation)}
 ```
 
-Where:
-- $`\overrightarrow{h}_t`$: forward hidden state at time $`t`$
-- $`\overleftarrow{h}_t`$: backward hidden state at time $`t`$
-- $`h_t`$: combined bidirectional representation
-- $`f`$: activation function (e.g., $`\tanh`$ for vanilla RNN, or the gating mechanism for LSTM/GRU)
+> **Math Breakdown:**
+> - $\overrightarrow{h}_t$: Hidden state from the forward RNN at time $t$
+> - $\overleftarrow{h}_t$: Hidden state from the backward RNN at time $t$
+> - $f$: Activation function (e.g., $\tanh$ for vanilla RNN, or the gating mechanism for LSTM/GRU)
+> - $h_t$: Combined representation (often concatenation of forward and backward states)
 
-> **Common Pitfall:** When using bidirectional RNNs for tasks like language modeling or real-time prediction, be careful: you cannot use future information in these settings.
+Where:
+- $x_t$: Input at time $t$
+- $W_{\overrightarrow{h}}, W_{\overrightarrow{x}}, b_{\overrightarrow{h}}$: Weights and bias for forward RNN
+- $W_{\overleftarrow{h}}, W_{\overleftarrow{x}}, b_{\overleftarrow{h}}$: Weights and bias for backward RNN
+
+> **Common Pitfall:**
+> When using bidirectional RNNs for tasks like language modeling or real-time prediction, be careful: you cannot use future information in these settings.
 
 #### Step-by-Step Derivation
 
 1. **Forward Pass:**
-   - Computes $`\overrightarrow{h}_t`$ using information from the past.
+   - Computes $\overrightarrow{h}_t$ using information from the past.
 2. **Backward Pass:**
-   - Computes $`\overleftarrow{h}_t`$ using information from the future.
+   - Computes $\overleftarrow{h}_t$ using information from the future.
 3. **Combine:**
-   - $`h_t = [\overrightarrow{h}_t, \overleftarrow{h}_t]`$ (concatenation)
+   - $h_t = [\overrightarrow{h}_t, \overleftarrow{h}_t]$ (concatenation)
 
-> **Try it yourself!** For a short sequence, manually compute the forward and backward hidden states and combine them to see how context is aggregated.
+> **Explanation:**
+> The combined representation at each time step contains information from both directions, enabling the model to make more informed predictions.
 
 ## Python Implementation
 
@@ -100,7 +110,10 @@ class BidirectionalRNN(nn.Module):
         return outputs, (h_forward, h_backward)
 ```
 
-> **Code Commentary:** The forward and backward RNNs process the sequence in opposite directions. Their outputs are concatenated at each time step, providing a full context window.
+> **Code Walkthrough:**
+> - The forward and backward RNNs process the sequence in opposite directions.
+> - Their outputs are concatenated at each time step, providing a full context window.
+> - The final output layer combines the information from both directions for prediction.
 
 ### Using PyTorch's Built-in Bidirectional RNN
 
