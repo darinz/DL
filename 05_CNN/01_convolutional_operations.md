@@ -26,8 +26,10 @@ Convolutional operations are the fundamental building blocks of Convolutional Ne
 
 The discrete convolution operation combines two functions to produce a third function that expresses how the shape of one is modified by the other. In the context of CNNs, we convolve an input feature map with a learnable kernel.
 
+> **Explanation:**
+> In CNNs, a convolution operation slides a small matrix (the kernel or filter) over the input image, computing a weighted sum at each position. This allows the network to detect local patterns such as edges, textures, or shapes.
+
 > **Did you know?**
-> 
 > In deep learning libraries, the operation called "convolution" is usually cross-correlation! The kernel is not flipped as in true mathematical convolution.
 
 ### Mathematical Formulation
@@ -38,11 +40,12 @@ For a 2D input $`I`$ and kernel $`K`$, the convolution operation is defined as:
 (I * K)(i, j) = \sum_{m} \sum_{n} I(i + m, j + n) \cdot K(m, n)
 ```
 
-Where:
-- $`I`$ is the input feature map of size $`H \times W`$
-- $`K`$ is the convolutional kernel of size $`F \times F`$
-- $`(i, j)`$ are the output coordinates
-- $`(m, n)`$ are the kernel coordinates
+> **Math Breakdown:**
+> - $I$ is the input image or feature map.
+> - $K$ is the kernel (filter) matrix.
+> - $(i, j)$ are the coordinates in the output feature map.
+> - $(m, n)$ are the coordinates in the kernel.
+> - For each output position $(i, j)$, the kernel is overlaid on the input, and the sum of elementwise products is computed.
 
 ### Visual Understanding
 
@@ -55,8 +58,10 @@ Input:          Kernel:         Output:
 └─────────┘
 ```
 
+> **Explanation:**
+> The kernel slides over the input, and at each position, the sum of the elementwise products is the output value. This is how features are detected.
+
 > **Try it yourself!**
-> 
 > Change the kernel values and see how the output changes. Try edge detectors, blurring kernels, or random values!
 
 ---
@@ -77,10 +82,12 @@ In deep learning, we often use cross-correlation instead of true convolution:
 (I * K)(i, j) = \sum_{m} \sum_{n} I(i - m, j - n) \cdot K(m, n)
 ```
 
-The difference is in the sign of the indices. For symmetric kernels, both operations produce the same result.
+> **Math Breakdown:**
+> - In cross-correlation, the kernel is not flipped; in true convolution, it is.
+> - For symmetric kernels, both operations are equivalent.
+> - Most deep learning frameworks use cross-correlation for efficiency and simplicity.
 
 > **Common Pitfall:**
-> 
 > If you use a non-symmetric kernel, cross-correlation and convolution will give different results. Most deep learning frameworks use cross-correlation by default.
 
 ### Convolution as Matrix Multiplication
@@ -93,8 +100,10 @@ y = \text{vec}(I * K) = C \cdot \text{vec}(I)
 
 Where $`C`$ is the convolution matrix constructed from the kernel $`K`$.
 
+> **Explanation:**
+> This formulation allows convolutions to be implemented efficiently using matrix multiplication routines (like GEMM), which are highly optimized on modern hardware.
+
 > **Key Insight:**
-> 
 > Expressing convolution as matrix multiplication allows for efficient implementation using highly optimized BLAS libraries (like GEMM).
 
 ---
