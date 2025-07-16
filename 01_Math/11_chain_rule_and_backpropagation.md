@@ -6,39 +6,48 @@
 
 ## 1. Chain Rule for Single Variable Functions
 
-The **chain rule** tells us how to differentiate composite functions. If $`y = f(g(x))`$:
+The **chain rule** tells us how to differentiate composite functions. If $y = f(g(x))$:
 
 ```math
 \frac{dy}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
-- This means: to find how $`y`$ changes with $`x`$, multiply how $`y`$ changes with $`g`$ by how $`g`$ changes with $`x`$.
+- This means: to find how $y$ changes with $x$, multiply how $y$ changes with $g$ by how $g$ changes with $x$.
+
+**Step-by-step:**
+- Differentiate the outer function with respect to the inner function.
+- Multiply by the derivative of the inner function with respect to $x$.
 
 ### Example
 
-Let $`f(u) = u^2`$, $`u = 3x + 1`$.
-- $`\frac{df}{du} = 2u`$, $`\frac{du}{dx} = 3`$
-- $`\frac{df}{dx} = 2u \cdot 3 = 6u = 6(3x+1)`$
+Let $f(u) = u^2$, $u = 3x + 1$.
+- $\frac{df}{du} = 2u$, $\frac{du}{dx} = 3$
+- $\frac{df}{dx} = 2u \cdot 3 = 6u = 6(3x+1)$
 
 ---
 
 ## 2. Chain Rule for Multivariable Functions
 
-Suppose $`f(x_1, x_2, ..., x_n)`$ and each $`x_i`$ depends on $`t`$:
+Suppose $f(x_1, x_2, ..., x_n)$ and each $x_i$ depends on $t$:
 
 ```math
 \frac{df}{dt} = \sum_{i=1}^{n} \frac{\partial f}{\partial x_i} \cdot \frac{dx_i}{dt}
 ```
 
 - This generalizes the chain rule to functions of many variables.
-- Each path from $`t`$ to $`f`$ contributes a term.
+- Each path from $t$ to $f$ contributes a term.
+
+**Step-by-step:**
+- Compute the partial derivative of $f$ with respect to each $x_i$.
+- Multiply by the derivative of $x_i$ with respect to $t$.
+- Sum over all $i$.
 
 ### Example
 
-Let $`f(x, y) = x^2 + y^2`$, $`x = t^2`$, $`y = \sin t`$.
-- $`\frac{\partial f}{\partial x} = 2x`$, $`\frac{dx}{dt} = 2t`$
-- $`\frac{\partial f}{\partial y} = 2y`$, $`\frac{dy}{dt} = \cos t`$
-- $`\frac{df}{dt} = 2x \cdot 2t + 2y \cdot \cos t = 4t^3 + 2\sin t \cos t`$
+Let $f(x, y) = x^2 + y^2$, $x = t^2$, $y = \sin t$.
+- $\frac{\partial f}{\partial x} = 2x$, $\frac{dx}{dt} = 2t$
+- $\frac{\partial f}{\partial y} = 2y$, $\frac{dy}{dt} = \cos t$
+- $\frac{df}{dt} = 2x \cdot 2t + 2y \cdot \cos t = 4t^3 + 2\sin t \cos t$
 
 ---
 
@@ -50,8 +59,13 @@ In neural networks, we often deal with vectors and matrices. The chain rule can 
 \frac{\partial L}{\partial W} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W}
 ```
 
-- $`L`$ is the loss, $`y`$ is the output, $`W`$ is a weight matrix.
+- $L$ is the loss, $y$ is the output, $W$ is a weight matrix.
 - This expresses how the loss changes with respect to the weights, via the output.
+
+**Step-by-step:**
+- Compute the gradient of the loss with respect to the output.
+- Compute the gradient of the output with respect to the weights.
+- Multiply to get the gradient of the loss with respect to the weights.
 
 ---
 
@@ -73,10 +87,15 @@ In neural networks, we often deal with vectors and matrices. The chain rule can 
    - At each layer, compute gradients with respect to weights and biases.
 4. **Update parameters:** Use gradients to adjust weights (e.g., via gradient descent).
 
+**Step-by-step (for each layer):**
+- Compute the local gradient (derivative of activation function).
+- Multiply by the gradient flowing from the next layer (chain rule).
+- Use the result to update weights and biases.
+
 ### Example: Two-Layer Neural Network
 
-Let $`a = \sigma(Wx + b)`$, $`y = \sigma(Va + c)`$, $`L = \frac{1}{2}(y - t)^2`$.
-- Compute $`\frac{\partial L}{\partial V}`$, $`\frac{\partial L}{\partial W}`$, etc., using the chain rule.
+Let $a = \sigma(Wx + b)$, $y = \sigma(Va + c)$, $L = \frac{1}{2}(y - t)^2$.
+- Compute $\frac{\partial L}{\partial V}$, $\frac{\partial L}{\partial W}$, etc., using the chain rule.
 
 ---
 
@@ -160,6 +179,9 @@ for i, (x, pred) in enumerate(zip(test_X, test_predictions)):
 - The `backward` method applies the chain rule at each layer to compute gradients.
 - Gradients are used to update weights and biases.
 - The loss decreases as the network learns.
+- The chain rule is used in `dz1` to propagate gradients from the output layer to the hidden layer.
+
+> **Tip:** Try changing the network size or activation function to see how learning changes!
 
 ---
 
@@ -172,9 +194,11 @@ for i, (x, pred) in enumerate(zip(test_X, test_predictions)):
 
 ### Example: Gradient Descent Step
 
-Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
-- Compute $`\frac{\partial L}{\partial w}`$ and $`\frac{\partial L}{\partial b}`$ using the chain rule.
-- Update: $`w \leftarrow w - \eta \frac{\partial L}{\partial w}`$, $`b \leftarrow b - \eta \frac{\partial L}{\partial b}`$
+Suppose our loss is $L(w, b) = (wx + b - y)^2$ for a single data point.
+- Compute $\frac{\partial L}{\partial w}$ and $\frac{\partial L}{\partial b}$ using the chain rule.
+- Update: $w \leftarrow w - \eta \frac{\partial L}{\partial w}$, $b \leftarrow b - \eta \frac{\partial L}{\partial b}$
+
+> **Tip:** Understanding the chain rule helps you debug vanishing/exploding gradients and design better architectures.
 
 ---
 
@@ -183,6 +207,8 @@ Suppose our loss is $`L(w, b) = (wx + b - y)^2`$ for a single data point.
 - The chain rule is the backbone of gradient computation in deep learning.
 - Backpropagation applies the chain rule efficiently to train neural networks.
 - Mastery of these concepts is essential for building and understanding deep models.
+
+> **Summary:** Mastering the chain rule and backpropagation is essential for anyone working in deep learning!
 
 **Further Reading:**
 - [Chain Rule (Wikipedia)](https://en.wikipedia.org/wiki/Chain_rule)
