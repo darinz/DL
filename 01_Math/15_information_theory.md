@@ -25,16 +25,23 @@ H(X) = -\sum_{x} p(x) \log p(x)
 
 - **Intuition:** Entropy quantifies the unpredictability of a random variable. Higher entropy means more uncertainty.
 - **Units:** Bits (if log base 2) or nats (if natural log).
+- **Deep Learning Relevance:** Entropy underlies the concept of information content and is foundational for loss functions like cross-entropy.
 
 #### Example
 - A fair coin ($`p(H) = p(T) = 0.5`$): $`H(X) = 1`$ bit (maximum uncertainty)
 - A biased coin ($`p(H) = 0.9, p(T) = 0.1`$): $`H(X) < 1`$ bit (less uncertainty)
 
+> **Analogy:**
+> - Entropy is like the "surprise" you get when you see the outcome. If you always expect heads, but get tails, that's surprising!
+
 ### Properties of Entropy
 
-1. **Non-negativity:** $`H(X) \geq 0`$
+1. **Non-negativity:** $`H(X) \geq 0`$ (entropy can't be negative)
 2. **Maximum entropy:** For $`n`$ outcomes, maximum entropy is $`\log n`$ (achieved with uniform distribution)
 3. **Additivity:** For independent $`X`$ and $`Y`$: $`H(X,Y) = H(X) + H(Y)`$
+
+> **Tip:**
+> - Maximum entropy means maximum uncertainty (e.g., a fair die). Minimum entropy (zero) means no uncertainty (e.g., always the same outcome).
 
 ### Conditional Entropy
 
@@ -43,6 +50,7 @@ The entropy of $`X`$ given $`Y`$:
 H(X|Y) = -\sum_{x, y} p(x, y) \log p(x|y)
 ```
 - Measures the remaining uncertainty in $`X`$ after knowing $`Y`$.
+- **Deep Learning Relevance:** Conditional entropy is related to how much information is left after observing another variable (e.g., label given input).
 
 ### Python Implementation: Entropy
 
@@ -52,8 +60,13 @@ import matplotlib.pyplot as plt
 from scipy.stats import entropy
 
 def calculate_entropy(probabilities):
-    """Calculate Shannon entropy"""
-    # Remove zero probabilities to avoid log(0)
+    """Calculate Shannon entropy
+    Args:
+        probabilities: array-like, probabilities of outcomes (should sum to 1)
+    Returns:
+        Entropy in bits (log base 2)
+    """
+    # Remove zero probabilities to avoid log(0) (which is undefined)
     probs = probabilities[probabilities > 0]
     return -np.sum(probs * np.log2(probs))
 
@@ -63,7 +76,7 @@ def entropy_examples():
     uniform_probs = np.array([0.25, 0.25, 0.25, 0.25])
     uniform_entropy = calculate_entropy(uniform_probs)
     
-    # Skewed distribution
+    # Skewed distribution (one outcome much more likely)
     skewed_probs = np.array([0.8, 0.1, 0.05, 0.05])
     skewed_entropy = calculate_entropy(skewed_probs)
     
@@ -72,9 +85,9 @@ def entropy_examples():
     deterministic_entropy = calculate_entropy(deterministic_probs)
     
     print("Entropy Examples:")
-    print(f"Uniform distribution: {uniform_entropy:.3f} bits")
-    print(f"Skewed distribution: {skewed_entropy:.3f} bits")
-    print(f"Deterministic distribution: {deterministic_entropy:.3f} bits")
+    print(f"Uniform distribution: {uniform_entropy:.3f} bits (max uncertainty)")
+    print(f"Skewed distribution: {skewed_entropy:.3f} bits (less uncertainty)")
+    print(f"Deterministic distribution: {deterministic_entropy:.3f} bits (no uncertainty)")
     
     # Visualize
     plt.figure(figsize=(12, 4))
@@ -101,6 +114,8 @@ entropy_examples()
 **Code Annotations:**
 - Calculates and visualizes entropy for different distributions.
 - Shows how entropy changes with uniformity and skewness.
+- Avoids log(0) by removing zero probabilities (important for numerical stability).
+- **Try it:** Change the probabilities to see how entropy changes!
 
 ---
 
@@ -113,8 +128,12 @@ entropy_examples()
 ```math
 H(p, q) = -\sum_{x} p(x) \log q(x)
 ```
-- Used as a loss function in classification tasks.
-- Lower cross-entropy means $`q`$ is closer to $`p`$.
+- Used as a loss function in classification tasks (e.g., softmax output vs. true labels).
+- Lower cross-entropy means $`q`$ is closer to $`p`$ (better model predictions).
+- **Deep Learning Relevance:** Cross-entropy is the standard loss for classification because it directly measures how well the predicted probabilities match the true distribution.
+
+> **Analogy:**
+> - Cross-entropy is like asking: "How many bits do I need to encode the true data if I use my model's predictions?"
 
 ### Kullback-Leibler (KL) Divergence
 
@@ -126,6 +145,11 @@ D_{KL}(p \| q) = \sum_{x} p(x) \log \frac{p(x)}{q(x)}
 - $`D_{KL}(p \| q) \geq 0`$ (non-negative)
 - $`D_{KL}(p \| q) = 0`$ if and only if $`p = q`$
 - Not symmetric: $`D_{KL}(p \| q) \neq D_{KL}(q \| p)`$
+- **Deep Learning Relevance:** KL divergence is used in variational autoencoders (VAEs), regularization, and to measure how much the model diverges from the true distribution.
+
+> **Pitfall:**
+> - KL is not a true distance: $`D_{KL}(p \| q) \neq D_{KL}(q \| p)`$.
+> - If $q(x) = 0$ where $p(x) > 0$, KL divergence is infinite (model must assign nonzero probability to all true outcomes).
 
 ### Relationship
 
@@ -142,14 +166,26 @@ D_{KL}(p \| q) = H(p, q) - H(p)
 
 ```python
 def cross_entropy(p, q):
-    """Calculate cross-entropy between distributions p and q"""
-    # Ensure no zero probabilities
+    """Calculate cross-entropy between distributions p and q
+    Args:
+        p: true distribution (array-like)
+        q: predicted distribution (array-like)
+    Returns:
+        Cross-entropy in bits
+    """
+    # Ensure no zero probabilities for numerical stability
     p = np.maximum(p, 1e-10)
     q = np.maximum(q, 1e-10)
     return -np.sum(p * np.log2(q))
 
 def kl_divergence(p, q):
-    """Calculate KL divergence from p to q"""
+    """Calculate KL divergence from p to q
+    Args:
+        p: true distribution (array-like)
+        q: predicted distribution (array-like)
+    Returns:
+        KL divergence in bits
+    """
     # Ensure no zero probabilities
     p = np.maximum(p, 1e-10)
     q = np.maximum(q, 1e-10)
@@ -207,6 +243,8 @@ cross_entropy_examples()
 **Code Annotations:**
 - Calculates and visualizes cross-entropy and KL divergence for different prediction scenarios.
 - Shows how loss increases as predictions diverge from the true distribution.
+- Ensures numerical stability by avoiding log(0).
+- **Try it:** Change the predicted distributions to see how the loss changes!
 
 ---
 
@@ -220,12 +258,16 @@ cross_entropy_examples()
 I(X; Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
 ```
 - Quantifies how much knowing $`Y`$ reduces uncertainty about $`X`$.
+- **Deep Learning Relevance:** Mutual information is used in representation learning, feature selection, and understanding how much information about the input is preserved in the learned representation.
 
 ### Properties
 
 1. **Non-negativity:** $`I(X; Y) \geq 0`$
 2. **Symmetry:** $`I(X; Y) = I(Y; X)`$
 3. **Independence:** $`I(X; Y) = 0`$ if and only if $`X`$ and $`Y`$ are independent
+
+> **Analogy:**
+> - Mutual information is like the overlap in a Venn diagram: how much two variables "share" in terms of information.
 
 #### Example
 - If $`X`$ and $`Y`$ are perfectly correlated, $`I(X; Y)`$ is maximized.
@@ -235,7 +277,12 @@ I(X; Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
 
 ```python
 def mutual_information(p_xy):
-    """Calculate mutual information from joint distribution p_xy"""
+    """Calculate mutual information from joint distribution p_xy
+    Args:
+        p_xy: 2D array, joint probability distribution of X and Y
+    Returns:
+        Mutual information in bits
+    """
     # Calculate marginal distributions
     p_x = np.sum(p_xy, axis=1)
     p_y = np.sum(p_xy, axis=0)
@@ -316,6 +363,8 @@ mutual_information_example()
 **Code Annotations:**
 - Calculates and visualizes mutual information for correlated variables.
 - Shows how mutual information increases with correlation.
+- Demonstrates the relationship between joint and marginal distributions.
+- **Try it:** Change the correlation coefficient to see how MI changes!
 
 ---
 
@@ -334,14 +383,17 @@ Information theory is deeply integrated into deep learning:
   1. Maximize mutual information with the target (retain relevant information)
   2. Minimize mutual information with the input (compress irrelevant information)
 - Guides the design of efficient and robust representations.
+- **Deep Learning Relevance:** The information bottleneck explains why deep networks can learn compressed, generalizable features.
 
 ### Feature Selection
 
 - **Mutual Information:** Used to select features that share the most information with the target variable.
+- **Tip:** Features with high mutual information with the target are more useful for prediction.
 
 ### Uncertainty Quantification
 
 - **Entropy:** Measures model uncertainty and confidence in predictions.
+- **Pitfall:** High entropy means the model is unsure; low entropy means confident predictions (but not necessarily correct!).
 
 ### Python Implementation: Deep Learning Applications
 
@@ -352,7 +404,9 @@ from sklearn.metrics import log_loss
 
 # Cross-entropy loss for classification
 def classification_loss_example():
-    """Demonstrate cross-entropy loss for classification"""
+    """Demonstrate cross-entropy loss for classification
+    Shows how loss increases as predictions diverge from the true label.
+    """
     # True labels (one-hot encoded)
     y_true = np.array([
         [1, 0, 0],  # Class 0
@@ -413,7 +467,9 @@ def classification_loss_example():
 
 # Information bottleneck example
 def information_bottleneck_example():
-    """Simple information bottleneck demonstration"""
+    """Simple information bottleneck demonstration
+    Shows how mutual information can be used to analyze feature relevance and redundancy.
+    """
     # Generate data with some redundancy
     np.random.seed(42)
     n_samples = 1000
@@ -491,9 +547,11 @@ information_bottleneck_example()
 ```
 
 **Code Annotations:**
+- Calculates and visualizes mutual information for correlated variables.
 - Demonstrates cross-entropy loss for classification with different prediction qualities.
 - Shows information bottleneck analysis with mutual information between features and targets.
 - Visualizes feature redundancy and relevance.
+- **Try it:** Change the feature correlations or prediction probabilities to see how the results change!
 
 ---
 
