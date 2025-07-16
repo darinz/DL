@@ -22,9 +22,13 @@ A comprehensive guide to understanding skip connections, the architectural innov
 
 ## Introduction
 
+> **Intuition:** Skip connections are like express lanes on a highway, allowing information and gradients to bypass traffic jams (bottlenecks) in deep networks.
+
 Skip connections (also called residual connections) allow information to flow directly from earlier layers to later layers, addressing the vanishing gradient problem and enabling training of very deep networks.
 
 ### What are Skip Connections?
+
+> **Annotation:** Skip connections are a simple yet powerful idea: let information flow directly from earlier to later layers, making deep networks easier to train and more accurate.
 
 Skip connections:
 - **Direct paths**: Allow information to bypass intermediate layers
@@ -47,11 +51,18 @@ Skip connections:
 > **Key Insight:**
 > Skip connections are the key innovation that made it possible to train neural networks with hundreds of layers, leading to breakthroughs in computer vision and beyond.
 
+> **Common Pitfall:**
+> Not all skip connections are created equal! The way you add, concatenate, or gate the skip path can have a big impact on performance.
+
 ---
 
 ## The Vanishing Gradient Problem
 
+> **Intuition:** The vanishing gradient problem is like trying to shout a message through a long tunnel—by the time it reaches the other end, it's barely audible. Skip connections provide a direct line for the message.
+
 ### Understanding the Problem
+
+> **Annotation:** The gradient shrinks as it passes through each layer, especially with saturating activations or poor initialization. This makes it hard for early layers to learn.
 
 In deep networks, gradients can become extremely small during backpropagation, making early layers learn very slowly or not at all.
 
@@ -87,6 +98,8 @@ If each layer's derivative $`\frac{\partial h^{(i)}}{\partial h^{(i-1)}}`$ is le
 > The vanishing gradient problem was a major obstacle to training deep networks until the introduction of skip connections and better initialization methods.
 
 ### Demonstration
+
+> **Annotation:** The code below simulates how gradients shrink as they pass through many layers. Try changing the number of layers or the per-layer derivative to see the effect.
 
 ```python
 import numpy as np
@@ -127,6 +140,8 @@ demonstrate_vanishing_gradients()
 
 ## Residual Networks (ResNet)
 
+> **Intuition:** Instead of forcing each layer to learn a completely new transformation, ResNet lets the layer focus on learning the "difference" (residual) from the identity. This makes learning easier and more stable.
+
 ### Core Idea
 
 Instead of learning $`H(x)`$, learn the residual $`F(x) = H(x) - x`$, where $`H(x)`$ is the desired underlying mapping.
@@ -145,11 +160,15 @@ Where:
 - $`x`$: Identity mapping (skip connection)
 - $`y`$: Output
 
+> **Intuition:** If the best thing to do is nothing, the network can easily learn to pass the input through unchanged. The residual path only needs to learn the difference from the identity.
+
 **Why does this help?**
 - If the optimal mapping is the identity, the residual is zero, and the network can simply pass the input through.
 - The skip connection provides a direct path for gradients, improving training of deep networks.
 
 ### Residual Block
+
+> **Annotation:** The residual block is the fundamental building unit of ResNet. It consists of a main path (transformations) and a skip path (identity or projection).
 
 A residual block consists of:
 
@@ -177,6 +196,8 @@ Where $`f()`$ is the activation function (typically ReLU).
 > ResNet was the first architecture to successfully train networks with over 100 layers, winning the 2015 ImageNet competition and inspiring a new generation of deep models.
 
 ### Implementation
+
+> **Annotation:** The code below implements a basic residual block in PyTorch. Notice how the skip connection is added to the main path before the final activation.
 
 ```python
 import torch
@@ -240,6 +261,8 @@ class ResidualBlock(nn.Module):
 ---
 
 ## Highway Networks
+
+> **Intuition:** Highway networks use gates to decide how much information should take the skip path versus the main path, like toll booths on a highway.
 
 ### Concept
 
