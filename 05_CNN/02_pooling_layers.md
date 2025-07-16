@@ -565,7 +565,7 @@ Pooling layers are crucial components in CNNs that:
 | Pooling Type         | Key Formula / Idea                                              | Benefit                        |
 |---------------------|----------------------------------------------------------------|---------------------------------|
 | Max Pooling         | $`\max_{(m,n) \in R_{i,j}} x_{m,n}`$                            | Strongest feature, invariance   |
-| Average Pooling     | $`\frac{1}{|R_{i,j}|} \sum x_{m,n}`$                            | Smoothing, noise reduction      |
+| Average Pooling     | $`\frac{1}{\|R_{i,j}\|} \sum x_{m,n}`$                            | Smoothing, noise reduction      |
 | Global Avg/Max      | $`\frac{1}{HW} \sum x_{i,j,c}`$, $`\max x_{i,j,c}`$             | Feature aggregation             |
 | Fractional/Lp/Mixed | Flexible, learnable, or probabilistic pooling                   | Custom behavior, regularization |
 
