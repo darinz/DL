@@ -25,8 +25,10 @@ The evolution of Convolutional Neural Network architectures has been driven by t
 
 LeNet-5, developed by Yann LeCun and colleagues, was the first successful CNN for digit recognition. It demonstrated the potential of convolutional networks for pattern recognition tasks.
 
+> **Explanation:**
+> LeNet-5 was a breakthrough in using neural networks for image recognition, showing that convolutional layers could automatically learn features from raw pixels, outperforming hand-crafted features.
+
 > **Did you know?**
-> 
 > LeNet-5 was used to read millions of handwritten checks in the 1990s!
 
 ### Architecture Overview
@@ -36,6 +38,9 @@ Input (32x32) → Conv1 (6@28x28) → Pool1 (6@14x14) → Conv2 (16@10x10) →
 Pool2 (16@5x5) → Conv3 (120@1x1) → FC1 (84) → FC2 (10) → Output
 ```
 
+> **Explanation:**
+> The input image is processed through a series of convolutional and pooling layers, extracting increasingly abstract features, before being classified by fully connected layers.
+
 ### Mathematical Formulation
 
 **Convolutional Layer:**
@@ -43,10 +48,21 @@ Pool2 (16@5x5) → Conv3 (120@1x1) → FC1 (84) → FC2 (10) → Output
 y_{i,j,k} = \sum_{c=1}^{C_{in}} \sum_{m=0}^{F-1} \sum_{n=0}^{F-1} x_{i+m,j+n,c} \cdot w_{m,n,c,k} + b_k
 ```
 
+> **Math Breakdown:**
+> - $x_{i+m,j+n,c}$: Input value at position $(i+m, j+n)$ in channel $c$
+> - $w_{m,n,c,k}$: Weight for kernel position $(m, n)$, input channel $c$, output channel $k$
+> - $b_k$: Bias for output channel $k$
+> - $y_{i,j,k}$: Output value at position $(i, j)$ in channel $k$
+
 **Pooling Layer:**
 ```math
 y_{i,j,k} = \max_{(m,n) \in R_{i,j}} x_{m,n,k}
 ```
+
+> **Math Breakdown:**
+> - $R_{i,j}$: Pooling window centered at $(i, j)$
+> - $x_{m,n,k}$: Input values in the window for channel $k$
+> - $y_{i,j,k}$: Output value after pooling
 
 ### Implementation
 
@@ -103,6 +119,11 @@ print(f"Input shape: {sample_input.shape}")
 print(f"Output shape: {output.shape}")
 ```
 
+> **Code Walkthrough:**
+> - The model processes the input through convolutional and pooling layers, then flattens the output for fully connected layers.
+> - Tanh activations are used, as in the original LeNet-5.
+> - The output is a vector of class scores.
+
 ### Key Features
 
 - **7 layers**: 2 convolutional + 2 pooling + 3 fully connected
@@ -111,7 +132,6 @@ print(f"Output shape: {output.shape}")
 - **Non-linear activation**: Tanh activation functions
 
 > **Key Insight:**
-> 
 > LeNet-5 introduced the idea of local receptive fields, weight sharing, and subsampling—concepts that are still fundamental in modern CNNs.
 
 ---
@@ -122,8 +142,10 @@ print(f"Output shape: {output.shape}")
 
 AlexNet, developed by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton, won the ImageNet 2012 competition and marked the beginning of the deep learning revolution in computer vision.
 
+> **Explanation:**
+> AlexNet was a major leap in CNN design, using deeper networks, ReLU activations, and dropout regularization to achieve breakthrough performance on large-scale image classification.
+
 > **Did you know?**
-> 
 > AlexNet was trained on two GPUs in parallel—a major innovation at the time!
 
 ### Architecture Overview
@@ -134,12 +156,18 @@ Pool2 (256@13x13) → Conv3 (384@13x13) → Conv4 (384@13x13) → Conv5 (256@13x
 Pool3 (256@6x6) → FC1 (4096) → FC2 (4096) → FC3 (1000) → Output
 ```
 
+> **Explanation:**
+> The network stacks more convolutional and pooling layers, increasing depth and capacity. The use of ReLU and dropout were key to its success.
+
 ### Mathematical Innovations
 
 **ReLU Activation:**
 ```math
 f(x) = \max(0, x)
 ```
+
+> **Math Breakdown:**
+> - ReLU (Rectified Linear Unit) replaces negative values with zero, introducing non-linearity and helping gradients flow in deep networks.
 
 **Dropout Regularization:**
 ```math
@@ -148,6 +176,11 @@ y_i = \begin{cases}
 0 & \text{with probability } p
 \end{cases}
 ```
+
+> **Math Breakdown:**
+> - $x_i$ is the input to a neuron.
+> - $p$ is the dropout probability.
+> - During training, some neurons are randomly set to zero, and the rest are scaled up to maintain the expected sum.
 
 ### Implementation
 
@@ -198,17 +231,11 @@ class AlexNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
-
-# Create model
-model = AlexNet()
-print(model)
-
-# Test with sample input
-sample_input = torch.randn(1, 3, 227, 227)
-output = model(sample_input)
-print(f"Input shape: {sample_input.shape}")
-print(f"Output shape: {output.shape}")
 ```
+
+> **Code Walkthrough:**
+> - The model uses deeper convolutional stacks, ReLU activations, and dropout for regularization.
+> - The output is a vector of class scores for 1000 classes (ImageNet).
 
 ### Key Innovations
 
