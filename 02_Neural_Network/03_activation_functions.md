@@ -21,9 +21,13 @@ A comprehensive guide to understanding activation functions, the key components 
 
 ## Introduction
 
+> **Intuition:** Activation functions are like the "magic ingredient" that lets neural networks learn complex, non-linear relationships. Without them, a neural network would be no more powerful than a single-layer linear model!
+
 Activation functions are mathematical functions applied to the output of neurons in neural networks. They introduce non-linearity, enabling networks to learn complex, non-linear relationships in data.
 
 ### What are Activation Functions?
+
+> **Annotation:** The choice of activation function can dramatically affect how well a neural network learns. Some are better for certain tasks or architectures than others.
 
 Activation functions:
 - Transform the weighted sum of inputs
@@ -46,9 +50,14 @@ Activation functions:
 > **Key Insight:**
 > Without non-linear activation functions, no matter how many layers you stack, the network can only represent linear transformations. Non-linearity is what gives neural networks their power!
 
+> **Common Pitfall:**
+> Choosing an activation function without considering its properties (e.g., vanishing gradients, output range) can lead to poor training or convergence issues.
+
 ---
 
 ## Mathematical Foundation
+
+> **Intuition:** The activation function decides how much signal a neuron should pass on. Think of it as a filter that shapes the neuron's response to its input.
 
 ### Basic Structure
 
@@ -59,6 +68,8 @@ y = f\left(\sum_{i=1}^{n} w_i x_i + b\right) = f(z)
 ```
 
 Where $`z = \sum_{i=1}^{n} w_i x_i + b`$ is the pre-activation value.
+
+> **Annotation:** The pre-activation value $`z`$ is the raw input to the activation function, and $`y = f(z)`$ is the neuron's output.
 
 **Step-by-Step Calculation:**
 1. Compute the weighted sum: $`z = \sum_{i=1}^{n} w_i x_i + b`$
@@ -88,11 +99,13 @@ Where $`z = \sum_{i=1}^{n} w_i x_i + b`$ is the pre-activation value.
 > **Common Pitfall:**
 > Saturating activation functions (like sigmoid and tanh) can cause the vanishing gradient problem, making it hard for the network to learn deep representations.
 
+> **Intuition:** If the gradient is too small, the network learns very slowly or not at all. This is why ReLU and its variants are popular in deep networks.
+
 ---
 
 ## Common Activation Functions
 
-Activation functions each have unique properties that make them suitable for different tasks and architectures. Let's explore the most widely used ones in detail.
+> **Annotation:** Each activation function has its own strengths and weaknesses. The best choice depends on your network architecture and task.
 
 ### 1. ReLU (Rectified Linear Unit)
 
@@ -132,6 +145,8 @@ f'(x) = \begin{cases}
 
 > **Key Insight:**
 > ReLU is the default choice for hidden layers in deep networks due to its simplicity and effectiveness.
+
+> **Annotation:** The derivative of ReLU is simple: 1 for positive inputs, 0 for negative. This makes backpropagation efficient.
 
 #### Implementation
 
@@ -209,6 +224,8 @@ f'(x) = \begin{cases}
 > **Try it yourself!**
 > Experiment with different values of $`\alpha`$ to see how it affects learning and gradient flow.
 
+> **Annotation:** Leaky ReLU is a simple but effective tweak to standard ReLU, especially for deep or sparse networks.
+
 #### Implementation
 
 ```python
@@ -281,6 +298,8 @@ f'(x) = f(x) \cdot (1 - f(x))
 > **Common Pitfall:**
 > Using sigmoid in deep hidden layers can cause gradients to vanish, making training slow or impossible.
 
+> **Annotation:** The sigmoid's output is always positive, which can cause issues for optimization (not zero-centered).
+
 #### Implementation
 
 ```python
@@ -352,6 +371,8 @@ f'(x) = 1 - f(x)^2
 > **Key Insight:**
 > Tanh is often preferred over sigmoid for hidden layers, but still suffers from vanishing gradients in deep networks.
 
+> **Annotation:** Tanh outputs are zero-centered, which can help with optimization compared to sigmoid.
+
 #### Implementation
 
 ```python
@@ -394,7 +415,7 @@ plt.show()
 
 ## Advanced Activation Functions
 
-As deep learning has advanced, new activation functions have been developed to address the limitations of classic ones. Let's explore a few important modern choices.
+> **Annotation:** Modern deep learning has produced many new activation functions designed to address the limitations of classic ones. Swish and GELU are two popular examples.
 
 ### 1. Swish
 
@@ -422,6 +443,8 @@ f'(x) = \sigma(x) + x \cdot \sigma(x) \cdot (1 - \sigma(x)) = \sigma(x) \cdot (1
 
 > **Did you know?**
 > Swish was discovered by neural architecture search at Google and is used in some state-of-the-art models.
+
+> **Annotation:** Swish is self-gated: the output is modulated by the input itself, which can help with gradient flow.
 
 #### Implementation
 
@@ -496,6 +519,8 @@ f(x) \approx 0.5x \left(1 + \tanh\left(\sqrt{\frac{2}{\pi}}(x + 0.044715x^3)\rig
 
 > **Key Insight:**
 > GELU is the default activation in BERT, GPT, and many transformer-based models.
+
+> **Annotation:** GELU uses the normal distribution to decide how much of the input to let through, making it both smooth and effective for deep architectures.
 
 #### Implementation
 
