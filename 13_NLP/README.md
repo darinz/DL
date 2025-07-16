@@ -25,7 +25,7 @@ Natural Language Processing (NLP) is a field at the intersection of computer sci
 - **Autoregressive Generation:**
 
 ```math
-P(x) = \prod_{t=1}^T P(x_t \mid x_{<t})
+P(x) = \prod_{t=1}^T P(x_t \mid x_{\lt t})
 ```
 
 - **Sequence-to-Sequence Models:**
