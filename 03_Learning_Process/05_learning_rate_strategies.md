@@ -21,6 +21,8 @@
 
 ## Introduction
 
+> **Intuition:** The learning rate is like the gas pedal in a car—press too hard and you might crash (diverge), too soft and you'll never reach your destination (slow learning).
+
 ### What is Learning Rate Scheduling?
 
 Learning rate scheduling involves adapting the learning rate $`\eta_t`$ during training based on the current step $`t`$ or epoch. The goal is to:
@@ -53,9 +55,13 @@ Where:
 > **Did you know?**
 > The learning rate is sometimes called the "step size" in optimization literature. In deep learning, "learning rate" is the standard term.
 
+> **Annotation:** The right learning rate schedule can make the difference between a model that converges quickly and one that never learns at all.
+
 ---
 
 ## Fixed Learning Rate
+
+> **Annotation:** Fixed learning rates are simple but rarely optimal. Most modern training uses some form of scheduling.
 
 ### Basic Fixed Learning Rate
 
@@ -82,6 +88,8 @@ class FixedLR:
 ---
 
 ## Step Decay
+
+> **Intuition:** Step decay mimics the way humans learn—make big changes at first, then smaller adjustments as you get closer to the goal.
 
 ### Step Decay Formula
 
@@ -121,6 +129,8 @@ class StepDecay:
 ---
 
 ## Exponential Decay
+
+> **Annotation:** Exponential decay provides a smooth, continuous reduction in learning rate, which can help with fine-tuning and stability.
 
 ### Exponential Decay Formula
 
@@ -165,6 +175,8 @@ class TimeDecay:
 ---
 
 ## Cosine Annealing
+
+> **Intuition:** Cosine annealing lets the learning rate rise and fall in cycles, which can help the optimizer escape local minima and explore the loss landscape.
 
 ### Cosine Annealing Formula
 
@@ -230,6 +242,8 @@ class CosineAnnealingWarmRestarts:
 ---
 
 ## Warmup Strategies
+
+> **Annotation:** Warmup helps prevent instability at the start of training, especially for large models or high learning rates.
 
 ### Why Warmup?
 
