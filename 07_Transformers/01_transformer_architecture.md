@@ -1,10 +1,14 @@
 # Transformer Architecture
 
+> **Key Insight:** The Transformer architecture revolutionized deep learning by replacing recurrence and convolutions with pure attention, enabling efficient parallelization and modeling of long-range dependencies.
+
 The Transformer architecture, introduced by Vaswani et al. (2017), is a deep learning model that relies entirely on attention mechanisms, dispensing with recurrence and convolutions. It has become the foundation for most modern NLP and vision models.
 
 ## 1. Overview
 
 Transformers process input sequences in parallel, allowing for efficient computation and modeling of long-range dependencies. The core building block is the self-attention mechanism.
+
+> **Did you know?** The name "Transformer" comes from the model's ability to transform input sequences into output sequences using only attention and feed-forward layers.
 
 ## 2. Self-Attention Mechanism
 
@@ -23,6 +27,12 @@ The attention scores are computed as:
 ```
 
 where $`d_k`$ is the dimension of the key vectors. This operation allows each position to attend to all others, weighted by similarity.
+
+#### Geometric/Visual Explanation
+
+Imagine each word in a sentence "looking around" at all other words and deciding which ones are most relevant for its own representation. This is what self-attention enables.
+
+> **Common Pitfall:** Forgetting to scale by $`\sqrt{d_k}`$ can cause the softmax to become too sharp or too flat, hurting learning.
 
 ### Python Example: Scaled Dot-Product Attention
 ```python
@@ -43,6 +53,8 @@ output = scaled_dot_product_attention(Q, K, V)
 print(output.shape)  # (2, 4, 8)
 ```
 
+> **Try it yourself!** Change the values of $`Q`$, $`K`$, and $`V`$ and observe how the attention output changes.
+
 ## 3. Multi-Head Attention
 
 Instead of performing a single attention function, the Transformer uses multiple heads to capture information from different representation subspaces:
@@ -52,6 +64,10 @@ Instead of performing a single attention function, the Transformer uses multiple
 ```
 
 where each $`\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)`$ and $`W^O`$ is a learnable output projection.
+
+#### Intuitive Explanation
+
+Each head in multi-head attention can focus on different types of relationships (e.g., syntactic, semantic) in the sequence, making the model more expressive.
 
 ### Python Example: Multi-Head Attention (Simplified)
 ```python
@@ -76,6 +92,8 @@ class MultiHeadAttention(torch.nn.Module):
         return self.W_o(attn)
 ```
 
+> **Did you know?** Multi-head attention is the reason why Transformers can model complex relationships in language and vision tasks.
+
 ## 4. Positional Encoding
 
 Since Transformers lack recurrence, they use positional encodings to inject information about the order of the sequence:
@@ -88,6 +106,10 @@ Since Transformers lack recurrence, they use positional encodings to inject info
 ```
 
 where $`pos`$ is the position and $`i`$ is the dimension.
+
+#### Intuitive Explanation
+
+Positional encoding gives each position in the sequence a unique signature, so the model can distinguish between, for example, the first and last word.
 
 ### Python Example: Positional Encoding
 ```python
@@ -107,6 +129,8 @@ pe = positional_encoding(10, 16)
 print(pe.shape)  # (10, 16)
 ```
 
+> **Try it yourself!** Visualize the positional encodings for different positions and dimensions to see their patterns.
+
 ## 5. Encoder and Decoder Structure
 
 The Transformer consists of an encoder and a decoder, each composed of stacked layers of multi-head attention and feed-forward networks, with layer normalization and residual connections.
@@ -114,8 +138,30 @@ The Transformer consists of an encoder and a decoder, each composed of stacked l
 - **Encoder:** Processes the input sequence and outputs representations for each position.
 - **Decoder:** Generates the output sequence, attending to both previous outputs and encoder outputs.
 
-## 6. Summary
+#### Geometric/Visual Explanation
+
+Think of the encoder as a team of experts, each analyzing the input from a different perspective, and the decoder as a team that generates the output step by step, consulting both the input and what has been generated so far.
+
+> **Common Pitfall:** Forgetting to mask future positions in the decoder's self-attention can cause information leakage during training.
+
+## 6. Summary & Next Steps
 
 The Transformer architecture is highly parallelizable, models long-range dependencies efficiently, and forms the basis for most state-of-the-art models in NLP and vision.
 
-For further details, see the original paper: [Attention Is All You Need](https://arxiv.org/abs/1706.03762) 
+| Component              | Role in Transformer                |
+|------------------------|------------------------------------|
+| Self-attention         | Captures dependencies in sequence  |
+| Multi-head attention   | Models diverse relationships       |
+| Positional encoding    | Injects order information          |
+| Feed-forward layers    | Nonlinear transformation           |
+| Layer normalization    | Stabilizes training                |
+| Residual connections   | Eases optimization                 |
+
+> **Key Insight:** Mastering the Transformer is essential for understanding modern deep learning models like BERT, GPT, and Vision Transformers.
+
+### Next Steps
+- Implement a simple Transformer encoder or decoder from scratch.
+- Explore how masking works in the decoder for autoregressive generation.
+- Read the original paper: [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+
+> **Did you know?** Transformers are now used not just in NLP, but also in computer vision, audio, and even protein folding! 
