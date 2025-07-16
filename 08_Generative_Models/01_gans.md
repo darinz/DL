@@ -16,10 +16,13 @@ The GAN framework is formulated as a minimax game between the generator $`G`$ an
 \min_G \max_D \; V(D, G) = \mathbb{E}_{x \sim p_{\text{data}}(x)} [\log D(x)] + \mathbb{E}_{z \sim p_z(z)} [\log(1 - D(G(z)))]
 ```
 
-- $`p_{\text{data}}(x)`$: Distribution of real data
-- $`p_z(z)`$: Prior distribution (e.g., Gaussian noise)
-- $`G(z)`$: Generator output
-- $`D(x)`$: Probability that $`x`$ is real
+> **Math Breakdown:**
+> - $p_{\text{data}}(x)$: Distribution of real data (e.g., real images).
+> - $p_z(z)$: Prior distribution for the generator's input (e.g., Gaussian noise).
+> - $G(z)$: The generator's output (a fake sample).
+> - $D(x)$: The discriminator's estimate that $x$ is real.
+> - The discriminator tries to maximize the probability of correctly classifying real and fake samples.
+> - The generator tries to minimize the probability that the discriminator correctly identifies its outputs as fake.
 
 #### Step-by-Step Derivation
 
@@ -27,7 +30,11 @@ The GAN framework is formulated as a minimax game between the generator $`G`$ an
 2. **Generator's goal:** Fool the discriminator by generating samples that look real.
 3. **Minimax game:** The generator and discriminator update their parameters in turns, each trying to outsmart the other.
 
-> **Common Pitfall:** If the discriminator becomes too strong, the generator's gradients vanish, making training unstable.
+> **Explanation:**
+> GANs are trained as a two-player game: the generator tries to create realistic data, while the discriminator tries to distinguish real from fake. Training continues until the generator produces data indistinguishable from real data.
+
+> **Common Pitfall:**
+> If the discriminator becomes too strong, the generator's gradients vanish, making training unstable.
 
 ## 3. Training Process
 
@@ -37,6 +44,9 @@ Training alternates between updating the discriminator and the generator:
    - Maximize the probability of assigning the correct label to both real and generated samples.
 2. **Generator step:**
    - Minimize $`\log(1 - D(G(z)))`$ (or maximize $`\log D(G(z))`$ for better gradients).
+
+> **Explanation:**
+> The discriminator and generator are updated in alternating steps. The discriminator learns to distinguish real from fake, while the generator learns to fool the discriminator.
 
 #### Geometric/Visual Explanation
 
@@ -64,7 +74,10 @@ for epoch in range(num_epochs):
         optimizer_G.step()
 ```
 
-> **Code Commentary:** The generator and discriminator are updated in alternating steps, each trying to improve against the other.
+> **Code Walkthrough:**
+> - The discriminator is trained to maximize its ability to distinguish real from fake data.
+> - The generator is trained to maximize the discriminator's error (i.e., to fool it).
+> - The two networks are updated in alternating steps, creating a dynamic adversarial process.
 
 > **Try it yourself!** Modify the loss functions or architectures and observe how GAN training stability changes.
 
@@ -110,7 +123,10 @@ class DCGANGenerator(nn.Module):
         return self.net(z)
 ```
 
-> **Code Commentary:** The generator uses transposed convolutions to upsample the latent vector into an image.
+> **Code Walkthrough:**
+> - The generator uses transposed convolutions (also called deconvolutions) to upsample the latent vector into an image.
+> - Batch normalization and ReLU activations help stabilize training and improve image quality.
+> - The final Tanh activation ensures the output pixel values are in the range [-1, 1].
 
 ## 6. StyleGAN
 
