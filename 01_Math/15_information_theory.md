@@ -13,21 +13,36 @@
 
 ---
 
-## Entropy and Information
+## 1. Entropy and Information
 
 ### Shannon Entropy
 
-Entropy measures the average uncertainty or randomness in a random variable. For a discrete random variable $`X`$ with probability mass function $`p(x)`$:
+**Entropy** measures the average uncertainty or randomness in a random variable. For a discrete random variable $`X`$ with probability mass function $`p(x)`$:
 
 ```math
 H(X) = -\sum_{x} p(x) \log p(x)
 ```
 
+- **Intuition:** Entropy quantifies the unpredictability of a random variable. Higher entropy means more uncertainty.
+- **Units:** Bits (if log base 2) or nats (if natural log).
+
+#### Example
+- A fair coin ($`p(H) = p(T) = 0.5`$): $`H(X) = 1`$ bit (maximum uncertainty)
+- A biased coin ($`p(H) = 0.9, p(T) = 0.1`$): $`H(X) < 1`$ bit (less uncertainty)
+
 ### Properties of Entropy
 
-1. **Non-negativity**: $`H(X) \geq 0`$
-2. **Maximum entropy**: For $`n`$ outcomes, maximum entropy is $`\log n`$ (achieved with uniform distribution)
-3. **Additivity**: For independent $`X`$ and $`Y`$: $`H(X,Y) = H(X) + H(Y)`$
+1. **Non-negativity:** $`H(X) \geq 0`$
+2. **Maximum entropy:** For $`n`$ outcomes, maximum entropy is $`\log n`$ (achieved with uniform distribution)
+3. **Additivity:** For independent $`X`$ and $`Y`$: $`H(X,Y) = H(X) + H(Y)`$
+
+### Conditional Entropy
+
+The entropy of $`X`$ given $`Y`$:
+```math
+H(X|Y) = -\sum_{x, y} p(x, y) \log p(x|y)
+```
+- Measures the remaining uncertainty in $`X`$ after knowing $`Y`$.
 
 ### Python Implementation: Entropy
 
@@ -83,31 +98,45 @@ def entropy_examples():
 entropy_examples()
 ```
 
+**Code Annotations:**
+- Calculates and visualizes entropy for different distributions.
+- Shows how entropy changes with uniformity and skewness.
+
 ---
 
-## Cross-Entropy and KL Divergence
+## 2. Cross-Entropy and KL Divergence
 
 ### Cross-Entropy
 
-Cross-entropy measures the average number of bits needed to encode data from distribution $`p`$ using distribution $`q`$:
+**Cross-entropy** measures the average number of bits needed to encode data from distribution $`p`$ using distribution $`q`$:
 
 ```math
 H(p, q) = -\sum_{x} p(x) \log q(x)
 ```
+- Used as a loss function in classification tasks.
+- Lower cross-entropy means $`q`$ is closer to $`p`$.
 
-### Kullback-Leibler Divergence
+### Kullback-Leibler (KL) Divergence
 
-KL divergence measures the difference between two probability distributions:
+**KL divergence** measures the difference between two probability distributions:
 
 ```math
 D_{KL}(p \| q) = \sum_{x} p(x) \log \frac{p(x)}{q(x)}
 ```
+- $`D_{KL}(p \| q) \geq 0`$ (non-negative)
+- $`D_{KL}(p \| q) = 0`$ if and only if $`p = q`$
+- Not symmetric: $`D_{KL}(p \| q) \neq D_{KL}(q \| p)`$
 
 ### Relationship
 
 ```math
 D_{KL}(p \| q) = H(p, q) - H(p)
 ```
+- KL divergence is the extra entropy (cost) from using $`q`$ instead of $`p`$.
+
+#### Example
+- $`p`$ is the true distribution, $`q`$ is the model's prediction.
+- KL divergence penalizes when $`q`$ assigns low probability to events that actually occur.
 
 ### Python Implementation: Cross-Entropy and KL Divergence
 
@@ -175,23 +204,32 @@ def cross_entropy_examples():
 cross_entropy_examples()
 ```
 
+**Code Annotations:**
+- Calculates and visualizes cross-entropy and KL divergence for different prediction scenarios.
+- Shows how loss increases as predictions diverge from the true distribution.
+
 ---
 
-## Mutual Information
+## 3. Mutual Information
 
 ### Definition
 
-Mutual information measures the amount of information shared between two random variables:
+**Mutual information** measures the amount of information shared between two random variables:
 
 ```math
 I(X; Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
 ```
+- Quantifies how much knowing $`Y`$ reduces uncertainty about $`X`$.
 
 ### Properties
 
-1. **Non-negativity**: $`I(X; Y) \geq 0`$
-2. **Symmetry**: $`I(X; Y) = I(Y; X)`$
-3. **Independence**: $`I(X; Y) = 0`$ if and only if $`X`$ and $`Y`$ are independent
+1. **Non-negativity:** $`I(X; Y) \geq 0`$
+2. **Symmetry:** $`I(X; Y) = I(Y; X)`$
+3. **Independence:** $`I(X; Y) = 0`$ if and only if $`X`$ and $`Y`$ are independent
+
+#### Example
+- If $`X`$ and $`Y`$ are perfectly correlated, $`I(X; Y)`$ is maximized.
+- If $`X`$ and $`Y`$ are independent, $`I(X; Y) = 0`$.
 
 ### Python Implementation: Mutual Information
 
@@ -275,31 +313,35 @@ def mutual_information_example():
 mutual_information_example()
 ```
 
+**Code Annotations:**
+- Calculates and visualizes mutual information for correlated variables.
+- Shows how mutual information increases with correlation.
+
 ---
 
-## Applications in Deep Learning
+## 4. Applications in Deep Learning
+
+Information theory is deeply integrated into deep learning:
 
 ### Loss Functions
 
-#### Cross-Entropy Loss for Classification
+- **Cross-Entropy Loss:** Standard loss for classification, measures the distance between true and predicted distributions.
+- **KL Divergence:** Used in variational autoencoders (VAEs), regularization, and model compression.
 
-```math
-L(y, \hat{y}) = -\sum_{i=1}^{n} y_i \log(\hat{y}_i)
-```
+### Model Compression and Representation Learning
 
-#### Binary Cross-Entropy
+- **Information Bottleneck Principle:**
+  1. Maximize mutual information with the target (retain relevant information)
+  2. Minimize mutual information with the input (compress irrelevant information)
+- Guides the design of efficient and robust representations.
 
-```math
-L(y, \hat{y}) = -y \log(\hat{y}) - (1-y) \log(1-\hat{y})
-```
+### Feature Selection
 
-### Model Compression
+- **Mutual Information:** Used to select features that share the most information with the target variable.
 
-#### Information Bottleneck
+### Uncertainty Quantification
 
-The information bottleneck principle states that a good representation should:
-1. Maximize mutual information with the target
-2. Minimize mutual information with the input
+- **Entropy:** Measures model uncertainty and confidence in predictions.
 
 ### Python Implementation: Deep Learning Applications
 
@@ -448,9 +490,14 @@ classification_loss_example()
 information_bottleneck_example()
 ```
 
+**Code Annotations:**
+- Demonstrates cross-entropy loss for classification with different prediction qualities.
+- Shows information bottleneck analysis with mutual information between features and targets.
+- Visualizes feature redundancy and relevance.
+
 ---
 
-## Summary
+## 5. Summary
 
 Information theory provides fundamental insights for deep learning:
 
