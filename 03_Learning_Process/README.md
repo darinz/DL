@@ -1,5 +1,14 @@
 # Learning Process in Deep Learning
 
+[![Learning Process](https://img.shields.io/badge/Learning%20Process-Training-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![Forward Propagation](https://img.shields.io/badge/Forward%20Propagation-Computation-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Backpropagation](https://img.shields.io/badge/Backpropagation-Gradients-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Loss Functions](https://img.shields.io/badge/Loss%20Functions-Objective-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Optimization](https://img.shields.io/badge/Optimization-Algorithms-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Learning Rate](https://img.shields.io/badge/Learning%20Rate-Scheduling-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Gradient Descent](https://img.shields.io/badge/Gradient%20Descent-SGD-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+[![Adam](https://img.shields.io/badge/Adam-Optimizer-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/03_Learning_Process)
+
 The learning process in deep learning involves the systematic training of neural networks to learn patterns from data. This section covers the fundamental mechanisms that enable neural networks to learn: forward propagation, backward propagation, loss functions, optimization algorithms, and learning rate strategies.
 
 ## Table of Contents
