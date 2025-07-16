@@ -24,7 +24,7 @@ Where $x$ is a sequence of tokens.
 Sequence-to-sequence (seq2seq) models encode an input sequence $x$ to a context vector, then decode it to an output sequence $y$.
 
 ```math
-P(y \mid x) = \prod_{t=1}^{T'} P(y_t \mid y_{<t}, x)
+P(y \mid x) = \prod_{t=1}^{T'} P(y_t \mid y_{\lt t}, x)
 ```
 
 **Explanation:**
