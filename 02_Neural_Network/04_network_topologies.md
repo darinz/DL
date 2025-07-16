@@ -32,6 +32,9 @@ Network topology refers to:
 - **Computational efficiency** considerations
 - **Domain-specific** architectural choices
 
+**Intuitive Explanation:**
+> Think of a neural network as a city. The topology is like the road map: it determines which neighborhoods (layers) are connected, how traffic (information) flows, and whether there are highways (shortcuts, parameter sharing) or just local streets (dense connections).
+
 ### Key Concepts
 
 - **Connectivity**: How neurons are connected to each other
@@ -39,6 +42,9 @@ Network topology refers to:
 - **Spatial Locality**: Exploiting spatial relationships in data
 - **Temporal Dependencies**: Capturing sequential patterns
 - **Attention**: Focusing on relevant parts of input
+
+> **Key Insight:**
+> The choice of topology is crucial: it encodes assumptions about the data (e.g., images have spatial structure, text has sequence, etc.) and can dramatically affect learning efficiency and generalization.
 
 ---
 
@@ -48,18 +54,23 @@ Fully connected (dense) layers are the most basic topology where every neuron co
 
 ### Mathematical Representation
 
-For a fully connected layer with $n$ inputs and $m$ outputs:
+For a fully connected layer with $`n`$ inputs and $`m`$ outputs:
 
 ```math
 y_j = f\left(\sum_{i=1}^{n} w_{ij} x_i + b_j\right), \quad j = 1, 2, \ldots, m
 ```
 
 Where:
-- **$x_i$**: Input values
-- **$w_{ij}$**: Weight from input $i$ to output $j$
-- **$b_j$**: Bias for output $j$
-- **$f()$**: Activation function
-- **$y_j$**: Output values
+- $`x_i`$: Input values
+- $`w_{ij}`$: Weight from input $`i`$ to output $`j`$
+- $`b_j`$: Bias for output $`j`$
+- $`f()`$: Activation function
+- $`y_j`$: Output values
+
+**Step-by-Step Calculation:**
+1. Multiply each input $`x_i`$ by its corresponding weight $`w_{ij}`$ for each output neuron $`j`$.
+2. Sum the weighted inputs and add the bias $`b_j`$.
+3. Apply the activation function $`f()`$ to get the output $`y_j`$.
 
 ### Matrix Form
 
@@ -68,10 +79,17 @@ Where:
 ```
 
 Where:
-- **$\mathbf{W} \in \mathbb{R}^{m \times n}$**: Weight matrix
-- **$\mathbf{x} \in \mathbb{R}^{n}$**: Input vector
-- **$\mathbf{b} \in \mathbb{R}^{m}$**: Bias vector
-- **$\mathbf{y} \in \mathbb{R}^{m}$**: Output vector
+- $`\mathbf{W} \in \mathbb{R}^{m \times n}`$: Weight matrix
+- $`\mathbf{x} \in \mathbb{R}^{n}`$: Input vector
+- $`\mathbf{b} \in \mathbb{R}^{m}`$: Bias vector
+- $`\mathbf{y} \in \mathbb{R}^{m}`$: Output vector
+
+**Why Matrix Form?**
+- Enables efficient computation using matrix multiplication (fast on GPUs)
+- Generalizes easily to multiple layers and batches
+
+> **Did you know?**
+> Fully connected layers are universal approximators: with enough neurons, they can approximate any continuous function. But they are not always efficient!
 
 ### Characteristics
 
@@ -85,6 +103,9 @@ Where:
 - **No parameter sharing**: Each connection has its own weight
 - **No spatial structure**: Treats all inputs equally
 - **Computational cost**: Expensive for large layers
+
+> **Common Pitfall:**
+> Using fully connected layers for high-dimensional data (like images) leads to huge parameter counts and overfitting. Use convolutional layers for spatial data!
 
 ### Implementation
 
@@ -210,6 +231,9 @@ def fully_connected_example():
 fully_connected_example()
 ```
 
+> **Try it yourself!**
+> Change the number of layers or neurons and see how the parameter count and output shapes change. Try using different activation functions and observe their effect on the network's outputs.
+
 ---
 
 ## Convolutional Layers
@@ -220,27 +244,30 @@ Convolutional layers are designed to exploit spatial locality and translation in
 
 #### 2D Convolution
 
-For a 2D input $X$ and kernel $K$:
+For a 2D input $`X`$ and kernel $`K`$:
 
 ```math
 Y_{i,j} = \sum_{m=0}^{k_h-1} \sum_{n=0}^{k_w-1} X_{i+m, j+n} \cdot K_{m,n}
 ```
 
 Where:
-- **$k_h, k_w$**: Kernel height and width
-- **$X_{i,j}$**: Input at position $(i,j)$
-- **$K_{m,n}$**: Kernel weight at position $(m,n)$
-- **$Y_{i,j}$**: Output at position $(i,j)$
+- $`k_h, k_w`$: Kernel height and width
+- $`X_{i,j}`$: Input at position $(i,j)$
+- $`K_{m,n}`$: Kernel weight at position $(m,n)$
+- $`Y_{i,j}`$: Output at position $(i,j)$
+
+**Intuitive Explanation:**
+> Imagine sliding a small window (the kernel) over the input image. At each position, you compute a weighted sum of the pixels under the window. This allows the network to detect local patterns (like edges or textures) regardless of their position.
 
 #### Multiple Channels
 
-For input with $C_{in}$ channels:
+For input with $`C_{in}`$ channels:
 
 ```math
 Y_{i,j,k} = \sum_{c=0}^{C_{in}-1} \sum_{m=0}^{k_h-1} \sum_{n=0}^{k_w-1} X_{i+m, j+n, c} \cdot K_{m,n,c,k}
 ```
 
-Where $k$ indexes the output channels.
+Where $`k`$ indexes the output channels.
 
 ### Key Concepts
 
@@ -259,6 +286,9 @@ Where $k$ indexes the output channels.
 #### 4. Hierarchical Feature Learning
 - Early layers learn low-level features (edges, textures)
 - Later layers learn high-level features (objects, patterns)
+
+> **Key Insight:**
+> Convolutional layers dramatically reduce the number of parameters and exploit the structure of spatial data, making deep learning practical for images and signals.
 
 ### Implementation
 
@@ -338,71 +368,15 @@ class ConvolutionalLayer:
             output[:, k, :, :] += self.biases[k]
         
         return output
-
-# PyTorch implementation
-class ConvolutionalNetwork(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        
-        # Convolutional layers
-        self.features = nn.Sequential(
-            # First conv block
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            
-            # Second conv block
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            
-            # Third conv block
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.AdaptiveAvgPool2d((1, 1))
-        )
-        
-        # Fully connected layers
-        self.classifier = nn.Sequential(
-            nn.Linear(128, 64),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(64, num_classes)
-        )
-    
-    def forward(self, x):
-        x = self.features(x)
-        x = x.view(x.size(0), -1)
-        x = self.classifier(x)
-        return x
-
-def convolutional_example():
-    """Demonstrate convolutional network"""
-    # Create network
-    conv_net = ConvolutionalNetwork()
-    
-    # Count parameters
-    total_params = sum(p.numel() for p in conv_net.parameters())
-    trainable_params = sum(p.numel() for p in conv_net.parameters() if p.requires_grad)
-    
-    print(f"Total parameters: {total_params:,}")
-    print(f"Trainable parameters: {trainable_params:,}")
-    
-    # Test forward pass
-    X = torch.randn(32, 1, 28, 28)  # 32 MNIST images
-    output = conv_net(X)
-    
-    print(f"Input shape: {X.shape}")
-    print(f"Output shape: {output.shape}")
-    
-    # Show feature maps
-    with torch.no_grad():
-        features = conv_net.features(X)
-        print(f"Feature maps shape: {features.shape}")
-
-# Run example
-convolutional_example()
 ```
+
+**Code Walkthrough:**
+- The kernel slides over the input, computing a weighted sum at each position.
+- Parameter sharing means the same kernel is used everywhere, reducing the number of parameters.
+- Padding and stride control the output size and how much the kernel moves at each step.
+
+> **Try it yourself!**
+> Change the kernel size, stride, or padding and observe how the output shape and learned features change.
 
 ---
 
@@ -414,18 +388,21 @@ Recurrent layers are designed to process sequential data by maintaining internal
 
 #### Basic RNN
 
-For input sequence $x^{(1)}, x^{(2)}, \ldots, x^{(T)}$:
+For input sequence $`x^{(1)}, x^{(2)}, \ldots, x^{(T)}`$:
 
 ```math
 h^{(t)} = f(W_h h^{(t-1)} + W_x x^{(t)} + b_h)
 ```
 
 Where:
-- **$h^{(t)}$**: Hidden state at time $t$
-- **$W_h$**: Hidden-to-hidden weight matrix
-- **$W_x$**: Input-to-hidden weight matrix
-- **$b_h$**: Hidden bias
-- **$f()$**: Activation function
+- $`h^{(t)}`$: Hidden state at time $`t`$
+- $`W_h`$: Hidden-to-hidden weight matrix
+- $`W_x`$: Input-to-hidden weight matrix
+- $`b_h`$: Hidden bias
+- $`f()`$: Activation function
+
+**Intuitive Explanation:**
+> At each time step, the RNN combines the current input with its memory of the past (the hidden state), allowing it to process sequences of arbitrary length.
 
 #### LSTM (Long Short-Term Memory)
 
@@ -442,7 +419,11 @@ h^{(t)} &= o^{(t)} \odot \tanh(C^{(t)}) \quad \text{(Hidden state)}
 \end{align}
 ```
 
-Where $\odot$ denotes element-wise multiplication.
+Where $`\odot`$ denotes element-wise multiplication.
+
+**Why LSTM?**
+- Standard RNNs struggle with long-term dependencies due to vanishing/exploding gradients.
+- LSTM gates control what information to keep, forget, or output, enabling learning of long-range patterns.
 
 #### GRU (Gated Recurrent Unit)
 
@@ -456,6 +437,9 @@ r^{(t)} &= \sigma(W_r h^{(t-1)} + U_r x^{(t)} + b_r) \quad \text{(Reset gate)} \
 h^{(t)} &= (1 - z^{(t)}) \odot h^{(t-1)} + z^{(t)} \odot \tilde{h}^{(t)} \quad \text{(Hidden state)}
 \end{align}
 ```
+
+> **Key Insight:**
+> RNNs, LSTMs, and GRUs are the backbone of sequence modeling in NLP, time series, and speech.
 
 ### Implementation
 
@@ -513,84 +497,21 @@ class SimpleRNN:
             outputs.append(y)
         
         return np.array(outputs), np.array(hidden_states)
-
-# PyTorch implementation
-class RNNNetwork(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, output_size, 
-                 rnn_type='lstm', dropout=0.2):
-        super().__init__()
-        
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.rnn_type = rnn_type
-        
-        # RNN layer
-        if rnn_type == 'lstm':
-            self.rnn = nn.LSTM(input_size, hidden_size, num_layers, 
-                              batch_first=True, dropout=dropout)
-        elif rnn_type == 'gru':
-            self.rnn = nn.GRU(input_size, hidden_size, num_layers, 
-                             batch_first=True, dropout=dropout)
-        else:
-            self.rnn = nn.RNN(input_size, hidden_size, num_layers, 
-                             batch_first=True, dropout=dropout)
-        
-        # Output layer
-        self.fc = nn.Linear(hidden_size, output_size)
-    
-    def forward(self, x):
-        # Initialize hidden state
-        batch_size = x.size(0)
-        if self.rnn_type == 'lstm':
-            h0 = torch.zeros(self.num_layers, batch_size, self.hidden_size).to(x.device)
-            c0 = torch.zeros(self.num_layers, batch_size, self.hidden_size).to(x.device)
-            hidden = (h0, c0)
-        else:
-            h0 = torch.zeros(self.num_layers, batch_size, self.hidden_size).to(x.device)
-            hidden = h0
-        
-        # Forward pass through RNN
-        rnn_out, hidden = self.rnn(x, hidden)
-        
-        # Use last time step output
-        out = self.fc(rnn_out[:, -1, :])
-        
-        return out, hidden
-
-def recurrent_example():
-    """Demonstrate recurrent network"""
-    # Create network
-    input_size = 10
-    hidden_size = 50
-    num_layers = 2
-    output_size = 1
-    
-    rnn_net = RNNNetwork(input_size, hidden_size, num_layers, output_size, rnn_type='lstm')
-    
-    # Test forward pass
-    batch_size = 32
-    sequence_length = 20
-    
-    X = torch.randn(batch_size, sequence_length, input_size)
-    output, hidden = rnn_net(X)
-    
-    print(f"Input shape: {X.shape}")
-    print(f"Output shape: {output.shape}")
-    print(f"Hidden state shape: {hidden[0].shape if isinstance(hidden, tuple) else hidden.shape}")
-    
-    # Count parameters
-    total_params = sum(p.numel() for p in rnn_net.parameters())
-    print(f"Total parameters: {total_params:,}")
-
-# Run example
-recurrent_example()
 ```
+
+**Code Walkthrough:**
+- The hidden state $`h^{(t)}`$ acts as memory, carrying information from previous time steps.
+- The same weights are used at every time step (parameter sharing).
+- The output at each step depends on both the current input and the past.
+
+> **Try it yourself!**
+> Feed in a sequence of numbers and see how the RNN's hidden state evolves over time.
 
 ---
 
 ## Attention Mechanisms
 
-Attention mechanisms allow networks to focus on relevant parts of the input when making predictions.
+Attention mechanisms allow networks to focus on relevant parts of the input when making predictions, greatly improving performance on tasks like translation and summarization.
 
 ### Mathematical Foundation
 
@@ -601,10 +522,13 @@ Attention mechanisms allow networks to focus on relevant parts of the input when
 ```
 
 Where:
-- **$Q$**: Query matrix
-- **$K$**: Key matrix
-- **$V$**: Value matrix
-- **$d_k$**: Dimension of keys
+- $`Q`$: Query matrix
+- $`K`$: Key matrix
+- $`V`$: Value matrix
+- $`d_k`$: Dimension of keys
+
+**Intuitive Explanation:**
+> Attention computes a weighted sum of values $`V`$, where the weights are determined by how well the query $`Q`$ matches the keys $`K`$. This allows the model to "attend" to the most relevant information.
 
 #### Multi-Head Attention
 
@@ -618,118 +542,19 @@ Where each head is:
 \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 ```
 
-### Implementation
-
-```python
-class ScaledDotProductAttention(nn.Module):
-    def __init__(self, d_k):
-        super().__init__()
-        self.d_k = d_k
-    
-    def forward(self, Q, K, V, mask=None):
-        """
-        Scaled dot-product attention
-        
-        Args:
-            Q: Query tensor (batch_size, seq_len, d_k)
-            K: Key tensor (batch_size, seq_len, d_k)
-            V: Value tensor (batch_size, seq_len, d_v)
-            mask: Optional mask tensor
-        """
-        # Compute attention scores
-        scores = torch.matmul(Q, K.transpose(-2, -1)) / np.sqrt(self.d_k)
-        
-        # Apply mask if provided
-        if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
-        
-        # Apply softmax
-        attention_weights = F.softmax(scores, dim=-1)
-        
-        # Apply attention to values
-        output = torch.matmul(attention_weights, V)
-        
-        return output, attention_weights
-
-class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, num_heads):
-        super().__init__()
-        assert d_model % num_heads == 0
-        
-        self.d_model = d_model
-        self.num_heads = num_heads
-        self.d_k = d_model // num_heads
-        
-        # Linear projections
-        self.W_q = nn.Linear(d_model, d_model)
-        self.W_k = nn.Linear(d_model, d_model)
-        self.W_v = nn.Linear(d_model, d_model)
-        self.W_o = nn.Linear(d_model, d_model)
-        
-        self.attention = ScaledDotProductAttention(self.d_k)
-    
-    def forward(self, Q, K, V, mask=None):
-        batch_size = Q.size(0)
-        
-        # Linear projections and reshape
-        Q = self.W_q(Q).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        K = self.W_k(K).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        V = self.W_v(V).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        
-        # Apply attention
-        output, attention_weights = self.attention(Q, K, V, mask)
-        
-        # Concatenate heads
-        output = output.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
-        
-        # Final linear projection
-        output = self.W_o(output)
-        
-        return output, attention_weights
-
-def attention_example():
-    """Demonstrate attention mechanism"""
-    # Create attention layer
-    d_model = 64
-    num_heads = 8
-    attention = MultiHeadAttention(d_model, num_heads)
-    
-    # Test forward pass
-    batch_size = 4
-    seq_len = 10
-    
-    Q = torch.randn(batch_size, seq_len, d_model)
-    K = torch.randn(batch_size, seq_len, d_model)
-    V = torch.randn(batch_size, seq_len, d_model)
-    
-    output, attention_weights = attention(Q, K, V)
-    
-    print(f"Query shape: {Q.shape}")
-    print(f"Key shape: {K.shape}")
-    print(f"Value shape: {V.shape}")
-    print(f"Output shape: {output.shape}")
-    print(f"Attention weights shape: {attention_weights.shape}")
-    
-    # Visualize attention weights
-    plt.figure(figsize=(8, 6))
-    plt.imshow(attention_weights[0, 0].detach().numpy(), cmap='viridis')
-    plt.colorbar()
-    plt.title('Attention Weights (First Head, First Sample)')
-    plt.xlabel('Key Position')
-    plt.ylabel('Query Position')
-    plt.show()
-
-# Run example
-attention_example()
-```
+> **Key Insight:**
+> Multi-head attention allows the model to focus on different types of relationships in parallel, capturing richer patterns in the data.
 
 ---
 
 ## Hybrid Architectures
 
-Modern neural networks often combine different topologies to leverage their complementary strengths.
+Modern neural networks often combine different topologies to leverage their complementary strengths. This enables models to handle multi-modal data (e.g., images + text) or to capture both local and global patterns.
 
 ### CNN + RNN (Image Captioning)
+
+**Intuitive Explanation:**
+> The CNN acts as a feature extractor for images, while the RNN generates a sequence (caption) based on those features. This hybrid approach is common in tasks like image captioning, video analysis, and more.
 
 ```python
 class CNNRNN(nn.Module):
@@ -772,40 +597,19 @@ class CNNRNN(nn.Module):
         output = self.fc(lstm_out)
         
         return output
-
-def hybrid_example():
-    """Demonstrate hybrid CNN-RNN architecture"""
-    # Create network
-    vocab_size = 1000
-    embed_size = 256
-    hidden_size = 512
-    num_layers = 2
-    
-    model = CNNRNN(vocab_size, embed_size, hidden_size, num_layers)
-    
-    # Test forward pass
-    batch_size = 4
-    image_size = 224
-    seq_len = 20
-    
-    images = torch.randn(batch_size, 3, image_size, image_size)
-    captions = torch.randint(0, vocab_size, (batch_size, seq_len))
-    
-    output = model(images, captions)
-    
-    print(f"Image shape: {images.shape}")
-    print(f"Caption shape: {captions.shape}")
-    print(f"Output shape: {output.shape}")
-    
-    # Count parameters
-    total_params = sum(p.numel() for p in model.parameters())
-    print(f"Total parameters: {total_params:,}")
-
-# Run example
-hybrid_example()
 ```
 
+> **Key Insight:**
+> Hybrid architectures allow you to combine the strengths of different topologies. For example, CNNs are great for extracting spatial features, while RNNs are ideal for handling sequences.
+
+---
+
 ### Transformer Architecture
+
+Transformers use only attention mechanisms (no recurrence or convolution) and have become the state-of-the-art for many NLP and vision tasks.
+
+**Intuitive Explanation:**
+> Transformers process all positions in a sequence in parallel, using self-attention to capture dependencies regardless of distance. This enables efficient learning of long-range relationships.
 
 ```python
 class TransformerBlock(nn.Module):
@@ -834,85 +638,21 @@ class TransformerBlock(nn.Module):
         x = self.norm2(x + ff_output)
         
         return x
-
-class Transformer(nn.Module):
-    def __init__(self, vocab_size, d_model, num_heads, num_layers, d_ff, max_seq_len):
-        super().__init__()
-        
-        self.embedding = nn.Embedding(vocab_size, d_model)
-        self.pos_encoding = self.create_positional_encoding(max_seq_len, d_model)
-        
-        self.transformer_blocks = nn.ModuleList([
-            TransformerBlock(d_model, num_heads, d_ff) 
-            for _ in range(num_layers)
-        ])
-        
-        self.fc = nn.Linear(d_model, vocab_size)
-    
-    def create_positional_encoding(self, max_seq_len, d_model):
-        """Create positional encoding"""
-        pe = torch.zeros(max_seq_len, d_model)
-        position = torch.arange(0, max_seq_len).unsqueeze(1).float()
-        
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * 
-                           -(np.log(10000.0) / d_model))
-        
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        
-        return pe.unsqueeze(0)
-    
-    def forward(self, x, mask=None):
-        seq_len = x.size(1)
-        
-        # Embedding and positional encoding
-        x = self.embedding(x)
-        x = x + self.pos_encoding[:, :seq_len].to(x.device)
-        
-        # Transformer blocks
-        for transformer_block in self.transformer_blocks:
-            x = transformer_block(x, mask)
-        
-        # Output projection
-        output = self.fc(x)
-        
-        return output
-
-def transformer_example():
-    """Demonstrate transformer architecture"""
-    # Create transformer
-    vocab_size = 1000
-    d_model = 512
-    num_heads = 8
-    num_layers = 6
-    d_ff = 2048
-    max_seq_len = 100
-    
-    transformer = Transformer(vocab_size, d_model, num_heads, num_layers, d_ff, max_seq_len)
-    
-    # Test forward pass
-    batch_size = 4
-    seq_len = 50
-    
-    x = torch.randint(0, vocab_size, (batch_size, seq_len))
-    output = transformer(x)
-    
-    print(f"Input shape: {x.shape}")
-    print(f"Output shape: {output.shape}")
-    
-    # Count parameters
-    total_params = sum(p.numel() for p in transformer.parameters())
-    print(f"Total parameters: {total_params:,}")
-
-# Run example
-transformer_example()
 ```
+
+> **Did you know?**
+> Transformers have revolutionized NLP and are now being adapted for vision (ViT), audio, and multi-modal tasks.
 
 ---
 
 ## Performance Comparison
 
+Comparing different topologies helps you choose the right architecture for your task and constraints.
+
 ### Parameter Efficiency
+
+**Intuitive Explanation:**
+> Convolutional and attention-based models can achieve similar or better performance than fully connected networks with far fewer parameters, especially on structured data like images or sequences.
 
 ```python
 def parameter_efficiency_comparison():
@@ -923,9 +663,7 @@ def parameter_efficiency_comparison():
     
     architectures = {
         'Fully Connected': FullyConnectedPyTorch([input_size, hidden_size, hidden_size, output_size]),
-        'Convolutional': ConvolutionalNetwork(output_size),
-        'RNN': RNNNetwork(28, hidden_size, 2, output_size),  # 28 features per time step
-        'Transformer': Transformer(1000, 128, 4, 2, 512, 28)  # Simplified transformer
+        # Add your own convolutional, RNN, and transformer models here for comparison
     }
     
     results = {}
@@ -950,67 +688,15 @@ def parameter_efficiency_comparison():
     
     plt.tight_layout()
     plt.show()
-
-# Run comparison
-parameter_efficiency_comparison()
 ```
+
+> **Try it yourself!**
+> Add convolutional, RNN, and transformer models to the comparison and see how parameter counts differ for similar tasks.
 
 ### Computational Complexity
 
-```python
-def computational_complexity_analysis():
-    """Analyze computational complexity of different architectures"""
-    import time
-    
-    # Test different input sizes
-    input_sizes = [100, 500, 1000, 2000]
-    
-    architectures = {
-        'Fully Connected': lambda size: FullyConnectedPyTorch([size, size//2, size//4, 10]),
-        'Convolutional': lambda size: ConvolutionalNetwork(10),
-        'RNN': lambda size: RNNNetwork(size//28, 50, 2, 10)  # Adjust for RNN input
-    }
-    
-    results = {}
-    
-    for name, model_creator in architectures.items():
-        times = []
-        for size in input_sizes:
-            model = model_creator(size)
-            X = torch.randn(32, size if name != 'Convolutional' else 1, 
-                          28 if name == 'Convolutional' else size)
-            
-            # Warm up
-            for _ in range(10):
-                _ = model(X)
-            
-            # Time forward pass
-            start_time = time.time()
-            for _ in range(100):
-                _ = model(X)
-            end_time = time.time()
-            
-            avg_time = (end_time - start_time) / 100
-            times.append(avg_time)
-        
-        results[name] = times
-    
-    # Plot results
-    plt.figure(figsize=(10, 6))
-    for name, times in results.items():
-        plt.plot(input_sizes, times, marker='o', label=name, linewidth=2)
-    
-    plt.xlabel('Input Size')
-    plt.ylabel('Average Forward Pass Time (seconds)')
-    plt.title('Computational Complexity Comparison')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.yscale('log')
-    plt.show()
-
-# Run complexity analysis
-computational_complexity_analysis()
-```
+**Key Insight:**
+> The right topology can dramatically reduce computation time and memory usage, especially for large-scale data.
 
 ---
 
@@ -1034,11 +720,17 @@ Network topologies determine how information flows through neural networks and w
 - **Multi-modal**: Hybrid architectures
 - **Large-scale**: Attention mechanisms
 
+> **Common Pitfall:**
+> Using the wrong topology for your data (e.g., fully connected for images) can lead to poor performance and wasted resources.
+
 ### Future Directions
 
 - **Efficient architectures**: Reducing computational cost
 - **Adaptive topologies**: Learning optimal connectivity patterns
 - **Domain-specific designs**: Tailored for specific applications
 - **Scalable attention**: Handling longer sequences efficiently
+
+> **Keep exploring!**
+> Try building your own hybrid models, experiment with new topologies, and stay up to date with the latest research in neural network architectures!
 
 Understanding network topologies is essential for designing effective neural network architectures for different types of data and tasks. 
