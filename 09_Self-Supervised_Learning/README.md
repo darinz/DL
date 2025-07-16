@@ -1,5 +1,14 @@
 # Self-Supervised Learning in Neural Networks
 
+[![Self Supervised](https://img.shields.io/badge/Self%20Supervised-Unlabeled%20Data-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![Contrastive Learning](https://img.shields.io/badge/Contrastive%20Learning-SimCLR-green?style=for-the-badge&logo=balance-scale)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![Masked Autoencoding](https://img.shields.io/badge/Masked%20Autoencoding-MAE-orange?style=for-the-badge&logo=mask)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![Pretext Tasks](https://img.shields.io/badge/Pretext%20Tasks-Rotation-purple?style=for-the-badge&logo=rotate)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![MoCo](https://img.shields.io/badge/MoCo-Momentum%20Contrast-red?style=for-the-badge&logo=bolt)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![CLIP](https://img.shields.io/badge/CLIP-Multimodal-yellow?style=for-the-badge&logo=link)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![Representation Learning](https://img.shields.io/badge/Representation%20Learning-Features-blue?style=for-the-badge&logo=layer-group)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+[![Unsupervised](https://img.shields.io/badge/Unsupervised-No%20Labels-orange?style=for-the-badge&logo=eye-slash)](https://github.com/yourusername/DL/tree/main/09_Self-Supervised_Learning)
+
 Self-supervised learning (SSL) is a paradigm in machine learning where the model learns useful representations from unlabeled data by solving pretext tasks. These tasks are designed such that the supervision signal is generated from the data itself, enabling the model to learn without explicit human-annotated labels. SSL has become foundational in modern neural network research, especially in computer vision and natural language processing.
 
 ## 1. [Contrastive Learning](01_contrastive_learning.md)
