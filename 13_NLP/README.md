@@ -38,7 +38,9 @@ P(x) = \prod_{t=1}^T P(x_t \mid x_{\lt t})
   - Given a context $`C`$ and question $`Q`$, predict the span $`(s, e)`$ in $`C`$ that answers $`Q`$.
 - **Mathematical Formulation:**
 
-$`(s^*, e^*) = \underset{(s, e)}{\arg\max}\; P(s, e \mid C, Q)`$
+```math
+(s^ \ast , e^ \ast) = \underset{(s, e)}{\arg\max}\; P(s, e \mid C, Q)
+```
 
 ---
 
