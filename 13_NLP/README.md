@@ -41,7 +41,3 @@ P(x) = \prod_{t=1}^T P(x_t \mid x_{\lt t})
 ```math
 (s^ \ast , e^ \ast) = \underset{(s, e)}{\arg\max}\; P(s, e \mid C, Q)
 ```
-
----
-
-This directory contains resources, notes, and code related to these NLP topics, with mathematical concepts presented using LaTeX for clarity. 
