@@ -1,13 +1,13 @@
 # Recurrent Neural Networks (RNNs)
 
 [![RNNs](https://img.shields.io/badge/RNNs-Sequential%20Data-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
-[![LSTM](https://img.shields.io/badge/LSTM-Long%20Term%20Memory-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![GRU](https://img.shields.io/badge/GRU-Gated%20Recurrent-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![Attention](https://img.shields.io/badge/Attention-Mechanisms-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![Bidirectional](https://img.shields.io/badge/Bidirectional-Forward%20Backward-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![Vanishing Gradients](https://img.shields.io/badge/Vanishing%20Gradients-Problem-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![NLP](https://img.shields.io/badge/NLP-Natural%20Language-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
-[![Time Series](https://img.shields.io/badge/Time%20Series-Forecasting-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![LSTM](https://img.shields.io/badge/LSTM-Long%20Term%20Memory-green?style=for-the-badge&logo=memory)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![GRU](https://img.shields.io/badge/GRU-Gated%20Recurrent-orange?style=for-the-badge&logo=gate)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![Attention](https://img.shields.io/badge/Attention-Mechanisms-purple?style=for-the-badge&logo=eye)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![Bidirectional](https://img.shields.io/badge/Bidirectional-Forward%20Backward-red?style=for-the-badge&logo=arrows-alt-h)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![Vanishing Gradients](https://img.shields.io/badge/Vanishing%20Gradients-Problem-yellow?style=for-the-badge&logo=exclamation-triangle)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![NLP](https://img.shields.io/badge/NLP-Natural%20Language-blue?style=for-the-badge&logo=language)](https://github.com/yourusername/DL/tree/main/06_RNN)
+[![Time Series](https://img.shields.io/badge/Time%20Series-Forecasting-orange?style=for-the-badge&logo=chart-line)](https://github.com/yourusername/DL/tree/main/06_RNN)
 
 This section covers the fundamental concepts and advanced techniques in Recurrent Neural Networks, which are specialized for processing sequential data.
 
