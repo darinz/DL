@@ -2,11 +2,6 @@
 
 A comprehensive collection of deep learning fundamentals, modern architectures, practical implementations, and learning resources. This curated knowledge base covers everything from neural network basics to cutting-edge generative AI, providing structured learning paths, code examples, and references to help you master deep learning concepts and applications.
 
-> **NOTE: This repository is currently under construction**  
-> We're actively building and organizing comprehensive deep learning resources, tutorials, and implementations.
-
----
-
 ## What is Deep Learning?
 
 Deep Learning is a subset of machine learning that uses artificial neural networks with multiple layers to model and understand complex patterns in data. Inspired by the human brain's neural structure, these networks can automatically learn hierarchical representations from raw input data, enabling breakthroughs in computer vision, natural language processing, speech recognition, and many other domains.
