@@ -27,20 +27,20 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 - **Tensor Operations**: Multi-dimensional generalizations of matrices
 
 **Key Operations**
-- **Matrix Multiplication**: `C = AB` where `C_ij = Σ_k A_ik B_kj`
-- **Dot Product**: `a · b = Σ_i a_i b_i`
-- **Transpose**: `A^T_ij = A_ji`
-- **Inverse**: `AA^(-1) = A^(-1)A = I`
+- **Matrix Multiplication**: $`C = AB`$ where $`C_{ij} = \sum_k A_{ik} B_{kj}`$
+- **Dot Product**: $`a \cdot b = \sum_i a_i b_i`$
+- **Transpose**: $`A^T_{ij} = A_{ji}`$
+- **Inverse**: $`AA^{-1} = A^{-1}A = I`$
 
 **Eigenvalues and Eigenvectors**
-- **Definition**: For matrix A, if `Av = λv`, then λ is eigenvalue, v is eigenvector
-- **Eigendecomposition**: `A = QΛQ^(-1)` where Q contains eigenvectors, Λ contains eigenvalues
+- **Definition**: For matrix A, if $`Av = \lambda v`$, then $`\lambda`$ is eigenvalue, $`v`$ is eigenvector
+- **Eigendecomposition**: $`A = Q\Lambda Q^{-1}`$ where Q contains eigenvectors, $`\Lambda`$ contains eigenvalues
 - **Applications**: Principal Component Analysis (PCA), dimensionality reduction
 
 **Linear Transformations**
-- **Rotation**: `R(θ) = [cos(θ) -sin(θ); sin(θ) cos(θ)]`
-- **Scaling**: `S = [s_x 0; 0 s_y]`
-- **Translation**: `T = [1 0 t_x; 0 1 t_y; 0 0 1]`
+- **Rotation**: $`R(\theta) = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}`$
+- **Scaling**: $`S = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}`$
+- **Translation**: $`T = \begin{bmatrix} 1 & 0 & t_x \\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}`$
 
 ### Deep Learning Applications
 - **Weight matrices** in neural networks
@@ -55,30 +55,30 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 ### Derivatives and Gradients
 
 **Single Variable Calculus**
-- **Derivative**: `f'(x) = lim(h→0) [f(x+h) - f(x)]/h`
+- **Derivative**: $`f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}`$
 - **Common Derivatives**:
-  - `d/dx(x^n) = nx^(n-1)`
-  - `d/dx(e^x) = e^x`
-  - `d/dx(ln(x)) = 1/x`
-  - `d/dx(sin(x)) = cos(x)`
+  - $`\frac{d}{dx}(x^n) = nx^{n-1}`$
+  - $`\frac{d}{dx}(e^x) = e^x`$
+  - $`\frac{d}{dx}(\ln(x)) = \frac{1}{x}`$
+  - $`\frac{d}{dx}(\sin(x)) = \cos(x)`$
 
 **Multivariable Calculus**
-- **Partial Derivatives**: `∂f/∂x_i` - derivative with respect to variable i
-- **Gradient**: `∇f = [∂f/∂x_1, ∂f/∂x_2, ..., ∂f/∂x_n]^T`
-- **Directional Derivative**: `D_v f = ∇f · v`
+- **Partial Derivatives**: $`\frac{\partial f}{\partial x_i}`$ - derivative with respect to variable i
+- **Gradient**: $`\nabla f = \left[\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_n}\right]^T`$
+- **Directional Derivative**: $`D_v f = \nabla f \cdot v`$
 
 **Chain Rule**
-- **Single Variable**: `(f∘g)'(x) = f'(g(x)) · g'(x)`
-- **Multivariable**: `∂f/∂x = Σ_i ∂f/∂y_i · ∂y_i/∂x`
-- **Matrix Form**: `∂L/∂W = ∂L/∂y · ∂y/∂W`
+- **Single Variable**: $`(f \circ g)'(x) = f'(g(x)) \cdot g'(x)`$
+- **Multivariable**: $`\frac{\partial f}{\partial x} = \sum_i \frac{\partial f}{\partial y_i} \cdot \frac{\partial y_i}{\partial x}`$
+- **Matrix Form**: $`\frac{\partial L}{\partial W} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W}`$
 
 ### Optimization
 
 **Gradient Descent**
-- **Update Rule**: `θ_(t+1) = θ_t - α∇L(θ_t)`
-- **Learning Rate**: α controls step size
+- **Update Rule**: $`\theta_{t+1} = \theta_t - \alpha \nabla L(\theta_t)`$
+- **Learning Rate**: $`\alpha`$ controls step size
 - **Stochastic Gradient Descent (SGD)**: Uses mini-batches
-- **Momentum**: `v_(t+1) = βv_t + (1-β)∇L(θ_t)`
+- **Momentum**: $`v_{t+1} = \beta v_t + (1-\beta)\nabla L(\theta_t)`$
 
 **Advanced Optimizers**
 - **Adam**: Adaptive learning rates with momentum
@@ -100,38 +100,38 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 **Basic Concepts**
 - **Sample Space**: Set of all possible outcomes
 - **Event**: Subset of sample space
-- **Probability**: P(A) ∈ [0,1] with P(Ω) = 1
+- **Probability**: $`P(A) \in [0,1]`$ with $`P(\Omega) = 1`$
 
 **Conditional Probability**
-- **Definition**: `P(A|B) = P(A∩B)/P(B)`
-- **Bayes' Theorem**: `P(A|B) = P(B|A)P(A)/P(B)`
-- **Independence**: `P(A∩B) = P(A)P(B)`
+- **Definition**: $`P(A|B) = \frac{P(A \cap B)}{P(B)}`$
+- **Bayes' Theorem**: $`P(A|B) = \frac{P(B|A)P(A)}{P(B)}`$
+- **Independence**: $`P(A \cap B) = P(A)P(B)`$
 
 ### Probability Distributions
 
 **Discrete Distributions**
-- **Bernoulli**: `P(X=k) = p^k(1-p)^(1-k)`
-- **Binomial**: `P(X=k) = C(n,k) p^k(1-p)^(n-k)`
-- **Poisson**: `P(X=k) = (λ^k e^(-λ))/k!`
+- **Bernoulli**: $`P(X=k) = p^k(1-p)^{1-k}`$
+- **Binomial**: $`P(X=k) = \binom{n}{k} p^k(1-p)^{n-k}`$
+- **Poisson**: $`P(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}`$
 
 **Continuous Distributions**
-- **Normal/Gaussian**: `f(x) = (1/√(2πσ²)) e^(-(x-μ)²/(2σ²))`
-- **Uniform**: `f(x) = 1/(b-a)` for x ∈ [a,b]
-- **Exponential**: `f(x) = λe^(-λx)` for x ≥ 0
+- **Normal/Gaussian**: $`f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}`$
+- **Uniform**: $`f(x) = \frac{1}{b-a}`$ for $`x \in [a,b]`$
+- **Exponential**: $`f(x) = \lambda e^{-\lambda x}`$ for $`x \geq 0`$
 
 ### Statistical Inference
 
 **Descriptive Statistics**
-- **Mean**: `μ = (1/n) Σ_i x_i`
-- **Variance**: `σ² = (1/n) Σ_i (x_i - μ)²`
-- **Standard Deviation**: `σ = √σ²`
-- **Covariance**: `Cov(X,Y) = E[(X-μ_X)(Y-μ_Y)]`
+- **Mean**: $`\mu = \frac{1}{n} \sum_i x_i`$
+- **Variance**: $`\sigma^2 = \frac{1}{n} \sum_i (x_i - \mu)^2`$
+- **Standard Deviation**: $`\sigma = \sqrt{\sigma^2}`$
+- **Covariance**: $`\text{Cov}(X,Y) = \mathbb{E}[(X-\mu_X)(Y-\mu_Y)]`$
 
 **Hypothesis Testing**
-- **Null Hypothesis**: H₀ (default assumption)
-- **Alternative Hypothesis**: H₁ (research hypothesis)
-- **P-value**: Probability of observing data as extreme under H₀
-- **Significance Level**: α (typically 0.05)
+- **Null Hypothesis**: $`H_0`$ (default assumption)
+- **Alternative Hypothesis**: $`H_1`$ (research hypothesis)
+- **P-value**: Probability of observing data as extreme under $`H_0`$
+- **Significance Level**: $`\alpha`$ (typically 0.05)
 
 ### Deep Learning Applications
 - **Loss functions**: Cross-entropy, mean squared error
@@ -146,22 +146,22 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 ### Entropy and Information
 
 **Shannon Entropy**
-- **Definition**: `H(X) = -Σ_i p_i log(p_i)`
+- **Definition**: $`H(X) = -\sum_i p_i \log(p_i)`$
 - **Interpretation**: Average uncertainty in random variable X
-- **Properties**: H(X) ≥ 0, maximum when uniform distribution
+- **Properties**: $`H(X) \geq 0`$, maximum when uniform distribution
 
 **Cross-Entropy**
-- **Definition**: `H(p,q) = -Σ_i p_i log(q_i)`
+- **Definition**: $`H(p,q) = -\sum_i p_i \log(q_i)`$
 - **Interpretation**: Average number of bits needed to encode p using q
 - **Deep Learning**: Common loss function for classification
 
 **Kullback-Leibler Divergence**
-- **Definition**: `KL(p||q) = Σ_i p_i log(p_i/q_i)`
+- **Definition**: $`KL(p||q) = \sum_i p_i \log\left(\frac{p_i}{q_i}\right)`$
 - **Interpretation**: Measure of difference between distributions p and q
-- **Properties**: KL(p||q) ≥ 0, KL(p||q) = 0 iff p = q
+- **Properties**: $`KL(p||q) \geq 0`$, $`KL(p||q) = 0`$ iff $`p = q`$
 
 ### Mutual Information
-- **Definition**: `I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)`
+- **Definition**: $`I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)`$
 - **Interpretation**: Amount of information shared between X and Y
 - **Applications**: Feature selection, representation learning
 
@@ -198,8 +198,8 @@ Deep learning relies heavily on mathematical foundations from multiple disciplin
 ## Implementation Notes
 
 ### Numerical Stability
-- **Log-sum-exp trick**: `log(Σ_i e^x_i) = max(x) + log(Σ_i e^(x_i - max(x)))`
-- **Softmax**: `softmax(x_i) = e^x_i / Σ_j e^x_j`
+- **Log-sum-exp trick**: $`\log(\sum_i e^{x_i}) = \max(x) + \log(\sum_i e^{x_i - \max(x)})`$
+- **Softmax**: $`\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}`$
 - **Gradient clipping**: Prevent exploding gradients
 
 ### Computational Efficiency
