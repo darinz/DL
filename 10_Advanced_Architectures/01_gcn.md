@@ -1,6 +1,10 @@
-3# Graph Convolutional Networks (GCN)
+# Graph Convolutional Networks (GCN)
 
 Graph Convolutional Networks (GCNs) are a class of neural networks designed to perform learning on graph-structured data. They generalize the concept of convolution from regular grids (like images) to arbitrary graphs.
+
+> **Key Insight:** GCNs allow neural networks to directly operate on graphs, enabling learning from data with complex relationships (e.g., social networks, molecules).
+
+> **Did you know?** GCNs are the foundation for many modern graph-based models, including Graph Attention Networks (GAT) and GraphSAGE!
 
 ## 1. Introduction to Graphs
 
@@ -16,6 +20,8 @@ Traditional neural networks (CNNs, RNNs) are not designed for non-Euclidean data
 - Aggregate information from a node's neighbors
 - Learn node, edge, or graph-level representations
 
+> **Geometric Intuition:** In a GCN, each node "listens" to its neighbors, updating its features based on the local graph structure.
+
 ## 3. GCN Layer: The Math
 
 The core operation of a GCN layer is:
@@ -30,9 +36,12 @@ where:
 - $`\sigma`$ is an activation function (e.g., ReLU)
 
 ### Step-by-Step Explanation
-1. **Add self-loops:** Each node connects to itself.
-2. **Normalize adjacency:** Prevents feature explosion and stabilizes training.
+1. **Add self-loops:** Each node connects to itself, ensuring its own features are included in the update.
+2. **Normalize adjacency:** Compute $`\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}`$ to prevent feature explosion and stabilize training.
 3. **Aggregate neighbor features:** Each node updates its features by combining its own and its neighbors' features.
+4. **Apply linear transformation and nonlinearity:** $`W^{(l)}`$ and $`\sigma`$.
+
+> **Common Pitfall:** Forgetting to add self-loops can degrade performance, as nodes won't consider their own features.
 
 ## 4. Simple GCN Example (Python)
 
@@ -60,6 +69,7 @@ class GCNLayer(nn.Module):
         # GCN layer
         return F.relu(self.linear(A_norm @ X))
 ```
+*This layer aggregates features from each node's neighbors and itself, then applies a linear transformation and nonlinearity.*
 
 ### Usage Example
 Suppose we have a graph with 3 nodes and 2 features per node:
@@ -79,11 +89,16 @@ gcn = GCNLayer(2, 2)
 output = gcn(X, A)
 print(output)
 ```
+*Try changing the adjacency matrix or node features to see how the output changes!*
+
+> **Try it yourself!** Visualize the learned node embeddings using t-SNE or PCA. Do nodes with similar roles cluster together?
 
 ## 5. Applications of GCNs
 - Node classification (e.g., predicting user type in a social network)
 - Link prediction (e.g., recommending friends)
 - Graph classification (e.g., molecule property prediction)
+
+> **Key Insight:** GCNs are widely used in chemistry, social network analysis, recommendation systems, and more.
 
 ## 6. Further Reading
 - [Kipf & Welling, 2017: Semi-Supervised Classification with Graph Convolutional Networks](https://arxiv.org/abs/1609.02907)
