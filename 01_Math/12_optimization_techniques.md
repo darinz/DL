@@ -6,9 +6,9 @@
 
 ## 1. What is Optimization?
 
-In deep learning, **optimization** means finding the set of parameters $`\theta`$ that minimize a loss function $`L(\theta)`$.
+In deep learning, **optimization** means finding the set of parameters $\theta$ that minimize a loss function $L(\theta)$.
 - The loss function measures how well the model predicts the data.
-- The optimization algorithm updates $`\theta`$ to reduce $`L`$.
+- The optimization algorithm updates $\theta$ to reduce $L$.
 
 ---
 
@@ -21,20 +21,27 @@ The most fundamental optimization algorithm in deep learning is **gradient desce
 ```
 
 Where:
-- $`\theta_t`$ are the parameters at step $`t`$
-- $`\alpha`$ is the learning rate (step size)
-- $`\nabla L(\theta_t)`$ is the gradient of the loss function with respect to $`\theta`$
+- $\theta_t$ are the parameters at step $t$
+- $\alpha$ is the learning rate (step size)
+- $\nabla L(\theta_t)$ is the gradient of the loss function with respect to $\theta$
+
+**Step-by-step:**
+- Compute the gradient $\nabla L(\theta_t)$ at the current parameters.
+- Multiply by the learning rate $\alpha$.
+- Subtract from the current parameters to get the new parameters.
 
 ### Intuition
-- The gradient $`\nabla L(\theta)`$ points in the direction of steepest increase of $`L`$.
-- We move in the **opposite** direction to minimize $`L`$.
-- The learning rate $`\alpha`$ controls how big each step is.
+- The gradient $\nabla L(\theta)$ points in the direction of steepest increase of $L$.
+- We move in the **opposite** direction to minimize $L$.
+- The learning rate $\alpha$ controls how big each step is.
 
 ### Example
-Let $`L(\theta) = (\theta - 3)^2`$.
-- $`\nabla L(\theta) = 2(\theta - 3)`$
-- Update: $`\theta_{t+1} = \theta_t - 2\alpha (\theta_t - 3)`$
-- $`\theta`$ converges to 3.
+Let $L(\theta) = (\theta - 3)^2$.
+- $\nabla L(\theta) = 2(\theta - 3)$
+- Update: $\theta_{t+1} = \theta_t - 2\alpha (\theta_t - 3)$
+- $\theta$ converges to 3.
+
+> **Tip:** If the learning rate is too large, you may overshoot the minimum; if too small, convergence is slow.
 
 ---
 
@@ -46,12 +53,19 @@ Let $`L(\theta) = (\theta - 3)^2`$.
 \theta_{t+1} = \theta_t - \alpha \nabla L(\theta_t, \mathcal{B}_t)
 ```
 
-Where $`\mathcal{B}_t`$ is a mini-batch at step $`t`$.
+Where $\mathcal{B}_t$ is a mini-batch at step $t$.
+
+**Step-by-step:**
+- Randomly select a mini-batch of data.
+- Compute the gradient of the loss on this mini-batch.
+- Update parameters using this gradient.
 
 ### Why Use SGD?
 - Faster updates (especially for large datasets)
 - Introduces noise, which can help escape local minima
 - More scalable for deep learning
+
+> **Tip:** Batch size is a key hyperparameter in SGD.
 
 ---
 
@@ -67,20 +81,29 @@ v_{t+1} = \beta v_t + (1-\beta)\nabla L(\theta_t)
 ```
 
 Where:
-- $`v_t`$ is the velocity (running average of gradients)
-- $`\beta`$ is the momentum coefficient (e.g., 0.9)
+- $v_t$ is the velocity (running average of gradients)
+- $\beta$ is the momentum coefficient (e.g., 0.9)
+
+**Step-by-step:**
+- Compute the gradient at the current parameters.
+- Update the velocity as a combination of the previous velocity and the new gradient.
+- Update parameters using the velocity.
 
 ### Intuition
 - Momentum smooths the updates, helping to avoid oscillations.
 - It can speed up convergence, especially in ravines or on noisy surfaces.
+
+> **Tip:** Momentum can help escape shallow local minima and speed up training.
 
 ---
 
 ## 5. Learning Rate Strategies
 
 - **Constant learning rate**: Simple, but may not work for all problems.
-- **Learning rate decay**: Reduce $`\alpha`$ over time.
+- **Learning rate decay**: Reduce $\alpha$ over time.
 - **Adaptive methods**: Algorithms like Adam, RMSProp adjust the learning rate for each parameter.
+
+> **Tip:** Try different learning rate schedules to improve convergence.
 
 ---
 
@@ -177,6 +200,8 @@ print(f"Momentum converged in {len(momentum_trajectory)} iterations")
 - The contour plot shows the optimization paths.
 - The function value plot shows convergence speed.
 
+> **Tip:** Try changing the learning rate or initial point to see how convergence changes!
+
 ---
 
 ## 7. Why Optimization Techniques Matter in Deep Learning
@@ -193,6 +218,8 @@ Adam combines momentum and adaptive learning rates:
 - Adapts learning rate for each parameter.
 - Widely used in deep learning.
 
+> **Tip:** Adam is often a good default optimizer for deep learning.
+
 ---
 
 ## 8. Summary
@@ -200,6 +227,8 @@ Adam combines momentum and adaptive learning rates:
 - Optimization is central to deep learning.
 - Gradient descent and its variants are the workhorses of model training.
 - Understanding these methods helps you tune, debug, and improve deep learning models.
+
+> **Summary:** Mastering optimization techniques is essential for building and training effective deep learning models!
 
 **Further Reading:**
 - [Gradient Descent (Wikipedia)](https://en.wikipedia.org/wiki/Gradient_descent)
