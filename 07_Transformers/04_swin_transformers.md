@@ -14,15 +14,22 @@ Swin Transformers build feature maps at multiple scales, similar to CNNs, and us
 
 Instead of global self-attention, Swin computes self-attention within local windows, reducing computational complexity from $`O((HW)^2)`$ to $`O(M^2HW/M^2) = O(HW M^2)`$, where $`M`$ is the window size.
 
+> **Explanation:**
+> By restricting self-attention to local windows, Swin Transformers dramatically reduce the number of computations compared to global attention. This makes them much more efficient for large images.
+
 #### Geometric/Visual Explanation
 
 Imagine dividing an image into small windows and letting each window process its own content independently. This is much more efficient than having every patch attend to every other patch in the image.
 
-> **Common Pitfall:** Using only local windows can limit the model's ability to capture long-range dependencies—hence the need for shifted windows.
+> **Common Pitfall:**
+> Using only local windows can limit the model's ability to capture long-range dependencies—hence the need for shifted windows.
 
 ## 3. Shifted Window Mechanism
 
 To allow cross-window connections, the window partitioning is shifted between layers. This means that in one layer, windows are placed at certain positions, and in the next, they are shifted so that different patches are grouped together.
+
+> **Explanation:**
+> Shifting the windows ensures that information can flow between neighboring windows, enabling the model to capture both local and global context over multiple layers.
 
 #### Intuitive Explanation
 
@@ -38,6 +45,9 @@ Patch merging layers reduce the number of tokens and increase feature dimension,
 | Window attention     | Local self-attention     | Efficient local context modeling       |
 | Shifted windows      | Shift window positions   | Cross-window information flow          |
 | Patch merging        | Merge patches            | Build multi-scale, hierarchical features|
+
+> **Explanation:**
+> The hierarchical design allows Swin Transformers to process images at multiple scales, similar to how CNNs use pooling to build up from local to global features.
 
 > **Did you know?** This hierarchical design allows Swin Transformers to be used as a backbone for tasks like object detection and segmentation, not just classification.
 
@@ -57,7 +67,9 @@ windows = window_partition(x, 4)
 print(windows.shape)  # (8, 4, 4, 96)
 ```
 
-> **Code Commentary:** The window partitioning function rearranges the image tensor so that each window can be processed independently by self-attention.
+> **Code Walkthrough:**
+> - The window partitioning function rearranges the image tensor so that each window can be processed independently by self-attention.
+> - Changing the window size changes the number and shape of windows, affecting the model's efficiency and receptive field.
 
 > **Try it yourself!** Change the window size and see how the number and shape of windows change for a fixed image size.
 
