@@ -12,66 +12,88 @@ A **matrix decomposition** expresses a matrix as a product of simpler matrices. 
 - Decomposing a matrix is like breaking a complex machine into simple parts you can analyze and use separately.
 - Many algorithms in deep learning and scientific computing rely on matrix decompositions for speed and stability.
 
+> **Tip:** Decompositions often reveal hidden structure and make computations easier!
+
 ---
 
 ## LU Decomposition
 
-Decomposes a square matrix $`A`$ into:
+Decomposes a square matrix $A$ into:
 
 ```math
 A = LU
 ```
 
-- $`L`$ is lower triangular (all entries above the diagonal are zero)
-- $`U`$ is upper triangular (all entries below the diagonal are zero)
+- $L$ is lower triangular (all entries above the diagonal are zero)
+- $U$ is upper triangular (all entries below the diagonal are zero)
+
+**Step-by-step:**
+- Find $L$ and $U$ such that $A = LU$.
+- Solve $Ax = b$ by first solving $Ly = b$ (forward substitution), then $Ux = y$ (backward substitution).
 
 **Use case:**
 - Solving systems of linear equations efficiently (forward and backward substitution).
 
 **Example:**
-If $`A = \begin{bmatrix} 2 & 3 \\ 5 & 4 \end{bmatrix}`$, then $`L = \begin{bmatrix} 1 & 0 \\ 2.5 & 1 \end{bmatrix}`$, $`U = \begin{bmatrix} 2 & 3 \\ 0 & -3.5 \end{bmatrix}`$ (details omitted for brevity).
+If $A = \begin{bmatrix} 2 & 3 \\ 5 & 4 \end{bmatrix}$, then $L = \begin{bmatrix} 1 & 0 \\ 2.5 & 1 \end{bmatrix}$, $U = \begin{bmatrix} 2 & 3 \\ 0 & -3.5 \end{bmatrix}$ (details omitted for brevity).
+
+> **Pitfall:** Not all matrices have an LU decomposition without row exchanges (pivoting).
 
 ---
 
 ## QR Decomposition
 
-Decomposes a matrix $`A`$ into:
+Decomposes a matrix $A$ into:
 
 ```math
 A = QR
 ```
 
-- $`Q`$ is orthogonal ($`Q^T Q = I`$)
-- $`R`$ is upper triangular
+- $Q$ is orthogonal ($Q^T Q = I$)
+- $R$ is upper triangular
+
+**Step-by-step:**
+- Use the Gram-Schmidt process or a numerical algorithm to find $Q$ and $R$.
+- $Q$ has orthonormal columns (length 1, mutually perpendicular).
+- $R$ is upper triangular.
 
 **Use case:**
 - Solving least squares problems (fitting a line to data).
 - Orthogonalizing vectors (Gram-Schmidt process).
 
 **Example:**
-If $`A = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}`$, $`Q`$ and $`R`$ can be computed so that $`A = QR`$ (see NumPy's `np.linalg.qr`).
+If $A = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$, $Q$ and $R$ can be computed so that $A = QR$ (see NumPy's `np.linalg.qr`).
+
+> **Tip:** QR is numerically stable and widely used in regression and optimization.
 
 ---
 
 ## Singular Value Decomposition (SVD)
 
-Decomposes any $`m \times n`$ matrix $`A`$ into:
+Decomposes any $m \times n$ matrix $A$ into:
 
 ```math
 A = U\Sigma V^T
 ```
 
-- $`U`$ and $`V`$ are orthogonal matrices
-- $`\Sigma`$ is a diagonal matrix of singular values
+- $U$ and $V$ are orthogonal matrices
+- $\Sigma$ is a diagonal matrix of singular values
+
+**Step-by-step:**
+- Compute $U$, $\Sigma$, and $V$ such that $A = U\Sigma V^T$.
+- $U$ and $V$ give the "directions" in input and output space.
+- $\Sigma$ tells how much each direction is stretched.
 
 **Intuition:**
 - SVD generalizes eigendecomposition to all matrices (not just square ones).
-- $`U`$ and $`V`$ give the "directions" in input and output space; $`\Sigma`$ tells how much each direction is stretched.
+- $U$ and $V$ give the "directions" in input and output space; $\Sigma$ tells how much each direction is stretched.
 
 **Use case:**
 - Data compression (keep only the largest singular values)
 - Noise reduction (remove small singular values)
 - Principal Component Analysis (PCA)
+
+> **Tip:** SVD is the foundation of many dimensionality reduction and data analysis techniques.
 
 ---
 
@@ -95,7 +117,7 @@ print(S)
 print("\nV^T matrix:")
 print(Vt)
 
-# Reconstruct A
+# Reconstruct A from SVD
 Sigma = np.zeros_like(A, dtype=float)
 Sigma[:len(S), :len(S)] = np.diag(S)
 A_reconstructed = U @ Sigma @ Vt
@@ -122,6 +144,14 @@ plt.tight_layout()
 plt.show()
 ```
 
+**Code Annotations:**
+- `np.linalg.svd(A)` computes the SVD of $A$.
+- `U` and `Vt` are orthogonal matrices; `S` contains the singular values.
+- `Sigma` is constructed as a diagonal matrix for reconstruction.
+- The plot shows how a linear transformation (matrix) stretches and rotates points.
+
+> **Tip:** Try zeroing out small singular values in `S` and reconstructing $A$ to see the effect of compression!
+
 ---
 
 ## Why Matrix Decompositions Matter in Deep Learning
@@ -131,5 +161,4 @@ plt.show()
 - **Dimensionality reduction**: SVD is the basis for PCA and other techniques.
 - **Numerical stability**: Decompositions help avoid instability in computations.
 
-**Summary:**
-Matrix decompositions are essential tools for both theory and practice in deep learning! They enable efficient computation, data analysis, and model understanding. 
+> **Summary:** Matrix decompositions are essential tools for both theory and practice in deep learning! They enable efficient computation, data analysis, and model understanding. 
