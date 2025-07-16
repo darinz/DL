@@ -10,7 +10,7 @@ A comprehensive collection of deep learning fundamentals, modern architectures, 
 
 Deep Learning is a subset of machine learning that uses artificial neural networks with multiple layers to model and understand complex patterns in data. Inspired by the human brain's neural structure, these networks can automatically learn hierarchical representations from raw input data, enabling breakthroughs in computer vision, natural language processing, speech recognition, and many other domains.
 
-$`\text{Deep Learning: Data} \xrightarrow{\text{Neural Network}} \text{Prediction}`$
+Deep Learning: Data ⟶[Neural Network] Prediction
 
 **Key Characteristics:**
 - **Hierarchical Learning:** Automatically discovers features at multiple levels of abstraction.
@@ -36,48 +36,48 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ### Mathematical Foundations
 
-- **Linear Algebra:** Matrices, vectors, eigenvalues, and transformations
-- **Calculus:** Derivatives, gradients, chain rule, and optimization
-- **Probability & Statistics:** Distributions, Bayes' theorem, and statistical inference
-- **Information Theory:** Entropy, cross-entropy, and KL divergence
+- **[Linear Algebra](01_Math/01_vectors_and_vector_operations.md):** Matrices, vectors, eigenvalues, and transformations
+- **[Calculus](01_Math/08_single_variable_calculus.md):** Derivatives, gradients, chain rule, and optimization
+- **[Probability & Statistics](01_Math/14_probability_statistics.md):** Distributions, Bayes' theorem, and statistical inference
+- **[Information Theory](01_Math/15_information_theory.md):** Entropy, cross-entropy, and KL divergence
 
 > **Try it yourself!** Visualize a matrix transformation or plot a sigmoid activation to build intuition for how neural networks process data.
 
 ### Neural Network Architecture
 
-- **Perceptrons:** The building block of neural networks
-- **Multi-layer Perceptrons (MLPs):** Feedforward neural networks
-- **Activation Functions:** ReLU, Sigmoid, Tanh, Leaky ReLU, Swish, GELU
-- **Network Topologies:** Fully connected, convolutional, recurrent layers
-- **Skip Connections:** Residual networks and highway networks
+- **[Perceptrons](02_Neural_Network/01_perceptrons.md):** The building block of neural networks
+- **[Multi-layer Perceptrons (MLPs)](02_Neural_Network/02_multi_layer_perceptrons.md):** Feedforward neural networks
+- **[Activation Functions](02_Neural_Network/03_activation_functions.md):** ReLU, Sigmoid, Tanh, Leaky ReLU, Swish, GELU
+- **[Network Topologies](02_Neural_Network/04_network_topologies.md):** Fully connected, convolutional, recurrent layers
+- **[Skip Connections](02_Neural_Network/05_skip_connections.md):** Residual networks and highway networks
 
 > **Common Pitfall:** Using the wrong activation function can lead to vanishing or exploding gradients. ReLU is often a safe default.
 
 ### Learning Process
 
-- **Forward Propagation:** Computing predictions through the network
-- **Backward Propagation:** Computing gradients using chain rule
-- **Loss Functions:** Mean squared error, cross-entropy, focal loss
-- **Optimization Algorithms:** SGD, Adam, RMSprop, AdaGrad
-- **Learning Rate Strategies:** Step decay, cosine annealing, warmup
+- **[Forward Propagation](03_Learning_Process/01_forward_propagation.md):** Computing predictions through the network
+- **[Backward Propagation](03_Learning_Process/02_backward_propagation.md):** Computing gradients using chain rule
+- **[Loss Functions](03_Learning_Process/03_loss_functions.md):** Mean squared error, cross-entropy, focal loss
+- **[Optimization Algorithms](03_Learning_Process/04_optimization_algorithms.md):** SGD, Adam, RMSprop, AdaGrad
+- **[Learning Rate Strategies](03_Learning_Process/05_learning_rate_strategies.md):** Step decay, cosine annealing, warmup
 
 ---
 
 ### Training Techniques
 
-- **Regularization Methods**
+- **[Regularization Methods](04_Training_Techniques/01_regularization_methods.md)**
   - **Dropout:** Randomly deactivating neurons during training
   - **Weight Decay (L2):** Penalizing large weights
   - **Early Stopping:** Preventing overfitting through validation monitoring
   - **Data Augmentation:** Expanding training data through transformations
 
-- **Normalization Techniques**
+- **[Normalization Techniques](04_Training_Techniques/02_normalization_techniques.md)**
   - **Batch Normalization (BatchNorm):** Normalizing layer inputs
   - **Layer Normalization:** Normalizing across features
   - **Instance Normalization:** Normalizing individual samples
   - **Group Normalization:** Normalizing within groups
 
-- **Initialization Strategies**
+- **[Initialization Strategies](04_Training_Techniques/03_initialization_strategies.md)**
   - **Xavier/Glorot Initialization:** Variance scaling for sigmoid/tanh
   - **He Initialization:** Variance scaling for ReLU activations
   - **Orthogonal Initialization:** Preserving gradient flow
@@ -89,11 +89,11 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ### Convolutional Neural Networks (CNNs)
 
-- **Convolutional Operations:** Feature extraction through sliding filters
-- **Pooling Layers:** Max pooling, average pooling, global pooling
-- **Architecture Evolution:** LeNet, AlexNet, VGG, ResNet, DenseNet
-- **Modern Architectures:** EfficientNet, MobileNet, ShuffleNet
-- **Computer Vision Tasks:** Classification, detection, segmentation
+- **[Convolutional Operations](05_CNN/01_convolutional_operations.md):** Feature extraction through sliding filters
+- **[Pooling Layers](05_CNN/02_pooling_layers.md):** Max pooling, average pooling, global pooling
+- **[Architecture Evolution](05_CNN/03_architecture_evolution.md):** LeNet, AlexNet, VGG, ResNet, DenseNet
+- **[Modern Architectures](05_CNN/04_modern_architectures.md):** EfficientNet, MobileNet, ShuffleNet
+- **[Computer Vision Tasks](05_CNN/05_computer_vision_tasks.md):** Classification, detection, segmentation
 
 > **Did you know?** CNNs exploit spatial locality, making them ideal for image data.
 
@@ -101,12 +101,12 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ### Recurrent Neural Networks (RNNs)
 
-- **Sequential Data Processing:** Handling variable-length sequences
-- **Vanilla RNNs:** Basic recurrent architecture and vanishing gradients
-- **Long Short-Term Memory (LSTM):** Gated memory cells for long dependencies
-- **Gated Recurrent Units (GRU):** Simplified LSTM with fewer parameters
-- **Bidirectional RNNs:** Processing sequences in both directions
-- **Attention Mechanisms:** Focusing on relevant parts of input sequences
+- **[Sequential Data Processing](06_RNN/01_sequential_data_processing.md):** Handling variable-length sequences
+- **[Vanilla RNNs](06_RNN/02_vanilla_rnns.md):** Basic recurrent architecture and vanishing gradients
+- **[Long Short-Term Memory (LSTM)](06_RNN/03_lstm.md):** Gated memory cells for long dependencies
+- **[Gated Recurrent Units (GRU)](06_RNN/04_gru.md):** Simplified LSTM with fewer parameters
+- **[Bidirectional RNNs](06_RNN/05_bidirectional_rnns.md):** Processing sequences in both directions
+- **[Attention Mechanisms](06_RNN/06_attention_mechanisms.md):** Focusing on relevant parts of input sequences
 
 > **Try it yourself!** Feed a short sentence into an RNN and visualize the hidden state evolution.
 
@@ -115,46 +115,52 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 ## Modern Deep Learning Approaches
 
 ### Transformers & Attention
-- **Transformer Architecture:** Self-attention mechanisms
-- **BERT, GPT, T5:** Large Language Models
-- **Vision Transformers (ViT):** Transformers for computer vision
-- **Swin Transformers:** Hierarchical vision transformers
+- **[Transformer Architecture](07_Transformers/01_transformer_architecture.md):** Self-attention mechanisms
+- **[Large Language Models](07_Transformers/02_large_language_models.md):** BERT, GPT, T5
+- **[Vision Transformers](07_Transformers/03_vision_transformers.md):** Transformers for computer vision
+- **[Swin Transformers](07_Transformers/04_swin_transformers.md):** Hierarchical vision transformers
 
 ### Generative Models
-- **Generative Adversarial Networks (GANs):** DCGAN, StyleGAN, CycleGAN, Conditional GANs
-- **Variational Autoencoders (VAEs)**
-- **Diffusion Models:** DDPM, DDIM, Stable Diffusion
-- **Flow-based Models:** RealNVP, Glow
+- **[Generative Adversarial Networks (GANs)](08_Generative_Models/01_gans.md):** DCGAN, StyleGAN, CycleGAN, Conditional GANs
+- **[Variational Autoencoders (VAEs)](08_Generative_Models/02_vaes.md)**
+- **[Diffusion Models](08_Generative_Models/03_diffusion_models.md):** DDPM, DDIM, Stable Diffusion
+- **[Flow-based Models](08_Generative_Models/04_flow_based_models.md):** RealNVP, Glow
 
 ### Self-Supervised Learning
-- **Contrastive Learning:** SimCLR, MoCo, CLIP
-- **Masked Autoencoding:** MAE, SimMIM
-- **Pretext Tasks:** Rotation, Jigsaw, Colorization
+- **[Contrastive Learning](09_Self-Supervised_Learning/01_contrastive_learning.md):** SimCLR, MoCo, CLIP
+- **[Masked Autoencoding](09_Self-Supervised_Learning/02_masked_autoencoding.md):** MAE, SimMIM
+- **[Pretext Tasks](09_Self-Supervised_Learning/03_pretext_tasks.md):** Rotation, Jigsaw, Colorization
 
 ### Advanced Architectures
-- **Graph Neural Networks (GNNs):** GCN, GAT
-- **Neural Architecture Search (NAS)**
-- **Meta-Learning:** MAML, Reptile
-- **Few-Shot Learning**
+- **[Graph Neural Networks (GNNs)](10_Advanced_Architectures/01_gcn.md):** GCN, GAT
+- **[Neural Architecture Search (NAS)](10_Advanced_Architectures/03_nas.md)**
+- **[Meta-Learning](10_Advanced_Architectures/04_meta_learning.md):** MAML, Reptile
+- **[Few-Shot Learning](10_Advanced_Architectures/05_few_shot_learning.md)**
 
 ### Optimization & Training
-- **Mixed Precision Training:** FP16/BF16
-- **Gradient Accumulation**
-- **Distributed Training:** Data/Model Parallelism
-- **Federated Learning**
-- **Knowledge Distillation**
+- **[Mixed Precision Training](11_Optimization/01_mixed_precision_training.md):** FP16/BF16
+- **[Gradient Accumulation](11_Optimization/02_gradient_accumulation.md)**
+- **[Distributed Training](11_Optimization/03_distributed_training.md):** Data/Model Parallelism
+- **[Federated Learning](11_Optimization/04_federated_learning.md)**
+- **[Knowledge Distillation](11_Optimization/05_knowledge_distillation.md)**
 
 ### Computer Vision
-- **Object Detection:** YOLO v5/v8, DETR, Faster R-CNN
-- **Instance Segmentation:** Mask R-CNN, SOLO
-- **Pose Estimation:** HRNet, MediaPipe
-- **3D Vision:** PointNet, VoxelNet
+- **[Fundamental Concepts](12_CV/01_fundamental_concepts.md):** Core computer vision principles
+- **[Image Processing Basics](12_CV/02_image_processing_basics.md):** Preprocessing and augmentation
+- **[Feature Detection & Description](12_CV/03_feature_detection_description.md):** SIFT, SURF, ORB
+- **[Object Detection](12_CV/04_object_detection.md):** YOLO v5/v8, DETR, Faster R-CNN
+- **[Instance Segmentation](12_CV/05_instance_segmentation.md):** Mask R-CNN, SOLO
+- **[Pose Estimation](12_CV/06_pose_estimation.md):** HRNet, MediaPipe
+- **[3D Vision](12_CV/07_3d_vision.md):** PointNet, VoxelNet
+- **[Image Classification](12_CV/08_image_classification.md):** CNN architectures and training
+- **[Semantic Segmentation](12_CV/09_semantic_segmentation.md):** U-Net, DeepLab, PSPNet
+- **[Video Analysis](12_CV/10_video_analysis.md):** Temporal modeling and action recognition
 
 ### Natural Language Processing
-- **Large Language Models:** GPT-4, Claude, LLaMA
-- **Multimodal Models:** CLIP, DALL-E, Flamingo
-- **Text Generation:** T5, BART, GPT
-- **Question Answering:** BERT, RoBERTa
+- **[Large Language Models](13_NLP/01_large_language_models.md):** GPT-4, Claude, LLaMA
+- **[Multimodal Models](13_NLP/02_multimodal_models.md):** CLIP, DALL-E, Flamingo
+- **[Text Generation](13_NLP/03_text_generation.md):** T5, BART, GPT
+- **[Question Answering](13_NLP/04_question_answering.md):** BERT, RoBERTa
 
 > **Key Insight:** Transformers have unified architectures across vision, language, and multimodal tasks.
 
@@ -162,12 +168,12 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ## Learning Path
 
-1. **Foundation:** Neural networks, backpropagation, optimization
-2. **Computer Vision:** CNNs, image classification, object detection
-3. **Sequential Data:** RNNs, LSTM, GRU, attention
-4. **Transformers:** Self-attention, BERT, GPT
-5. **Generative AI:** GANs, VAEs, diffusion models
-6. **Advanced Topics:** Self-supervised learning, meta-learning
+1. **[Foundation](01_Math/README.md):** Neural networks, backpropagation, optimization
+2. **[Computer Vision](12_CV/README.md):** CNNs, image classification, object detection
+3. **[Sequential Data](06_RNN/README.md):** RNNs, LSTM, GRU, attention
+4. **[Transformers](07_Transformers/README.md):** Self-attention, BERT, GPT
+5. **[Generative AI](08_Generative_Models/README.md):** GANs, VAEs, diffusion models
+6. **[Advanced Topics](09_Self-Supervised_Learning/README.md):** Self-supervised learning, meta-learning
 
 > **Try it yourself!** Pick a path and implement a simple model for each stage. Reflect on how your understanding deepens with each step.
 
@@ -217,10 +223,10 @@ Deep Learning represents the cutting edge of artificial intelligence, enabling m
 
 ## Conceptual Connections
 
-- **Mathematical Foundations** underpin all deep learning models.
-- **Neural Network Architectures** are specialized for different data types (images, sequences, graphs).
-- **Optimization and Training** strategies are universal across domains.
-- **Modern Approaches** (Transformers, GANs) build on classical foundations.
+- **[Mathematical Foundations](01_Math/README.md)** underpin all deep learning models.
+- **[Neural Network Architectures](02_Neural_Network/README.md)** are specialized for different data types (images, sequences, graphs).
+- **[Optimization and Training](11_Optimization/README.md)** strategies are universal across domains.
+- **[Modern Approaches](07_Transformers/README.md)** (Transformers, GANs) build on classical foundations.
 
 > **Did you know?** Many breakthroughs in deep learning come from combining ideas across domains—try connecting concepts from vision and language!
 
