@@ -2,6 +2,10 @@
 
 Federated learning is a machine learning approach that enables training models on decentralized data without sharing raw data, preserving privacy while leveraging distributed datasets.
 
+> **Key Insight:** Federated learning allows collaborative model training across many devices or organizations, all while keeping sensitive data local and private.
+
+> **Did you know?** Federated learning is used in real-world applications like keyboard prediction on smartphones, where user data never leaves the device!
+
 ## Overview
 
 Federated learning addresses privacy concerns by:
@@ -9,6 +13,8 @@ Federated learning addresses privacy concerns by:
 - **Sharing only model updates** instead of raw data
 - **Enabling collaborative training** across multiple parties
 - **Preserving data privacy** and regulatory compliance
+
+> **Geometric Intuition:** Imagine each device as a chef perfecting a recipe with local ingredients. Instead of sharing the ingredients, each chef shares their improved recipe, which is then averaged to create a better global recipe.
 
 ## Mathematical Foundation
 
@@ -39,6 +45,8 @@ For FedAvg with $`K`$ clients and $`T`$ rounds:
 ```math
 \mathbb{E}[f(\bar{w}_T)] - f(w^*) \leq O\left(\frac{1}{\sqrt{T}} + \frac{1}{\sqrt{K}}\right)
 ```
+
+> **Common Pitfall:** If client data is highly non-i.i.d. (not identically distributed), convergence can be slow or unstable. Techniques like FedProx or personalization can help.
 
 ## Implementation Strategies
 
@@ -126,33 +134,8 @@ class FederatedTrainer:
             client_model.load_state_dict(averaged_weights)
         
         return averaged_weights
-
-# Usage example
-class SimpleModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(784, 128)
-        self.fc2 = nn.Linear(128, 10)
-    
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-
-# Initialize federated trainer
-global_model = SimpleModel()
-trainer = FederatedTrainer(global_model, num_clients=5)
-
-# Simulate client data
-client_data_loaders = []  # List of DataLoaders for each client
-client_sizes = [1000, 1200, 800, 1500, 900]  # Number of samples per client
-
-# Training rounds
-num_rounds = 10
-for round_id in range(num_rounds):
-    print(f"Training round {round_id + 1}")
-    trainer.train_round(client_data_loaders, client_sizes)
 ```
+*This trainer simulates federated learning by training local models and averaging their weights.*
 
 ### 2. Advanced Federated Learning with FedProx
 
@@ -223,6 +206,13 @@ class FedProxTrainer:
         
         return averaged_weights
 ```
+*FedProx adds a proximal term to the loss, helping stabilize training when client data is highly non-i.i.d.*
+
+---
+
+> **Try it yourself!** Simulate federated learning with different numbers of clients and data distributions. How does non-i.i.d. data affect convergence?
+
+> **Key Insight:** Federated learning is a powerful paradigm for privacy-preserving, collaborative AI, but requires careful handling of data heterogeneity and communication efficiency.
 
 ### 3. Communication-Efficient Federated Learning
 
