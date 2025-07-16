@@ -2,7 +2,7 @@
 
 This module covers the foundational concepts and architectures in the field of Transformers and Attention mechanisms, which have revolutionized deep learning for both natural language processing and computer vision.
 
-## 1. Transformer Architecture
+## 1. [Transformer Architecture](01_transformer_architecture.md)
 
 The Transformer architecture, introduced by Vaswani et al. (2017), is based on self-attention mechanisms and dispenses with recurrence and convolutions entirely. The core idea is to allow each position in the input sequence to attend to all other positions, enabling efficient modeling of long-range dependencies.
 
@@ -30,7 +30,7 @@ Multiple attention heads allow the model to jointly attend to information from d
 
 where each $`\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)`$.
 
-## 2. Large Language Models: BERT, GPT, T5
+## 2. [Large Language Models: BERT, GPT, T5](02_large_language_models.md)
 
 - **BERT (Bidirectional Encoder Representations from Transformers):**
   - Uses only the encoder part of the Transformer.
@@ -46,7 +46,7 @@ where each $`\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)`$.
   - Treats every NLP problem as a text-to-text task.
   - Uses an encoder-decoder architecture.
 
-## 3. Vision Transformers (ViT)
+## 3. [Vision Transformers (ViT)](03_vision_transformers.md)
 
 Vision Transformers adapt the Transformer architecture for image data. Images are split into patches, each patch is linearly embedded, and position embeddings are added. The sequence of patch embeddings is then processed by a standard Transformer encoder.
 
@@ -59,7 +59,7 @@ N = \frac{HW}{P^2}
 
 Each patch is flattened and projected to a $`D`$-dimensional embedding.
 
-## 4. Swin Transformers
+## 4. [Swin Transformers](04_swin_transformers.md)
 
 Swin Transformers introduce a hierarchical architecture for vision tasks, using shifted windows for self-attention. This enables scalable modeling of large images and efficient computation.
 
