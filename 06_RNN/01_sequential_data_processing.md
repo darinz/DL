@@ -4,8 +4,10 @@
 
 Sequential data processing is the foundation of Recurrent Neural Networks (RNNs). Unlike traditional neural networks that process fixed-size inputs independently, RNNs are designed to handle variable-length sequences while maintaining context across time steps.
 
+> **Explanation:**
+> RNNs are designed to process data where order matters, such as time series, text, or audio. They maintain a hidden state (memory) that is updated at each time step, allowing them to capture dependencies across the sequence.
+
 > **Key Insight:**
-> 
 > RNNs are powerful because they maintain a "memory" of previous inputs, allowing them to model temporal dependencies in data like text, audio, and time series.
 
 ## What is Sequential Data?
@@ -18,8 +20,10 @@ Sequential data consists of ordered collections where the position and order of 
 - **Video**: Frames in a video sequence
 - **DNA sequences**: Genetic information
 
+> **Explanation:**
+> The meaning or value of each element in sequential data depends on its position and the elements that come before or after it.
+
 > **Did you know?**
-> 
 > The same set of words can have completely different meanings depending on their order in a sentence!
 
 ## Key Characteristics
@@ -34,7 +38,6 @@ Information at time step $`t`$ often depends on previous time steps $`t-1, t-2, 
 The sequence $`[A, B, C]`$ is different from $`[C, B, A]`$.
 
 > **Common Pitfall:**
-> 
 > Treating sequential data as unordered can destroy important information. Always preserve order!
 
 ## Mathematical Representation
@@ -44,6 +47,10 @@ A sequence of length $`T`$ can be represented as:
 ```math
 X = (x_1, x_2, \ldots, x_T)
 ```
+
+> **Math Breakdown:**
+> - $x_t$ is the feature vector at time step $t$.
+> - $T$ is the length of the sequence (can vary between samples).
 
 Where each $`x_t`$ is a vector of features at time step $`t`$.
 
@@ -56,7 +63,10 @@ The core concept in RNNs is the hidden state $`h_t`$, which serves as the networ
 h_t = f(h_{t-1}, x_t)
 ```
 
-Where $`f`$ is a function that combines the previous hidden state with the current input.
+> **Math Breakdown:**
+> - $h_{t-1}$ is the previous hidden state (memory from the past).
+> - $x_t$ is the current input.
+> - $f$ is a function (usually a neural network layer and activation) that combines the two.
 
 ### Information Flow
 The hidden state carries information from the beginning of the sequence to the current time step:
@@ -65,8 +75,10 @@ The hidden state carries information from the beginning of the sequence to the c
 h_t = f(f(f(\ldots f(h_0, x_1), x_2), \ldots), x_t)
 ```
 
+> **Explanation:**
+> The hidden state at time $t$ is a summary of all previous inputs, updated recursively at each step.
+
 > **Key Insight:**
-> 
 > The hidden state acts like a summary of everything the network has seen so far.
 
 ---
@@ -84,38 +96,28 @@ class SimpleRNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(SimpleRNN, self).__init__()
         self.hidden_size = hidden_size
-        
         # Weight matrices
         self.W_xh = nn.Linear(input_size, hidden_size)
         self.W_hh = nn.Linear(hidden_size, hidden_size)
         self.W_hy = nn.Linear(hidden_size, output_size)
-        
         # Activation function
         self.tanh = nn.Tanh()
-        
     def forward(self, x, h0=None):
         # x shape: (batch_size, seq_len, input_size)
         batch_size, seq_len, _ = x.size()
-        
         if h0 is None:
             h0 = torch.zeros(batch_size, self.hidden_size)
-        
         # Initialize hidden states
         h = h0
         outputs = []
-        
         # Process each time step
         for t in range(seq_len):
-            # Current input
             x_t = x[:, t, :]
-            
             # Update hidden state
             h = self.tanh(self.W_xh(x_t) + self.W_hh(h))
-            
             # Generate output
             y_t = self.W_hy(h)
             outputs.append(y_t)
-        
         # Stack outputs
         outputs = torch.stack(outputs, dim=1)
         return outputs, h
@@ -139,8 +141,12 @@ print(f"Output shape: {outputs.shape}")
 print(f"Final hidden state shape: {final_hidden.shape}")
 ```
 
+> **Code Walkthrough:**
+> - The RNN processes the input sequence one time step at a time, updating its hidden state.
+> - The output at each time step depends on both the current input and the memory from previous steps.
+> - The final hidden state summarizes the entire sequence.
+
 > **Try it yourself!**
-> 
 > Change the sequence length or batch size in the example above. How does the output shape change?
 
 ### Variable Length Sequence Handling
