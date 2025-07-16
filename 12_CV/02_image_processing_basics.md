@@ -1,792 +1,699 @@
 # Image Processing Basics
 
-Image processing is the foundation of computer vision, involving techniques to enhance, filter, and analyze digital images. This guide covers fundamental image processing operations and their mathematical foundations.
-
-## Table of Contents
-
-1. [Filtering and Enhancement](#filtering-and-enhancement)
-2. [Edge Detection](#edge-detection)
-3. [Morphological Operations](#morphological-operations)
-4. [Histogram Processing](#histogram-processing)
-5. [Noise Reduction](#noise-reduction)
-
-## Filtering and Enhancement
+## 1. Filtering and Enhancement
 
 ### Linear Filters
 
-Linear filters operate on pixels using a weighted sum of neighboring pixels. The most common linear filter is the Gaussian filter.
+Linear filters operate on the principle of linear superposition and are fundamental to image processing.
 
 #### Gaussian Filter
+A smoothing filter that reduces noise while preserving edges.
 
-The Gaussian filter is defined by the 2D Gaussian function:
-
-$$G(x, y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2 + y^2}{2\sigma^2}}$$
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-from scipy import ndimage
-
-def gaussian_filter_demo():
-    # Create a test image with noise
-    np.random.seed(42)
-    original = np.zeros((100, 100))
-    original[20:80, 20:80] = 255  # White square
-    
-    # Add noise
-    noisy = original + np.random.normal(0, 30, original.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
-    
-    # Apply Gaussian filter with different sigma values
-    sigma_values = [0.5, 1.0, 2.0, 3.0]
-    filtered_images = []
-    
-    for sigma in sigma_values:
-        # Create Gaussian kernel
-        kernel_size = int(6 * sigma) + 1
-        if kernel_size % 2 == 0:
-            kernel_size += 1
-        
-        filtered = cv2.GaussianBlur(noisy, (kernel_size, kernel_size), sigma)
-        filtered_images.append(filtered)
-    
-    # Display results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    axes[0, 0].imshow(original, cmap='gray')
-    axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(noisy, cmap='gray')
-    axes[0, 1].set_title('Noisy Image')
-    axes[0, 1].axis('off')
-    
-    for i, (sigma, filtered) in enumerate(zip(sigma_values, filtered_images)):
-        row = (i + 2) // 3
-        col = (i + 2) % 3
-        axes[row, col].imshow(filtered, cmap='gray')
-        axes[row, col].set_title(f'Gaussian Filter (σ={sigma})')
-        axes[row, col].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Compare noise reduction
-    print("Noise reduction comparison:")
-    for sigma, filtered in zip(sigma_values, filtered_images):
-        mse = np.mean((original.astype(float) - filtered.astype(float))**2)
-        print(f"σ={sigma}: MSE = {mse:.2f}")
-
-gaussian_filter_demo()
+**1D Gaussian Function:**
+```math
+G(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{x^2}{2\sigma^2}}
 ```
+
+**2D Gaussian Function:**
+```math
+G(x, y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2 + y^2}{2\sigma^2}}
+```
+
+**Properties:**
+- Smoothing effect increases with $\sigma$
+- Separable: $G(x, y) = G(x) \cdot G(y)$
+- Preserves edges better than uniform averaging
 
 #### Mean Filter
+Simple averaging filter that reduces noise but blurs edges.
 
-The mean filter replaces each pixel with the average of its neighbors:
-
-$$I'(x, y) = \frac{1}{N} \sum_{i=-k}^{k} \sum_{j=-k}^{k} I(x+i, y+j)$$
-
-```python
-def mean_filter_demo():
-    # Create test image
-    image = np.zeros((50, 50))
-    image[10:40, 10:40] = 255
-    image[20:30, 20:30] = 0  # Hole in the middle
-    
-    # Add salt and pepper noise
-    noisy = image.copy()
-    noise_pixels = np.random.choice([0, 255], size=image.shape, p=[0.1, 0.1])
-    noisy = np.where(noise_pixels == 0, 0, np.where(noise_pixels == 255, 255, noisy))
-    
-    # Apply mean filter with different kernel sizes
-    kernel_sizes = [3, 5, 7, 9]
-    filtered_images = []
-    
-    for ksize in kernel_sizes:
-        kernel = np.ones((ksize, ksize)) / (ksize * ksize)
-        filtered = cv2.filter2D(noisy, -1, kernel)
-        filtered_images.append(filtered)
-    
-    # Display results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    axes[0, 0].imshow(image, cmap='gray')
-    axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(noisy, cmap='gray')
-    axes[0, 1].set_title('Noisy Image')
-    axes[0, 1].axis('off')
-    
-    for i, (ksize, filtered) in enumerate(zip(kernel_sizes, filtered_images)):
-        row = (i + 2) // 3
-        col = (i + 2) % 3
-        axes[row, col].imshow(filtered, cmap='gray')
-        axes[row, col].set_title(f'Mean Filter ({ksize}x{ksize})')
-        axes[row, col].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-
-mean_filter_demo()
+**Kernel:**
+```math
+K = \frac{1}{n^2} \begin{bmatrix} 1 & 1 & \cdots & 1 \\ 1 & 1 & \cdots & 1 \\ \vdots & \vdots & \ddots & \vdots \\ 1 & 1 & \cdots & 1 \end{bmatrix}
 ```
+
+#### Median Filter
+Non-linear filter that preserves edges while removing salt-and-pepper noise.
+
+**Operation:**
+```math
+I'(x, y) = \text{median}\{I(i, j) : (i, j) \in N(x, y)\}
+```
+
+Where $N(x, y)$ is the neighborhood around pixel $(x, y)$.
 
 ### Non-Linear Filters
 
-Non-linear filters don't follow the principle of superposition and are often more effective for certain types of noise.
+#### Bilateral Filter
+Preserves edges while smoothing, combining spatial and intensity similarity.
 
-#### Median Filter
-
-The median filter replaces each pixel with the median of its neighbors, effective for salt-and-pepper noise:
-
-```python
-def median_filter_demo():
-    # Create test image
-    image = np.zeros((50, 50))
-    image[10:40, 10:40] = 255
-    
-    # Add salt and pepper noise
-    noisy = image.copy()
-    noise_mask = np.random.random(image.shape) < 0.1
-    noisy[noise_mask] = np.random.choice([0, 255], size=noise_mask.sum())
-    
-    # Apply median filter with different kernel sizes
-    kernel_sizes = [3, 5, 7]
-    filtered_images = []
-    
-    for ksize in kernel_sizes:
-        filtered = cv2.medianBlur(noisy, ksize)
-        filtered_images.append(filtered)
-    
-    # Compare with mean filter
-    mean_filtered = cv2.blur(noisy, (5, 5))
-    
-    # Display results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    axes[0, 0].imshow(image, cmap='gray')
-    axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(noisy, cmap='gray')
-    axes[0, 1].set_title('Salt & Pepper Noise')
-    axes[0, 1].axis('off')
-    
-    axes[0, 2].imshow(mean_filtered, cmap='gray')
-    axes[0, 2].set_title('Mean Filter (5x5)')
-    axes[0, 2].axis('off')
-    
-    for i, (ksize, filtered) in enumerate(zip(kernel_sizes, filtered_images)):
-        axes[1, i].imshow(filtered, cmap='gray')
-        axes[1, i].set_title(f'Median Filter ({ksize}x{ksize})')
-        axes[1, i].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Compare performance
-    print("Filter performance comparison:")
-    print(f"Mean filter MSE: {np.mean((image - mean_filtered)**2):.2f}")
-    for ksize, filtered in zip(kernel_sizes, filtered_images):
-        mse = np.mean((image - filtered)**2)
-        print(f"Median filter ({ksize}x{ksize}) MSE: {mse:.2f}")
-
-median_filter_demo()
+**Bilateral Filter Formula:**
+```math
+I'(x, y) = \frac{1}{W_p} \sum_{i,j} I(i, j) \cdot w_s(i, j) \cdot w_r(i, j)
 ```
 
-## Edge Detection
+Where:
+- $w_s(i, j) = e^{-\frac{(i-x)^2 + (j-y)^2}{2\sigma_s^2}}$ (spatial weight)
+- $w_r(i, j) = e^{-\frac{(I(i,j) - I(x,y))^2}{2\sigma_r^2}}$ (range weight)
+- $W_p = \sum_{i,j} w_s(i, j) \cdot w_r(i, j)$ (normalization factor)
 
-Edge detection identifies boundaries between different regions in an image. The most common methods are based on gradient operators.
+## 2. Edge Detection
 
-### Gradient Operators
+### Gradient-Based Methods
 
 #### Sobel Operator
+Computes gradient magnitude and direction using convolution kernels.
 
-The Sobel operator computes gradients using two 3×3 kernels:
+**Sobel Kernels:**
+```math
+G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}, \quad
+G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}
+```
 
-$$G_x = \begin{pmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{pmatrix}, \quad G_y = \begin{pmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{pmatrix}$$
+**Gradient Magnitude:**
+```math
+|\nabla I| = \sqrt{G_x^2 + G_y^2}
+```
 
-The gradient magnitude is: $G = \sqrt{G_x^2 + G_y^2}$
-
-```python
-def sobel_edge_detection():
-    # Create test image with edges
-    image = np.zeros((100, 100))
-    image[20:80, 20:80] = 255  # Square
-    image[40:60, 40:60] = 0    # Hole
-    
-    # Add some noise
-    noisy = image + np.random.normal(0, 10, image.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
-    
-    # Apply Sobel operator
-    sobelx = cv2.Sobel(noisy, cv2.CV_64F, 1, 0, ksize=3)
-    sobely = cv2.Sobel(noisy, cv2.CV_64F, 0, 1, ksize=3)
-    
-    # Compute gradient magnitude and direction
-    magnitude = np.sqrt(sobelx**2 + sobely**2)
-    direction = np.arctan2(sobely, sobelx)
-    
-    # Normalize for display
-    magnitude_norm = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-    
-    # Display results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
-    axes[0, 0].imshow(noisy, cmap='gray')
-    axes[0, 0].set_title('Original Image')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(np.abs(sobelx), cmap='gray')
-    axes[0, 1].set_title('Sobel X')
-    axes[0, 1].axis('off')
-    
-    axes[0, 2].imshow(np.abs(sobely), cmap='gray')
-    axes[0, 2].set_title('Sobel Y')
-    axes[0, 2].axis('off')
-    
-    axes[1, 0].imshow(magnitude_norm, cmap='gray')
-    axes[1, 0].set_title('Gradient Magnitude')
-    axes[1, 0].axis('off')
-    
-    axes[1, 1].imshow(direction, cmap='hsv')
-    axes[1, 1].set_title('Gradient Direction')
-    axes[1, 1].axis('off')
-    
-    # Apply threshold to magnitude
-    threshold = 50
-    edges = (magnitude_norm > threshold).astype(np.uint8) * 255
-    axes[1, 2].imshow(edges, cmap='gray')
-    axes[1, 2].set_title(f'Edges (threshold={threshold})')
-    axes[1, 2].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"Gradient magnitude range: {magnitude.min():.2f} - {magnitude.max():.2f}")
-    print(f"Gradient direction range: {direction.min():.2f} - {direction.max():.2f}")
-
-sobel_edge_detection()
+**Gradient Direction:**
+```math
+\theta = \arctan\left(\frac{G_y}{G_x}\right)
 ```
 
 #### Laplacian Operator
+Second-order derivative operator that detects edges at zero crossings.
 
-The Laplacian operator is a second-order derivative operator:
+**Laplacian Kernel:**
+```math
+\nabla^2 = \begin{bmatrix} 0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0 \end{bmatrix}
+```
 
-$$\nabla^2 I = \frac{\partial^2 I}{\partial x^2} + \frac{\partial^2 I}{\partial y^2}$$
-
-```python
-def laplacian_edge_detection():
-    # Create test image
-    image = np.zeros((100, 100))
-    image[20:80, 20:80] = 255
-    
-    # Add noise
-    noisy = image + np.random.normal(0, 15, image.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
-    
-    # Apply Laplacian operator
-    laplacian = cv2.Laplacian(noisy, cv2.CV_64F)
-    
-    # Apply Gaussian smoothing before Laplacian (LoG - Laplacian of Gaussian)
-    blurred = cv2.GaussianBlur(noisy, (5, 5), 1.0)
-    log = cv2.Laplacian(blurred, cv2.CV_64F)
-    
-    # Normalize for display
-    laplacian_norm = cv2.normalize(laplacian, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-    log_norm = cv2.normalize(log, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-    
-    # Display results
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-    
-    axes[0, 0].imshow(noisy, cmap='gray')
-    axes[0, 0].set_title('Original Image')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(laplacian_norm, cmap='gray')
-    axes[0, 1].set_title('Laplacian')
-    axes[0, 1].axis('off')
-    
-    axes[1, 0].imshow(blurred, cmap='gray')
-    axes[1, 0].set_title('Gaussian Blurred')
-    axes[1, 0].axis('off')
-    
-    axes[1, 1].imshow(log_norm, cmap='gray')
-    axes[1, 1].set_title('Laplacian of Gaussian (LoG)')
-    axes[1, 1].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"Laplacian range: {laplacian.min():.2f} - {laplacian.max():.2f}")
-    print(f"LoG range: {log.min():.2f} - {log.max():.2f}")
-
-laplacian_edge_detection()
+**Laplacian of Gaussian (LoG):**
+```math
+\text{LoG}(x, y) = \frac{1}{\pi\sigma^4}\left(1 - \frac{x^2 + y^2}{2\sigma^2}\right)e^{-\frac{x^2 + y^2}{2\sigma^2}}
 ```
 
 ### Canny Edge Detection
 
-Canny edge detection is a multi-stage algorithm that produces high-quality edges:
+A multi-stage algorithm that produces optimal edge detection.
 
-1. **Gaussian smoothing**
-2. **Gradient computation**
-3. **Non-maximum suppression**
-4. **Double thresholding**
-5. **Edge tracking**
+**Steps:**
+1. **Gaussian Smoothing:** Reduce noise
+2. **Gradient Computation:** Calculate magnitude and direction
+3. **Non-maximum Suppression:** Thin edges
+4. **Double Thresholding:** Classify edges as strong/weak
+5. **Edge Tracking:** Connect strong edges
+
+**Gradient Magnitude:**
+```math
+|\nabla I| = \sqrt{\left(\frac{\partial I}{\partial x}\right)^2 + \left(\frac{\partial I}{\partial y}\right)^2}
+```
+
+**Gradient Direction:**
+```math
+\theta = \arctan\left(\frac{\partial I}{\partial y} / \frac{\partial I}{\partial x}\right)
+```
+
+## 3. Morphological Operations
+
+### Basic Operations
+
+#### Erosion
+Shrinks objects and removes small details.
+
+```math
+(A \ominus B)(x, y) = \min\{A(x+i, y+j) : (i, j) \in B\}
+```
+
+#### Dilation
+Expands objects and fills small holes.
+
+```math
+(A \oplus B)(x, y) = \max\{A(x-i, y-j) : (i, j) \in B\}
+```
+
+#### Opening
+Erosion followed by dilation, removes small objects.
+
+```math
+A \circ B = (A \ominus B) \oplus B
+```
+
+#### Closing
+Dilation followed by erosion, fills small holes.
+
+```math
+A \bullet B = (A \oplus B) \ominus B
+```
+
+### Structuring Elements
+
+Common structuring elements:
+
+**Square:**
+```math
+B = \begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix}
+```
+
+**Cross:**
+```math
+B = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 1 & 1 \\ 0 & 1 & 0 \end{bmatrix}
+```
+
+**Disk:**
+```math
+B = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 1 & 1 \\ 0 & 1 & 0 \end{bmatrix}
+```
+
+## 4. Histogram Processing
+
+### Histogram Equalization
+
+Improves image contrast by spreading pixel intensities across the full range.
+
+**Cumulative Distribution Function (CDF):**
+```math
+cdf(k) = \sum_{i=0}^{k} p(i)
+```
+
+**Equalization Transformation:**
+```math
+T(k) = \text{round}\left(\frac{cdf(k) - cdf_{min}}{(M \times N) - cdf_{min}} \times (L-1)\right)
+```
+
+Where:
+- $M \times N$ is the image size
+- $L$ is the number of intensity levels
+- $cdf_{min}$ is the minimum non-zero CDF value
+
+### Contrast Limited Adaptive Histogram Equalization (CLAHE)
+
+Improves local contrast while limiting amplification of noise.
+
+**Clipping Limit:**
+```math
+\text{clip limit} = \alpha \times \frac{M \times N}{L}
+```
+
+Where $\alpha$ is the clipping factor (typically 2-4).
+
+**Local Histogram Equalization:**
+```math
+T_{local}(k) = \text{round}\left(\frac{cdf_{local}(k) - cdf_{local,min}}{(M_{local} \times N_{local}) - cdf_{local,min}} \times (L-1)\right)
+```
+
+## 5. Noise Reduction Techniques
+
+### Additive White Gaussian Noise (AWGN)
+
+**Model:**
+```math
+I_{noisy}(x, y) = I_{original}(x, y) + \eta(x, y)
+```
+
+Where $\eta(x, y) \sim \mathcal{N}(0, \sigma^2)$.
+
+### Salt-and-Pepper Noise
+
+**Model:**
+```math
+I_{noisy}(x, y) = \begin{cases}
+0 & \text{with probability } p/2 \\
+255 & \text{with probability } p/2 \\
+I_{original}(x, y) & \text{with probability } 1-p
+\end{cases}
+```
+
+### Wiener Filter
+
+Optimal linear filter for noise reduction.
+
+**Frequency Domain:**
+```math
+H(u, v) = \frac{P_f(u, v)}{P_f(u, v) + P_n(u, v)}
+```
+
+Where:
+- $P_f(u, v)$ is the power spectrum of the original image
+- $P_n(u, v)$ is the power spectrum of the noise
+
+## 6. Python Implementation Examples
+
+### Basic Filtering Operations
 
 ```python
-def canny_edge_detection():
-    # Create test image
-    image = np.zeros((100, 100))
-    image[20:80, 20:80] = 255
-    image[40:60, 40:60] = 0
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from scipy import ndimage
+from scipy.signal import convolve2d
+
+# Create test image with noise
+def create_noisy_image(size=(256, 256)):
+    """Create a test image with various noise types."""
+    # Create base image with geometric shapes
+    image = np.zeros(size, dtype=np.uint8)
     
-    # Add noise
-    noisy = image + np.random.normal(0, 20, image.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
+    # Add a circle
+    center = (size[0]//2, size[1]//2)
+    radius = min(size) // 4
+    cv2.circle(image, center, radius, 128, -1)
     
-    # Apply Canny edge detection with different parameters
-    thresholds = [(50, 150), (100, 200), (30, 100)]
-    canny_results = []
+    # Add a rectangle
+    rect_start = (50, 50)
+    rect_end = (150, 100)
+    cv2.rectangle(image, rect_start, rect_end, 200, -1)
     
-    for low, high in thresholds:
-        edges = cv2.Canny(noisy, low, high)
-        canny_results.append(edges)
+    # Add Gaussian noise
+    gaussian_noise = np.random.normal(0, 20, size).astype(np.uint8)
+    noisy_gaussian = cv2.add(image, gaussian_noise)
+    
+    # Add salt and pepper noise
+    salt_pepper = image.copy()
+    noise_pixels = np.random.random(size) < 0.05
+    salt_pepper[noise_pixels] = np.random.choice([0, 255], size=noise_pixels.sum())
+    
+    return image, noisy_gaussian, salt_pepper
+
+# Linear filtering
+def demonstrate_linear_filters(image):
+    """Demonstrate various linear filtering techniques."""
+    # Gaussian filter
+    gaussian_filtered = cv2.GaussianBlur(image, (15, 15), 2)
+    
+    # Mean filter
+    mean_filtered = cv2.blur(image, (15, 15))
+    
+    # Custom Gaussian kernel
+    def create_gaussian_kernel(size, sigma):
+        """Create a 2D Gaussian kernel."""
+        kernel = np.zeros((size, size))
+        center = size // 2
+        
+        for i in range(size):
+            for j in range(size):
+                x, y = i - center, j - center
+                kernel[i, j] = np.exp(-(x**2 + y**2) / (2 * sigma**2))
+        
+        return kernel / np.sum(kernel)
+    
+    custom_gaussian_kernel = create_gaussian_kernel(15, 2)
+    custom_gaussian_filtered = convolve2d(image, custom_gaussian_kernel, mode='same')
+    
+    # Display results
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    axes[0, 0].imshow(image, cmap='gray')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(gaussian_filtered, cmap='gray')
+    axes[0, 1].set_title('Gaussian Filter')
+    axes[1, 0].imshow(mean_filtered, cmap='gray')
+    axes[1, 0].set_title('Mean Filter')
+    axes[1, 1].imshow(custom_gaussian_filtered, cmap='gray')
+    axes[1, 1].set_title('Custom Gaussian Filter')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Non-linear filtering
+def demonstrate_nonlinear_filters(image):
+    """Demonstrate non-linear filtering techniques."""
+    # Median filter
+    median_filtered = cv2.medianBlur(image, 5)
+    
+    # Bilateral filter
+    bilateral_filtered = cv2.bilateralFilter(image, 9, 75, 75)
+    
+    # Non-local means denoising
+    nlm_filtered = cv2.fastNlMeansDenoising(image)
+    
+    # Display results
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    axes[0, 0].imshow(image, cmap='gray')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(median_filtered, cmap='gray')
+    axes[0, 1].set_title('Median Filter')
+    axes[1, 0].imshow(bilateral_filtered, cmap='gray')
+    axes[1, 0].set_title('Bilateral Filter')
+    axes[1, 1].imshow(nlm_filtered, cmap='gray')
+    axes[1, 1].set_title('Non-local Means')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Edge detection
+def demonstrate_edge_detection(image):
+    """Demonstrate various edge detection methods."""
+    # Sobel edge detection
+    sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
+    sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+    sobel_magnitude = np.sqrt(sobel_x**2 + sobel_y**2)
+    sobel_magnitude = np.uint8(sobel_magnitude / sobel_magnitude.max() * 255)
+    
+    # Laplacian edge detection
+    laplacian = cv2.Laplacian(image, cv2.CV_64F)
+    laplacian = np.uint8(np.absolute(laplacian))
+    
+    # Canny edge detection
+    canny_edges = cv2.Canny(image, 50, 150)
+    
+    # Custom Sobel implementation
+    def custom_sobel(image):
+        """Custom Sobel edge detection implementation."""
+        # Sobel kernels
+        sobel_x_kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+        sobel_y_kernel = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+        
+        # Apply convolution
+        grad_x = convolve2d(image, sobel_x_kernel, mode='same')
+        grad_y = convolve2d(image, sobel_y_kernel, mode='same')
+        
+        # Compute magnitude
+        magnitude = np.sqrt(grad_x**2 + grad_y**2)
+        return magnitude
+    
+    custom_sobel_result = custom_sobel(image)
+    custom_sobel_result = np.uint8(custom_sobel_result / custom_sobel_result.max() * 255)
+    
+    # Display results
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    axes[0, 0].imshow(image, cmap='gray')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(sobel_magnitude, cmap='gray')
+    axes[0, 1].set_title('Sobel Magnitude')
+    axes[0, 2].imshow(laplacian, cmap='gray')
+    axes[0, 2].set_title('Laplacian')
+    axes[1, 0].imshow(canny_edges, cmap='gray')
+    axes[1, 0].set_title('Canny Edges')
+    axes[1, 1].imshow(custom_sobel_result, cmap='gray')
+    axes[1, 1].set_title('Custom Sobel')
+    axes[1, 2].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Morphological operations
+def demonstrate_morphological_operations(image):
+    """Demonstrate morphological operations."""
+    # Create binary image for morphological operations
+    _, binary = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+    
+    # Define structuring element
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    
+    # Erosion
+    eroded = cv2.erode(binary, kernel, iterations=1)
+    
+    # Dilation
+    dilated = cv2.dilate(binary, kernel, iterations=1)
+    
+    # Opening (erosion followed by dilation)
+    opened = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
+    
+    # Closing (dilation followed by erosion)
+    closed = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
+    
+    # Display results
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    axes[0, 0].imshow(image, cmap='gray')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(binary, cmap='gray')
+    axes[0, 1].set_title('Binary Image')
+    axes[0, 2].imshow(eroded, cmap='gray')
+    axes[0, 2].set_title('Erosion')
+    axes[1, 0].imshow(dilated, cmap='gray')
+    axes[1, 0].set_title('Dilation')
+    axes[1, 1].imshow(opened, cmap='gray')
+    axes[1, 1].set_title('Opening')
+    axes[1, 2].imshow(closed, cmap='gray')
+    axes[1, 2].set_title('Closing')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Histogram processing
+def demonstrate_histogram_processing(image):
+    """Demonstrate histogram processing techniques."""
+    # Histogram equalization
+    equalized = cv2.equalizeHist(image)
+    
+    # CLAHE
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    clahe_result = clahe.apply(image)
+    
+    # Calculate histograms
+    hist_original = cv2.calcHist([image], [0], None, [256], [0, 256])
+    hist_equalized = cv2.calcHist([equalized], [0], None, [256], [0, 256])
+    hist_clahe = cv2.calcHist([clahe_result], [0], None, [256], [0, 256])
     
     # Display results
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
     
-    axes[0, 0].imshow(noisy, cmap='gray')
-    axes[0, 0].set_title('Original Image')
-    axes[0, 0].axis('off')
-    
-    # Show intermediate steps for first threshold
-    # Gaussian blur
-    blurred = cv2.GaussianBlur(noisy, (5, 5), 1.0)
-    axes[0, 1].imshow(blurred, cmap='gray')
-    axes[0, 1].set_title('Gaussian Blur')
-    axes[0, 1].axis('off')
-    
-    # Sobel gradients
-    sobelx = cv2.Sobel(blurred, cv2.CV_64F, 1, 0, ksize=3)
-    sobely = cv2.Sobel(blurred, cv2.CV_64F, 0, 1, ksize=3)
-    magnitude = np.sqrt(sobelx**2 + sobely**2)
-    magnitude_norm = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-    
-    axes[0, 2].imshow(magnitude_norm, cmap='gray')
-    axes[0, 2].set_title('Gradient Magnitude')
-    axes[0, 2].axis('off')
-    
-    # Canny results
-    for i, (edges, (low, high)) in enumerate(zip(canny_results, thresholds)):
-        axes[1, i].imshow(edges, cmap='gray')
-        axes[1, i].set_title(f'Canny ({low}, {high})')
-        axes[1, i].axis('off')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Compare edge detection methods
-    print("Edge detection comparison:")
-    sobel_edges = cv2.Sobel(noisy, cv2.CV_64F, 1, 0, ksize=3)
-    sobel_edges = np.abs(sobel_edges)
-    sobel_edges = (sobel_edges > 50).astype(np.uint8) * 255
-    
-    print(f"Sobel edges: {np.sum(sobel_edges > 0)} pixels")
-    for i, (edges, (low, high)) in enumerate(zip(canny_results, thresholds)):
-        print(f"Canny ({low}, {high}): {np.sum(edges > 0)} pixels")
-
-canny_edge_detection()
-```
-
-## Morphological Operations
-
-Morphological operations are based on set theory and are used for shape analysis and noise removal.
-
-### Basic Operations
-
-#### Erosion and Dilation
-
-**Erosion** shrinks objects: $A \ominus B = \{z | B_z \subseteq A\}$
-
-**Dilation** expands objects: $A \oplus B = \{z | \hat{B}_z \cap A \neq \emptyset\}$
-
-```python
-def morphological_operations_demo():
-    # Create test image
-    image = np.zeros((100, 100))
-    image[20:80, 20:80] = 255  # Square
-    image[30:70, 30:70] = 0    # Hole
-    
-    # Add noise
-    noisy = image.copy()
-    noise_pixels = np.random.choice([0, 255], size=image.shape, p=[0.05, 0.05])
-    noisy = np.where(noise_pixels == 0, 0, np.where(noise_pixels == 255, 255, noisy))
-    
-    # Define structuring elements
-    kernel_sizes = [3, 5, 7]
-    operations = []
-    
-    for ksize in kernel_sizes:
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (ksize, ksize))
-        
-        # Erosion
-        eroded = cv2.erode(noisy, kernel)
-        
-        # Dilation
-        dilated = cv2.dilate(noisy, kernel)
-        
-        # Opening (erosion followed by dilation)
-        opened = cv2.morphologyEx(noisy, cv2.MORPH_OPEN, kernel)
-        
-        # Closing (dilation followed by erosion)
-        closed = cv2.morphologyEx(noisy, cv2.MORPH_CLOSE, kernel)
-        
-        operations.append({
-            'kernel_size': ksize,
-            'eroded': eroded,
-            'dilated': dilated,
-            'opened': opened,
-            'closed': closed
-        })
-    
-    # Display results
-    fig, axes = plt.subplots(3, 5, figsize=(20, 12))
-    
-    # Original and noisy
+    # Images
     axes[0, 0].imshow(image, cmap='gray')
-    axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(equalized, cmap='gray')
+    axes[0, 1].set_title('Histogram Equalization')
+    axes[0, 2].imshow(clahe_result, cmap='gray')
+    axes[0, 2].set_title('CLAHE')
     
-    axes[0, 1].imshow(noisy, cmap='gray')
-    axes[0, 1].set_title('Noisy')
-    axes[0, 1].axis('off')
+    # Histograms
+    axes[1, 0].plot(hist_original)
+    axes[1, 0].set_title('Original Histogram')
+    axes[1, 0].set_xlabel('Pixel Intensity')
+    axes[1, 0].set_ylabel('Frequency')
     
-    # Empty plots for spacing
-    axes[0, 2].axis('off')
-    axes[0, 3].axis('off')
-    axes[0, 4].axis('off')
+    axes[1, 1].plot(hist_equalized)
+    axes[1, 1].set_title('Equalized Histogram')
+    axes[1, 1].set_xlabel('Pixel Intensity')
+    axes[1, 1].set_ylabel('Frequency')
     
-    # Operation results
-    for i, op in enumerate(operations):
-        ksize = op['kernel_size']
-        
-        axes[i+1, 0].imshow(op['eroded'], cmap='gray')
-        axes[i+1, 0].set_title(f'Erosion ({ksize}x{ksize})')
-        axes[i+1, 0].axis('off')
-        
-        axes[i+1, 1].imshow(op['dilated'], cmap='gray')
-        axes[i+1, 1].set_title(f'Dilation ({ksize}x{ksize})')
-        axes[i+1, 1].axis('off')
-        
-        axes[i+1, 2].imshow(op['opened'], cmap='gray')
-        axes[i+1, 2].set_title(f'Opening ({ksize}x{ksize})')
-        axes[i+1, 2].axis('off')
-        
-        axes[i+1, 3].imshow(op['closed'], cmap='gray')
-        axes[i+1, 3].set_title(f'Closing ({ksize}x{ksize})')
-        axes[i+1, 3].axis('off')
-        
-        # Morphological gradient
-        gradient = op['dilated'] - op['eroded']
-        axes[i+1, 4].imshow(gradient, cmap='gray')
-        axes[i+1, 4].set_title(f'Gradient ({ksize}x{ksize})')
-        axes[i+1, 4].axis('off')
+    axes[1, 2].plot(hist_clahe)
+    axes[1, 2].set_title('CLAHE Histogram')
+    axes[1, 2].set_xlabel('Pixel Intensity')
+    axes[1, 2].set_ylabel('Frequency')
     
     plt.tight_layout()
     plt.show()
 
-morphological_operations_demo()
-```
-
-## Histogram Processing
-
-Histogram processing techniques modify the distribution of pixel intensities to enhance image contrast and visibility.
-
-### Histogram Equalization
-
-Histogram equalization spreads the pixel intensities across the full range:
-
-$$s_k = T(r_k) = \sum_{j=0}^{k} \frac{n_j}{n}$$
-
-where $n_j$ is the number of pixels with intensity $j$ and $n$ is the total number of pixels.
-
-```python
-def histogram_processing_demo():
-    # Create test images with different contrast
-    np.random.seed(42)
+# Noise reduction comparison
+def demonstrate_noise_reduction(original, noisy_gaussian, noisy_salt_pepper):
+    """Compare different noise reduction techniques."""
+    # Gaussian noise reduction
+    gaussian_median = cv2.medianBlur(noisy_gaussian, 5)
+    gaussian_bilateral = cv2.bilateralFilter(noisy_gaussian, 9, 75, 75)
+    gaussian_gaussian = cv2.GaussianBlur(noisy_gaussian, (5, 5), 1)
     
-    # Low contrast image
-    low_contrast = np.random.normal(128, 20, (100, 100))
-    low_contrast = np.clip(low_contrast, 0, 255).astype(np.uint8)
-    
-    # High contrast image
-    high_contrast = np.random.normal(128, 60, (100, 100))
-    high_contrast = np.clip(high_contrast, 0, 255).astype(np.uint8)
-    
-    # Uneven histogram image
-    uneven = np.zeros((100, 100), dtype=np.uint8)
-    uneven[:50, :] = np.random.randint(0, 50, (50, 100))
-    uneven[50:, :] = np.random.randint(200, 255, (50, 100))
-    
-    images = [low_contrast, high_contrast, uneven]
-    titles = ['Low Contrast', 'High Contrast', 'Uneven Histogram']
-    
-    # Apply histogram equalization
-    equalized_images = []
-    for img in images:
-        equalized = cv2.equalizeHist(img)
-        equalized_images.append(equalized)
+    # Salt and pepper noise reduction
+    sp_median = cv2.medianBlur(noisy_salt_pepper, 5)
+    sp_bilateral = cv2.bilateralFilter(noisy_salt_pepper, 9, 75, 75)
+    sp_gaussian = cv2.GaussianBlur(noisy_salt_pepper, (5, 5), 1)
     
     # Display results
     fig, axes = plt.subplots(3, 4, figsize=(16, 12))
     
-    for i, (img, eq_img, title) in enumerate(zip(images, equalized_images, titles)):
-        # Original image
-        axes[i, 0].imshow(img, cmap='gray')
-        axes[i, 0].set_title(f'{title} - Original')
-        axes[i, 0].axis('off')
-        
-        # Equalized image
-        axes[i, 1].imshow(eq_img, cmap='gray')
-        axes[i, 1].set_title(f'{title} - Equalized')
-        axes[i, 1].axis('off')
-        
-        # Original histogram
-        axes[i, 2].hist(img.ravel(), bins=50, alpha=0.7, color='blue')
-        axes[i, 2].set_title('Original Histogram')
-        axes[i, 2].set_xlabel('Pixel Value')
-        axes[i, 2].set_ylabel('Frequency')
-        
-        # Equalized histogram
-        axes[i, 3].hist(eq_img.ravel(), bins=50, alpha=0.7, color='red')
-        axes[i, 3].set_title('Equalized Histogram')
-        axes[i, 3].set_xlabel('Pixel Value')
-        axes[i, 3].set_ylabel('Frequency')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Calculate statistics
-    print("Histogram statistics:")
-    for i, (img, eq_img, title) in enumerate(zip(images, equalized_images, titles)):
-        print(f"\n{title}:")
-        print(f"  Original - Mean: {img.mean():.1f}, Std: {img.std():.1f}")
-        print(f"  Equalized - Mean: {eq_img.mean():.1f}, Std: {eq_img.std():.1f}")
-
-histogram_processing_demo()
-```
-
-### Adaptive Histogram Equalization (CLAHE)
-
-CLAHE improves local contrast by applying histogram equalization to small regions:
-
-```python
-def clahe_demo():
-    # Create test image with varying contrast
-    image = np.zeros((200, 200), dtype=np.uint8)
-    
-    # Create gradient pattern
-    for i in range(200):
-        for j in range(200):
-            # Varying contrast across the image
-            contrast = 50 + 100 * (i / 200)
-            image[i, j] = np.clip(128 + contrast * np.sin(j / 20), 0, 255)
-    
-    # Add some noise
-    noisy = image + np.random.normal(0, 10, image.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
-    
-    # Apply different histogram equalization methods
-    # Global histogram equalization
-    global_eq = cv2.equalizeHist(noisy)
-    
-    # CLAHE
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    clahe_eq = clahe.apply(noisy)
-    
-    # CLAHE with different parameters
-    clahe2 = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(16, 16))
-    clahe_eq2 = clahe2.apply(noisy)
-    
-    # Display results
-    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
-    
-    # Original images
-    axes[0, 0].imshow(noisy, cmap='gray')
+    # Gaussian noise results
+    axes[0, 0].imshow(original, cmap='gray')
     axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
+    axes[0, 1].imshow(noisy_gaussian, cmap='gray')
+    axes[0, 1].set_title('Gaussian Noise')
+    axes[0, 2].imshow(gaussian_median, cmap='gray')
+    axes[0, 2].set_title('Median Filter')
+    axes[0, 3].imshow(gaussian_bilateral, cmap='gray')
+    axes[0, 3].set_title('Bilateral Filter')
     
-    axes[0, 1].imshow(global_eq, cmap='gray')
-    axes[0, 1].set_title('Global Equalization')
-    axes[0, 1].axis('off')
+    # Salt and pepper noise results
+    axes[1, 0].imshow(original, cmap='gray')
+    axes[1, 0].set_title('Original')
+    axes[1, 1].imshow(noisy_salt_pepper, cmap='gray')
+    axes[1, 1].set_title('Salt & Pepper Noise')
+    axes[1, 2].imshow(sp_median, cmap='gray')
+    axes[1, 2].set_title('Median Filter')
+    axes[1, 3].imshow(sp_bilateral, cmap='gray')
+    axes[1, 3].set_title('Bilateral Filter')
     
-    axes[0, 2].imshow(clahe_eq, cmap='gray')
-    axes[0, 2].set_title('CLAHE (clip=2.0, tile=8x8)')
-    axes[0, 2].axis('off')
+    # Comparison histograms
+    axes[2, 0].hist(original.ravel(), bins=50, alpha=0.7, label='Original')
+    axes[2, 0].hist(noisy_gaussian.ravel(), bins=50, alpha=0.7, label='Gaussian Noise')
+    axes[2, 0].set_title('Gaussian Noise Histogram')
+    axes[2, 0].legend()
     
-    axes[0, 3].imshow(clahe_eq2, cmap='gray')
-    axes[0, 3].set_title('CLAHE (clip=4.0, tile=16x16)')
-    axes[0, 3].axis('off')
+    axes[2, 1].hist(original.ravel(), bins=50, alpha=0.7, label='Original')
+    axes[2, 1].hist(noisy_salt_pepper.ravel(), bins=50, alpha=0.7, label='Salt & Pepper')
+    axes[2, 1].set_title('Salt & Pepper Histogram')
+    axes[2, 1].legend()
     
-    # Histograms
-    axes[1, 0].hist(noisy.ravel(), bins=50, alpha=0.7)
-    axes[1, 0].set_title('Original Histogram')
-    axes[1, 0].set_xlabel('Pixel Value')
+    axes[2, 2].hist(gaussian_median.ravel(), bins=50, alpha=0.7, label='Median Filtered')
+    axes[2, 2].set_title('Median Filter Result')
+    axes[2, 2].legend()
     
-    axes[1, 1].hist(global_eq.ravel(), bins=50, alpha=0.7)
-    axes[1, 1].set_title('Global Equalized Histogram')
-    axes[1, 1].set_xlabel('Pixel Value')
-    
-    axes[1, 2].hist(clahe_eq.ravel(), bins=50, alpha=0.7)
-    axes[1, 2].set_title('CLAHE Histogram')
-    axes[1, 2].set_xlabel('Pixel Value')
-    
-    axes[1, 3].hist(clahe_eq2.ravel(), bins=50, alpha=0.7)
-    axes[1, 3].set_title('CLAHE (High Clip) Histogram')
-    axes[1, 3].set_xlabel('Pixel Value')
+    axes[2, 3].hist(gaussian_bilateral.ravel(), bins=50, alpha=0.7, label='Bilateral Filtered')
+    axes[2, 3].set_title('Bilateral Filter Result')
+    axes[2, 3].legend()
     
     plt.tight_layout()
     plt.show()
-    
-    # Compare local contrast
-    def local_contrast(img, window_size=20):
-        """Calculate local contrast using standard deviation"""
-        contrast_map = np.zeros_like(img, dtype=float)
-        pad = window_size // 2
-        
-        for i in range(pad, img.shape[0] - pad):
-            for j in range(pad, img.shape[1] - pad):
-                window = img[i-pad:i+pad+1, j-pad:j+pad+1]
-                contrast_map[i, j] = window.std()
-        
-        return contrast_map
-    
-    print("Local contrast comparison:")
-    methods = [noisy, global_eq, clahe_eq, clahe_eq2]
-    method_names = ['Original', 'Global EQ', 'CLAHE', 'CLAHE (High Clip)']
-    
-    for img, name in zip(methods, method_names):
-        contrast = local_contrast(img)
-        print(f"{name}: Mean local contrast = {contrast.mean():.2f}")
 
-clahe_demo()
+# Main demonstration
+if __name__ == "__main__":
+    # Create test images
+    original, noisy_gaussian, noisy_salt_pepper = create_noisy_image()
+    
+    # Demonstrate linear filters
+    demonstrate_linear_filters(noisy_gaussian)
+    
+    # Demonstrate non-linear filters
+    demonstrate_nonlinear_filters(noisy_gaussian)
+    
+    # Demonstrate edge detection
+    demonstrate_edge_detection(original)
+    
+    # Demonstrate morphological operations
+    demonstrate_morphological_operations(original)
+    
+    # Demonstrate histogram processing
+    demonstrate_histogram_processing(original)
+    
+    # Demonstrate noise reduction
+    demonstrate_noise_reduction(original, noisy_gaussian, noisy_salt_pepper)
 ```
 
-## Noise Reduction
-
-### Advanced Noise Reduction Techniques
-
-#### Bilateral Filter
-
-The bilateral filter preserves edges while smoothing:
-
-$$BF[I]_p = \frac{1}{W_p} \sum_{q \in S} G_{\sigma_s}(\|p-q\|) G_{\sigma_r}(|I_p - I_q|) I_q$$
-
-where $G_{\sigma_s}$ and $G_{\sigma_r}$ are spatial and range Gaussian kernels.
+### Advanced Techniques
 
 ```python
-def bilateral_filter_demo():
-    # Create test image
-    image = np.zeros((100, 100))
-    image[20:80, 20:80] = 255
-    image[40:60, 40:60] = 0
+# Advanced filtering techniques
+def advanced_filtering_demo():
+    """Demonstrate advanced filtering techniques."""
+    # Create a complex test image
+    image = np.zeros((256, 256), dtype=np.uint8)
     
-    # Add Gaussian noise
-    noisy = image + np.random.normal(0, 25, image.shape)
-    noisy = np.clip(noisy, 0, 255).astype(np.uint8)
+    # Add multiple shapes with different intensities
+    cv2.circle(image, (128, 128), 50, 100, -1)
+    cv2.rectangle(image, (50, 50), (100, 100), 150, -1)
+    cv2.rectangle(image, (180, 180), (220, 220), 200, -1)
+    
+    # Add texture
+    noise = np.random.normal(0, 10, image.shape).astype(np.uint8)
+    image = cv2.add(image, noise)
+    
+    # Wiener filter implementation
+    def wiener_filter(image, noise_var=100):
+        """Simple Wiener filter implementation."""
+        # Convert to frequency domain
+        f_transform = np.fft.fft2(image)
+        f_shift = np.fft.fftshift(f_transform)
+        
+        # Create Wiener filter
+        rows, cols = image.shape
+        crow, ccol = rows // 2, cols // 2
+        
+        # Create frequency coordinates
+        u, v = np.meshgrid(np.arange(cols), np.arange(rows))
+        
+        # Wiener filter transfer function
+        H = 1 / (1 + noise_var / (np.abs(f_shift)**2 + 1e-10))
+        
+        # Apply filter
+        filtered_shift = f_shift * H
+        filtered_transform = np.fft.ifftshift(filtered_shift)
+        filtered_image = np.real(np.fft.ifft2(filtered_transform))
+        
+        return np.clip(filtered_image, 0, 255).astype(np.uint8)
     
     # Apply different filters
-    # Gaussian filter
-    gaussian_filtered = cv2.GaussianBlur(noisy, (9, 9), 2.0)
-    
-    # Bilateral filter
-    bilateral_filtered = cv2.bilateralFilter(noisy, 9, 75, 75)
-    
-    # Non-local means
-    nlm_filtered = cv2.fastNlMeansDenoising(noisy)
+    gaussian = cv2.GaussianBlur(image, (15, 15), 2)
+    bilateral = cv2.bilateralFilter(image, 9, 75, 75)
+    wiener = wiener_filter(image, noise_var=100)
     
     # Display results
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     axes[0, 0].imshow(image, cmap='gray')
-    axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
-    
-    axes[0, 1].imshow(noisy, cmap='gray')
-    axes[0, 1].set_title('Noisy')
-    axes[0, 1].axis('off')
-    
-    axes[0, 2].imshow(gaussian_filtered, cmap='gray')
-    axes[0, 2].set_title('Gaussian Filter')
-    axes[0, 2].axis('off')
-    
-    axes[1, 0].imshow(bilateral_filtered, cmap='gray')
+    axes[0, 0].set_title('Original Image')
+    axes[0, 1].imshow(gaussian, cmap='gray')
+    axes[0, 1].set_title('Gaussian Filter')
+    axes[1, 0].imshow(bilateral, cmap='gray')
     axes[1, 0].set_title('Bilateral Filter')
-    axes[1, 0].axis('off')
-    
-    axes[1, 1].imshow(nlm_filtered, cmap='gray')
-    axes[1, 1].set_title('Non-local Means')
-    axes[1, 1].axis('off')
-    
-    # Edge preservation comparison
-    def edge_preservation(original, filtered):
-        """Calculate edge preservation metric"""
-        # Sobel edges
-        sobel_orig = cv2.Sobel(original, cv2.CV_64F, 1, 0, ksize=3)
-        sobel_filt = cv2.Sobel(filtered, cv2.CV_64F, 1, 0, ksize=3)
-        
-        # Correlation between edge maps
-        correlation = np.corrcoef(sobel_orig.ravel(), sobel_filt.ravel())[0, 1]
-        return correlation
-    
-    # Calculate metrics
-    methods = [gaussian_filtered, bilateral_filtered, nlm_filtered]
-    method_names = ['Gaussian', 'Bilateral', 'Non-local Means']
-    
-    axes[1, 2].axis('off')
-    axes[1, 2].text(0.1, 0.8, 'Edge Preservation Metrics:', fontsize=12, fontweight='bold')
-    
-    y_pos = 0.7
-    for method, name in zip(methods, method_names):
-        mse = np.mean((image.astype(float) - method.astype(float))**2)
-        edge_pres = edge_preservation(image, method)
-        
-        axes[1, 2].text(0.1, y_pos, f'{name}:', fontsize=10, fontweight='bold')
-        axes[1, 2].text(0.1, y_pos-0.05, f'  MSE: {mse:.1f}', fontsize=9)
-        axes[1, 2].text(0.1, y_pos-0.1, f'  Edge Pres: {edge_pres:.3f}', fontsize=9)
-        y_pos -= 0.2
+    axes[1, 1].imshow(wiener, cmap='gray')
+    axes[1, 1].set_title('Wiener Filter')
     
     plt.tight_layout()
     plt.show()
 
-bilateral_filter_demo()
+# Multi-scale edge detection
+def multi_scale_edge_detection(image):
+    """Demonstrate multi-scale edge detection."""
+    # Apply Gaussian blur at different scales
+    scales = [1, 2, 4, 8]
+    edge_images = []
+    
+    for scale in scales:
+        # Blur image
+        blurred = cv2.GaussianBlur(image, (0, 0), scale)
+        
+        # Apply Canny edge detection
+        edges = cv2.Canny(blurred, 50, 150)
+        edge_images.append(edges)
+    
+    # Display results
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    for i, (scale, edges) in enumerate(zip(scales, edge_images)):
+        row, col = i // 2, i % 2
+        axes[row, col].imshow(edges, cmap='gray')
+        axes[row, col].set_title(f'Scale σ={scale}')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Advanced morphological operations
+def advanced_morphology_demo():
+    """Demonstrate advanced morphological operations."""
+    # Create a complex binary image
+    image = np.zeros((200, 200), dtype=np.uint8)
+    
+    # Add multiple objects
+    cv2.circle(image, (50, 50), 20, 255, -1)
+    cv2.circle(image, (150, 50), 15, 255, -1)
+    cv2.rectangle(image, (50, 120), (150, 180), 255, -1)
+    
+    # Add noise
+    noise = np.random.random(image.shape) < 0.1
+    image[noise] = 255
+    
+    # Define different structuring elements
+    kernel_rect = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    kernel_ellipse = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    kernel_cross = cv2.getStructuringElement(cv2.MORPH_CROSS, (5, 5))
+    
+    # Apply morphological operations
+    results = {}
+    kernels = {'Rectangle': kernel_rect, 'Ellipse': kernel_ellipse, 'Cross': kernel_cross}
+    
+    for name, kernel in kernels.items():
+        results[f'{name}_erosion'] = cv2.erode(image, kernel)
+        results[f'{name}_dilation'] = cv2.dilate(image, kernel)
+        results[f'{name}_opening'] = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+        results[f'{name}_closing'] = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+    
+    # Display results
+    fig, axes = plt.subplots(4, 4, figsize=(16, 16))
+    
+    # Original image
+    axes[0, 0].imshow(image, cmap='gray')
+    axes[0, 0].set_title('Original')
+    
+    # Display results for each kernel
+    for i, (name, kernel) in enumerate(kernels.items()):
+        row = i + 1
+        axes[row, 0].imshow(results[f'{name}_erosion'], cmap='gray')
+        axes[row, 0].set_title(f'{name} Erosion')
+        axes[row, 1].imshow(results[f'{name}_dilation'], cmap='gray')
+        axes[row, 1].set_title(f'{name} Dilation')
+        axes[row, 2].imshow(results[f'{name}_opening'], cmap='gray')
+        axes[row, 2].set_title(f'{name} Opening')
+        axes[row, 3].imshow(results[f'{name}_closing'], cmap='gray')
+        axes[row, 3].set_title(f'{name} Closing')
+    
+    plt.tight_layout()
+    plt.show()
 ```
 
-## Summary
-
-This guide covered fundamental image processing techniques:
-
-1. **Filtering and Enhancement**: Linear and non-linear filters for noise reduction
-2. **Edge Detection**: Gradient-based operators and advanced methods like Canny
-3. **Morphological Operations**: Shape-based processing using erosion, dilation, opening, and closing
-4. **Histogram Processing**: Contrast enhancement through histogram equalization
-5. **Advanced Noise Reduction**: Bilateral filtering and non-local means
-
-### Key Takeaways
-
-- **Linear filters** are computationally efficient but may blur edges
-- **Non-linear filters** like median and bilateral preserve edges better
-- **Edge detection** requires careful parameter tuning for optimal results
-- **Morphological operations** are powerful for shape analysis and noise removal
-- **Histogram processing** can significantly improve image visibility
-- **Advanced techniques** like CLAHE and bilateral filtering provide better results for specific applications
-
-### Next Steps
-
-With these basics mastered, you can explore:
-- Feature detection and description algorithms
-- Object detection and recognition
-- Image segmentation techniques
-- Deep learning approaches in computer vision 
+This comprehensive guide covers the fundamental image processing techniques used in computer vision. Each section includes detailed mathematical formulations and practical Python implementations, making it suitable for both theoretical understanding and practical application. 
