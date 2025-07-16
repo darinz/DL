@@ -17,6 +17,9 @@ A vanilla RNN consists of a single hidden layer with recurrent connections. At e
 2. Combines it with the previous hidden state $`h_{t-1}`$
 3. Produces a new hidden state $`h_t`$ and output $`y_t`$
 
+> **Explanation:**
+> The core idea of a vanilla RNN is to use the same set of weights to process each element in a sequence, passing information forward through the hidden state. This allows the network to "remember" information from previous time steps.
+
 #### Geometric/Visual Explanation
 
 Imagine a chain where each link represents a time step. The hidden state $`h_t`$ acts as the memory passed from one link to the next, allowing information to flow through the sequence.
@@ -30,6 +33,16 @@ h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t + b_h)
 y_t = W_{hy} h_t + b_y
 ```
 
+> **Math Breakdown:**
+> - $W_{xh}$: Weight matrix for input to hidden state
+> - $W_{hh}$: Weight matrix for hidden to hidden state
+> - $b_h$: Bias for hidden state
+> - $\tanh$: Nonlinear activation function
+> - $h_t$: New hidden state (memory)
+> - $W_{hy}$: Weight matrix for hidden to output
+> - $b_y$: Bias for output
+> - $y_t$: Output at time $t$
+
 Where:
 - $`h_t`$: hidden state at time $`t`$
 - $`x_t`$: input at time $`t`$
@@ -40,7 +53,8 @@ Where:
 - $`b_h`$, $`b_y`$: bias terms
 - $`\tanh`$: activation function
 
-> **Common Pitfall:** Forgetting to initialize the hidden state or incorrectly handling its shape can lead to subtle bugs in RNN implementations.
+> **Common Pitfall:**
+> Forgetting to initialize the hidden state or incorrectly handling its shape can lead to subtle bugs in RNN implementations.
 
 ## Python Implementation
 
@@ -96,7 +110,10 @@ class VanillaRNN(nn.Module):
         return outputs, h
 ```
 
-> **Code Commentary:** Each time step processes the input and previous hidden state, updating the memory and producing an output. The use of `torch.tanh` ensures nonlinearity and helps with gradient flow.
+> **Code Walkthrough:**
+> - The RNN processes the input sequence one time step at a time, updating its hidden state.
+> - The same weights are used at every time step, enabling parameter sharing across the sequence.
+> - The final hidden state summarizes the entire sequence.
 
 #### Try it yourself!
 - Modify the activation function to $`\text{ReLU}`$ or $`\text{sigmoid}`$ and observe the effect on learning and gradient flow.
