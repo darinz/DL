@@ -18,12 +18,19 @@
 
 Numerical stability is critical in deep learning to avoid errors due to the limitations of floating-point arithmetic. Instabilities can cause models to diverge, produce NaNs, or yield inaccurate results.
 
+> **Deep Learning Relevance:**
+> - Unstable computations can cause exploding/vanishing gradients, NaNs, or poor convergence.
+> - Stable numerical methods are essential for reliable training and inference.
+
 ### Floating Point Arithmetic
 
 Deep learning relies heavily on floating-point arithmetic, which can introduce numerical errors due to finite precision.
 
 #### Machine Epsilon
 The smallest number $`\epsilon`$ such that $`1 + \epsilon > 1`$ in floating-point arithmetic. It quantifies the precision limit of the system.
+
+> **Tip:**
+> - Machine epsilon tells you the smallest difference the computer can distinguish from 1.0.
 
 ### Common Numerical Issues
 
@@ -36,6 +43,9 @@ Loss of precision when subtracting nearly equal numbers, leading to significant 
 
 #### Accumulation of Rounding Errors
 Repeated operations can accumulate small errors, affecting results in long computations.
+
+> **Analogy:**
+> - Think of floating-point as using a fixed number of digits on a calculator. If you keep rounding, errors add up!
 
 ### Python Implementation: Numerical Issues
 
@@ -80,6 +90,7 @@ numerical_stability_examples()
 **Code Annotations:**
 - Demonstrates machine epsilon, overflow, underflow, and catastrophic cancellation.
 - Shows how floating-point limitations can affect computations.
+- **Try it:** Change the numbers to see when overflow/underflow happens!
 
 ---
 
@@ -93,12 +104,16 @@ The log-sum-exp trick prevents overflow when computing $`\log(\sum_i e^{x_i})`$ 
 
 - **Intuition:** Subtracting the maximum keeps exponentials in a safe range.
 - **Deep learning connection:** Used in softmax, log-likelihoods, and partition functions.
+- **Pitfall:** Naive computation can cause overflow if $x_i$ is large (e.g., $e^{1000}$ is infinity in float64).
+
+> **Analogy:**
+> - Like shifting all numbers down so the biggest is zero, so the exponentials don't "blow up."
 
 ### Python Implementation: Log-Sum-Exp Trick
 
 ```python
 def log_sum_exp_naive(x):
-    """Naive implementation of log-sum-exp"""
+    """Naive implementation of log-sum-exp (prone to overflow)"""
     return np.log(np.sum(np.exp(x)))
 
 def log_sum_exp_stable(x):
@@ -141,6 +156,7 @@ log_sum_exp_example()
 **Code Annotations:**
 - Compares naive and stable log-sum-exp implementations.
 - Shows how the trick prevents overflow and maintains accuracy.
+- **Try it:** Try larger or smaller numbers to see when the naive version fails!
 
 ---
 
@@ -154,17 +170,21 @@ The softmax function is commonly used in classification to convert logits to pro
 
 - **Numerical issue:** Large $`x_i`$ can cause overflow in $`e^{x_i}`$.
 - **Solution:** Subtract $`\max_j x_j`$ from all $`x_i`$ before exponentiating.
+- **Deep Learning Relevance:** Stable softmax is essential for reliable probability outputs and gradients.
+
+> **Tip:**
+> - Always use the stable version of softmax in your code!
 
 ### Python Implementation: Stable Softmax
 
 ```python
 def softmax_naive(x):
-    """Naive softmax implementation"""
+    """Naive softmax implementation (prone to overflow)"""
     exp_x = np.exp(x)
     return exp_x / np.sum(exp_x)
 
 def softmax_stable(x):
-    """Stable softmax implementation"""
+    """Stable softmax implementation (subtracts max for stability)"""
     # Subtract max for numerical stability
     x_shifted = x - np.max(x)
     exp_x = np.exp(x_shifted)
@@ -206,6 +226,7 @@ softmax_example()
 **Code Annotations:**
 - Demonstrates naive and stable softmax implementations.
 - Shows how stability is achieved by shifting inputs.
+- **Try it:** Use even larger numbers to see the difference between naive and stable softmax!
 
 ---
 
@@ -243,6 +264,9 @@ v_t = \beta_2 v_{t-1} + (1-\beta_2)(\nabla L(\theta_t))^2
 ```
 - Combines momentum and adaptive learning rates for each parameter.
 
+> **Deep Learning Note:**
+> - Adam and momentum help accelerate convergence and avoid getting stuck in poor local minima.
+
 ### Python Implementation: Optimization Algorithms
 
 ```python
@@ -254,11 +278,12 @@ class Optimizer:
         self.lr = learning_rate
     
     def step(self, params, grads):
-        """Update parameters"""
+        """Update parameters (to be implemented by subclasses)"""
         raise NotImplementedError
 
 class SGD(Optimizer):
     def step(self, params, grads):
+        # Standard stochastic gradient descent update
         return params - self.lr * grads
 
 class Momentum(Optimizer):
@@ -268,9 +293,10 @@ class Momentum(Optimizer):
         self.velocity = None
     
     def step(self, params, grads):
+        # Initialize velocity on first call
         if self.velocity is None:
             self.velocity = np.zeros_like(params)
-        
+        # Update velocity and parameters
         self.velocity = self.momentum * self.velocity + (1 - self.momentum) * grads
         return params - self.lr * self.velocity
 
@@ -285,25 +311,26 @@ class Adam(Optimizer):
         self.t = 0
     
     def step(self, params, grads):
+        # Initialize moment estimates on first call
         if self.m is None:
             self.m = np.zeros_like(params)
             self.v = np.zeros_like(params)
-        
         self.t += 1
-        
+        # Update biased first and second moment estimates
         self.m = self.beta1 * self.m + (1 - self.beta1) * grads
         self.v = self.beta2 * self.v + (1 - self.beta2) * (grads ** 2)
-        
         # Bias correction
         m_hat = self.m / (1 - self.beta1 ** self.t)
         v_hat = self.v / (1 - self.beta2 ** self.t)
-        
+        # Parameter update
         return params - self.lr * m_hat / (np.sqrt(v_hat) + self.epsilon)
 
 # Test optimization algorithms
 def test_optimizers():
-    """Compare different optimization algorithms"""
-    # Define a simple function to optimize
+    """Compare different optimization algorithms
+    Visualizes convergence and parameter updates for SGD, Momentum, and Adam.
+    """
+    # Define a simple function to optimize (quadratic)
     def objective_function(x):
         return x**2 + 2*x + 1
     
@@ -382,6 +409,8 @@ test_optimizers()
 **Code Annotations:**
 - Implements and compares SGD, Momentum, and Adam optimizers.
 - Visualizes optimization trajectories and convergence.
+- Shows how different optimizers affect speed and stability of convergence.
+- **Try it:** Change the learning rate or initial point to see how optimizers behave!
 
 ---
 
@@ -393,6 +422,10 @@ Efficient computation is essential for training large models and processing big 
 
 Vectorization uses array operations instead of loops for faster computation.
 - **Deep learning connection:** Libraries like NumPy, PyTorch, and TensorFlow are highly vectorized.
+- **Tip:** Always prefer vectorized operations for speed and clarity.
+
+> **Analogy:**
+> - Vectorization is like using a conveyor belt instead of moving items one by one.
 
 ### Python Implementation: Vectorization
 
@@ -401,7 +434,9 @@ import numpy as np
 import time
 
 def vectorization_example():
-    """Demonstrate the importance of vectorization"""
+    """Demonstrate the importance of vectorization
+    Compares loop-based and vectorized computation for speed and correctness.
+    """
     n = 10000
     
     # Non-vectorized computation
@@ -440,18 +475,23 @@ vectorization_example()
 **Code Annotations:**
 - Compares vectorized and non-vectorized implementations.
 - Shows dramatic speedup from vectorization.
+- **Try it:** Increase n to see how much faster vectorization becomes!
 
 ---
 
 ### Matrix Operations
 
 Efficient matrix operations are essential for neural networks, which are built on matrix multiplications.
+- **Deep learning connection:** Matrix multiplication is the backbone of forward and backward passes in neural nets.
+- **Tip:** Use optimized libraries (NumPy, BLAS, cuBLAS, etc.) for large matrix operations.
 
 ### Python Implementation: Matrix Operations
 
 ```python
 def matrix_operations_example():
-    """Demonstrate efficient matrix operations"""
+    """Demonstrate efficient matrix operations
+    Compares different methods for matrix multiplication.
+    """
     # Matrix sizes
     m, n, p = 1000, 1000, 1000
     
@@ -474,18 +514,16 @@ def matrix_operations_example():
         elapsed_time = time.time() - start_time
         print(f"{name}: {elapsed_time:.4f} seconds")
     
-    # Memory usage comparison
-    print(f"\nMatrix sizes: A({A.shape}), B({B.shape})")
-    print(f"Memory for A: {A.nbytes / 1024**2:.2f} MB")
-    print(f"Memory for B: {B.nbytes / 1024**2:.2f} MB")
-    print(f"Memory for result: {result.nbytes / 1024**2:.2f} MB")
+    # All results should be (almost) identical
+    # (not shown: you can use np.allclose to check)
 
 matrix_operations_example()
 ```
 
 **Code Annotations:**
-- Compares different matrix multiplication methods and their performance.
-- Shows memory usage for large matrices.
+- Compares different matrix multiplication methods in NumPy.
+- Shows the importance of using optimized operations for large matrices.
+- **Try it:** Change matrix sizes to see how performance scales!
 
 ---
 
@@ -494,9 +532,14 @@ matrix_operations_example()
 Memory-efficient operations are crucial for training large models and working with big data.
 
 ### Memory-Efficient Operations
-- Use in-place operations when possible
-- Delete unused variables and call garbage collection
-- Monitor memory usage
+- Use in-place operations when possible (e.g., `array *= 2` instead of `array = array * 2`)
+- Delete unused variables and call garbage collection to free memory
+- Monitor memory usage to avoid out-of-memory errors
+- **Deep learning connection:** Large models and datasets can easily exhaust system or GPU memory.
+
+> **Tip:**
+> - In-place operations save memory but can overwrite data. Use with care!
+> - Use memory profilers to track leaks in long-running training jobs.
 
 ### Python Implementation: Memory Management
 
@@ -505,8 +548,9 @@ import psutil
 import gc
 
 def memory_management_example():
-    """Demonstrate memory management techniques"""
-    
+    """Demonstrate memory management techniques
+    Shows how memory usage changes with array creation, deletion, and in-place operations.
+    """
     def get_memory_usage():
         """Get current memory usage in MB"""
         process = psutil.Process()
@@ -532,11 +576,11 @@ def memory_management_example():
     array = np.random.randn(1000, 1000)
     print(f"After creating array: {get_memory_usage():.2f} MB")
     
-    # In-place multiplication
+    # In-place multiplication (does not allocate new memory)
     array *= 2
     print(f"After in-place multiplication: {get_memory_usage():.2f} MB")
     
-    # Create new array (uses more memory)
+    # Create new array (allocates new memory)
     array = array * 2
     print(f"After creating new array: {get_memory_usage():.2f} MB")
 
@@ -546,6 +590,7 @@ memory_management_example()
 **Code Annotations:**
 - Demonstrates memory usage tracking and in-place operations.
 - Shows how to free memory and avoid leaks.
+- **Try it:** Increase array sizes to see how memory usage grows!
 
 ---
 
@@ -556,6 +601,10 @@ GPUs can significantly accelerate deep learning computations by parallelizing ma
 ### CUDA and GPU Computing
 - CUDA is a parallel computing platform for NVIDIA GPUs.
 - Deep learning frameworks (PyTorch, TensorFlow) use CUDA for GPU acceleration.
+- **Deep learning connection:** Training on GPU is often 10-100x faster than CPU for large models.
+
+> **Tip:**
+> - Always check if your tensors are on the correct device (CPU vs. GPU) to avoid slowdowns or errors.
 
 ### Python Implementation: GPU Acceleration (with PyTorch)
 
@@ -565,7 +614,9 @@ try:
     import torch
     
     def gpu_acceleration_example():
-        """Demonstrate GPU acceleration"""
+        """Demonstrate GPU acceleration
+        Compares CPU and GPU matrix multiplication performance.
+        """
         # Check if CUDA is available
         if torch.cuda.is_available():
             device = torch.device('cuda')
@@ -620,6 +671,7 @@ except ImportError:
 **Code Annotations:**
 - Compares CPU and GPU matrix multiplication performance.
 - Shows how to move data to GPU and verify results.
+- **Try it:** Change matrix size or use larger matrices to see GPU speedup!
 
 ---
 
