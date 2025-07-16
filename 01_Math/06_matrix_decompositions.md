@@ -35,7 +35,7 @@ A = LU
 - Solving systems of linear equations efficiently (forward and backward substitution).
 
 **Example:**
-If $A = \begin{bmatrix} 2 & 3 \\ 5 & 4 \end{bmatrix}$, then $L = \begin{bmatrix} 1 & 0 \\ 2.5 & 1 \end{bmatrix}$, $U = \begin{bmatrix} 2 & 3 \\ 0 & -3.5 \end{bmatrix}$ (details omitted for brevity).
+If $`A = \begin{bmatrix} 2 & 3 \\ 5 & 4 \end{bmatrix}`$, then $`L = \begin{bmatrix} 1 & 0 \\ 2.5 & 1 \end{bmatrix}`$, $`U = \begin{bmatrix} 2 & 3 \\ 0 & -3.5 \end{bmatrix}`$ (details omitted for brevity).
 
 > **Pitfall:** Not all matrices have an LU decomposition without row exchanges (pivoting).
 
