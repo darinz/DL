@@ -2,6 +2,9 @@
 
 Graph Attention Networks (GATs) introduce attention mechanisms to graph neural networks, allowing nodes to assign different importances (weights) to their neighbors during feature aggregation.
 
+> **Explanation:**
+> GATs use attention to let each node decide which neighbors are most important when updating its features. This is especially useful in graphs where some connections are more informative than others.
+
 > **Key Insight:** GATs enable each node to "focus" on the most relevant neighbors, improving performance on graphs with noisy or heterogeneous connections.
 
 > **Did you know?** The attention mechanism in GATs is inspired by the same principles as attention in transformers for NLP!
@@ -20,24 +23,40 @@ $`
 \alpha_{ij} = \mathrm{softmax}_j\left( a\left( W h_i, W h_j \right) \right)
 `$
 
-where:
-- $`h_i`$ is the feature vector of node $`i`$
-- $`W`$ is a learnable weight matrix
-- $`a(\cdot, \cdot)`$ is a learnable attention function (often a single-layer feedforward neural network)
-- $`\mathrm{softmax}_j`$ normalizes across all neighbors of $`i`$
+> **Math Breakdown:**
+> - $`h_i`$: Feature vector of node $`i`$.
+> - $`W`$: Learnable weight matrix that transforms node features.
+> - $`a(\cdot, \cdot)`$: Learnable attention function (often a small neural network) that scores the importance of each neighbor.
+> - $`\mathrm{softmax}_j`$: Normalizes the attention scores across all neighbors of node $`i`$ so they sum to 1.
+> - $`\alpha_{ij}`$: The normalized attention coefficient for edge $(i, j)$.
 
 The updated node features are:
 ```math
 h_i' = \sigma\left( \sum_{j \in \mathcal{N}(i)} \alpha_{ij} W h_j \right)
 ```
-where $`\sigma`$ is an activation function (e.g., ELU).
+> **Math Breakdown:**
+> - $`\mathcal{N}(i)`$: The set of neighbors of node $`i`$.
+> - $`\alpha_{ij}`$: Attention weight for neighbor $`j`$.
+> - $`W h_j`$: Transformed features of neighbor $`j`$.
+> - $`\sigma`$: Activation function (e.g., ELU).
+> - The sum is a weighted aggregation of neighbor features, where more important neighbors contribute more.
 
 ### Step-by-Step Breakdown
 1. **Linear transformation:** Project node features with $`W`$.
+   > **Explanation:**
+   > Each node's features are first transformed by a learnable matrix.
 2. **Compute attention scores:** For each edge $`(i, j)`$, concatenate $`W h_i`$ and $`W h_j`$, then apply $`a(\cdot)`$ and a nonlinearity (e.g., LeakyReLU).
+   > **Explanation:**
+   > The attention function scores how important each neighbor is for the current node.
 3. **Normalize:** Apply softmax over all neighbors $`j`$ of node $`i`$ to get $`\alpha_{ij}`$.
+   > **Math Breakdown:**
+   > Softmax ensures the attention weights sum to 1, making them interpretable as probabilities.
 4. **Aggregate:** Weighted sum of neighbors' features using $`\alpha_{ij}`$.
+   > **Explanation:**
+   > Each node's new features are a weighted sum of its neighbors' features, with weights given by attention.
 5. **Nonlinearity:** Apply $`\sigma`$ (e.g., ELU) to the result.
+   > **Explanation:**
+   > The nonlinearity introduces complexity and helps the model learn more expressive representations.
 
 > **Common Pitfall:** Forgetting to mask non-existent edges when computing attention can lead to incorrect aggregation.
 
@@ -47,7 +66,12 @@ GATs often use multiple attention heads to stabilize learning and capture divers
 ```math
 h_i' = \Vert_{k=1}^K \sigma\left( \sum_{j \in \mathcal{N}(i)} \alpha_{ij}^k W^k h_j \right)
 ```
-where $`\Vert`$ denotes concatenation and $`K`$ is the number of heads.
+> **Math Breakdown:**
+> - $`K`$: Number of attention heads.
+> - $`\alpha_{ij}^k`$: Attention coefficient for head $`k`$.
+> - $`W^k`$: Weight matrix for head $`k`$.
+> - $`\Vert`$: Concatenation of outputs from all heads.
+> - Multi-head attention allows the model to attend to different aspects of the neighborhood simultaneously.
 
 > **Key Insight:** Multi-head attention allows the model to attend to different aspects of the neighborhood simultaneously.
 
@@ -81,6 +105,13 @@ class GATLayer(nn.Module):
         h_prime = torch.matmul(attention, Wh)  # Weighted sum
         return F.elu(h_prime)
 ```
+> **Code Walkthrough:**
+> - The layer first transforms node features with a linear layer.
+> - It computes attention scores for all pairs of nodes, but only uses scores for actual edges (masking non-edges).
+> - Attention scores are normalized with softmax.
+> - Each node's new features are a weighted sum of its neighbors' features, with weights given by attention.
+> - The final output uses an ELU activation for nonlinearity.
+
 *This layer computes attention scores for each edge, normalizes them, and aggregates neighbor features accordingly.*
 
 ### Usage Example
@@ -98,6 +129,11 @@ gat = GATLayer(2, 2)
 output = gat(X, adj)
 print(output)
 ```
+> **Code Walkthrough:**
+> - Defines a small graph and its adjacency matrix.
+> - The GAT layer computes attention scores and aggregates features accordingly.
+> - Try changing the adjacency matrix or node features to see how the attention weights and output change!
+
 *Try changing the adjacency matrix or node features to see how the attention weights and output change!*
 
 > **Try it yourself!** Visualize the learned attention coefficients. Which neighbors does each node focus on?
