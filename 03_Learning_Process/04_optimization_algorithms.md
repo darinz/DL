@@ -20,6 +20,8 @@
 
 ## Introduction
 
+> **Intuition:** Optimization is like climbing down a mountain in the fog—you can only see the slope right where you are (the gradient), and you have to decide how big a step to take (the learning rate).
+
 ### What is Optimization?
 
 Optimization in deep learning involves finding the optimal set of parameters $`\theta`$ that minimize the loss function $`L(\theta)`$:
@@ -51,9 +53,13 @@ Where:
 > **Did you know?**
 > Most deep learning problems are not convex, so optimizers must navigate a complex loss landscape with many local minima and saddle points.
 
+> **Annotation:** The choice of optimizer can make or break your training. Some are better for certain problems or architectures than others.
+
 ---
 
 ## Gradient Descent Fundamentals
+
+> **Annotation:** Gradient descent is the foundation of all deep learning optimization. Variants like SGD, momentum, and Adam build on this basic idea.
 
 ### Basic Gradient Descent
 
@@ -84,6 +90,8 @@ $`\nabla L(\theta) = \frac{1}{m} \sum_{i \in B} \nabla L_i(\theta)`$
 
 ## Stochastic Gradient Descent (SGD)
 
+> **Annotation:** SGD introduces randomness into the optimization process, which can help escape local minima and improve generalization.
+
 ### Basic SGD
 
 **Update Rule:**
@@ -113,6 +121,8 @@ $`\eta_t = \eta_{min} + \frac{1}{2}(\eta_{max} - \eta_{min})(1 + \cos(\frac{t}{T
 ---
 
 ## Momentum-Based Methods
+
+> **Intuition:** Momentum helps the optimizer build up speed in directions with consistent gradients, smoothing out the path and accelerating convergence.
 
 ### SGD with Momentum
 
@@ -146,6 +156,8 @@ v_{t+1} &= \beta v_t + \nabla L(\theta_t - \beta v_t) \\
 ---
 
 ## Adaptive Learning Rate Methods
+
+> **Annotation:** Adaptive methods like AdaGrad, RMSprop, and Adam adjust the learning rate for each parameter, making training more robust to different scales and sparsity.
 
 ### AdaGrad
 
@@ -211,6 +223,8 @@ v_t &= \beta_2 v_{t-1} + (1-\beta_2) (\nabla L(\theta_t))^2 \\
 ---
 
 ## Advanced Optimizers
+
+> **Annotation:** New optimizers are constantly being developed to address specific challenges in deep learning, such as noise, bias, or generalization.
 
 ### AdaBelief
 
