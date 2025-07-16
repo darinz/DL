@@ -2,6 +2,9 @@
 
 Gradient accumulation is a technique that allows training with large effective batch sizes even when memory constraints limit the actual batch size that can fit in GPU memory.
 
+> **Explanation:**
+> Gradient accumulation lets you simulate training with a large batch size by splitting it into several smaller batches. You sum the gradients from each small batch, and only update the model after all have been processed. This is useful when your GPU can't fit a large batch in memory.
+
 > **Key Insight:** Gradient accumulation lets you train with large batch sizes on limited hardware, improving convergence and stability without needing massive GPUs.
 
 > **Did you know?** Many state-of-the-art models (e.g., BERT, GPT) are trained with very large effective batch sizes using gradient accumulation!
@@ -19,18 +22,30 @@ In standard gradient descent with batch size $`B`$:
 ```math
 \theta_{t+1} = \theta_t - \alpha \cdot \frac{1}{B} \sum_{i=1}^{B} \nabla L(x_i, y_i; \theta_t)
 ```
+> **Math Breakdown:**
+> - $`\theta_t`$: Model parameters at step $t$.
+> - $`\alpha`$: Learning rate.
+> - $`B`$: Batch size.
+> - $`\nabla L(x_i, y_i; \theta_t)`$: Gradient of the loss for sample $i$.
+> - The update is the average gradient over the batch.
 
 ### Gradient Accumulation
 With gradient accumulation over $`N`$ accumulation steps:
 ```math
 \theta_{t+1} = \theta_t - \alpha \cdot \frac{1}{N \cdot B} \sum_{k=1}^{N} \sum_{i=1}^{B} \nabla L(x_i^{(k)}, y_i^{(k)}; \theta_t)
 ```
+> **Math Breakdown:**
+> - $`N`$: Number of accumulation steps.
+> - $`B`$: Local batch size (per step).
+> - The sum is over all samples in all accumulation steps, so the effective batch size is $N \cdot B$.
 
 ### Effective Batch Size
 The effective batch size is:
 ```math
 B_{\text{effective}} = B_{\text{local}} \times N_{\text{accumulation}}
 ```
+> **Explanation:**
+> The model sees the same number of samples per update as if you had a single large batch, but splits them into smaller pieces.
 
 > **Common Pitfall:** Forgetting to scale the loss by the number of accumulation steps can lead to incorrect gradient magnitudes and unstable training.
 
@@ -68,6 +83,11 @@ class GradientAccumulationTrainer:
         
         return loss.item()
 ```
+> **Code Walkthrough:**
+> - The loss is divided by the number of accumulation steps to keep the gradient scale correct.
+> - Gradients are accumulated over several mini-batches.
+> - The optimizer only updates the model after all accumulation steps are done.
+
 *This trainer accumulates gradients over several mini-batches before updating the model parameters.*
 
 ### 2. Advanced Gradient Accumulation with Mixed Precision
@@ -113,6 +133,11 @@ class AMPGradientAccumulationTrainer:
         
         return loss.item()
 ```
+> **Code Walkthrough:**
+> - Uses PyTorch AMP for mixed precision training.
+> - Accumulates gradients and only updates the model after all steps.
+> - Unscales and clips gradients before the optimizer step for stability.
+
 *This trainer combines gradient accumulation with mixed precision for efficient and stable training on modern GPUs.*
 
 ### 3. Gradient Accumulation with Learning Rate Scaling
@@ -152,6 +177,10 @@ class ScaledGradientAccumulationTrainer:
     def get_effective_batch_size(self, local_batch_size):
         return local_batch_size * self.accumulation_steps
 ```
+> **Code Walkthrough:**
+> - Scales the learning rate to match the effective batch size.
+> - Otherwise, works like the basic gradient accumulation trainer.
+
 *Scaling the learning rate with the effective batch size can help maintain stable training dynamics.*
 
 ## Learning Rate Scaling
@@ -162,6 +191,11 @@ When using gradient accumulation, the learning rate should be scaled according t
 ```math
 \text{LR}_{\text{scaled}} = \text{LR}_{\text{base}} \times \frac{B_{\text{effective}}}{B_{\text{reference}}}
 ```
+> **Math Breakdown:**
+> - $`\text{LR}_{\text{base}}`$: The base learning rate for a reference batch size.
+> - $`B_{\text{effective}}`$: The effective batch size (local batch size × accumulation steps).
+> - $`B_{\text{reference}}`$: The batch size for which the base learning rate was chosen.
+> - The learning rate is increased proportionally to the batch size.
 
 > **Try it yourself!** Experiment with different accumulation steps and learning rate scaling. How does it affect convergence and final accuracy?
 
@@ -205,6 +239,10 @@ def analyze_memory_usage(model, batch_size, accumulation_steps):
     print(f"Memory after forward: {memory_after_forward:.2f} GB")
     print(f"Memory after backward: {memory_after_backward:.2f} GB")
 ```
+> **Code Walkthrough:**
+> - Simulates a forward and backward pass to measure memory usage.
+> - Helps you see how gradient accumulation affects memory requirements.
+
 *This function helps you analyze how gradient accumulation affects memory usage during training.*
 
 ---
