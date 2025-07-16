@@ -9,24 +9,24 @@ The Transformer architecture, introduced by Vaswani et al. (2017), is based on s
 ### Self-Attention Mechanism
 Given an input sequence of vectors $`X = [x_1, x_2, \ldots, x_n]`$, the self-attention mechanism computes queries $`Q`$, keys $`K`$, and values $`V`$ as linear projections:
 
-$`
+```math
 Q = XW^Q, \quad K = XW^K, \quad V = XW^V
-`
+```
 
 The attention scores are computed as:
 
-$`
+```math
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
-`
+```
 
 where $`d_k`$ is the dimension of the key vectors.
 
 ### Multi-Head Attention
 Multiple attention heads allow the model to jointly attend to information from different representation subspaces:
 
-$`
+```math
 \text{MultiHead}(Q, K, V) = [\text{head}_1; \ldots; \text{head}_h]W^O
-`
+```
 
 where each $`\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)`$.
 
@@ -53,9 +53,9 @@ Vision Transformers adapt the Transformer architecture for image data. Images ar
 ### Patch Embedding
 Given an image $`x \in \mathbb{R}^{H \times W \times C}`$, it is split into $`N`$ patches of size $`P \times P`$:
 
-$`
+```math
 N = \frac{HW}{P^2}
-`
+```
 
 Each patch is flattened and projected to a $`D`$-dimensional embedding.
 
