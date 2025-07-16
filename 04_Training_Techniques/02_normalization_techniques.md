@@ -19,6 +19,9 @@
 
 Batch Normalization normalizes layer inputs across the batch dimension, making training more stable and allowing higher learning rates.
 
+> **Explanation:**
+> BatchNorm addresses the problem of "internal covariate shift"—the change in the distribution of network activations due to parameter updates during training. By normalizing the inputs to each layer, BatchNorm stabilizes and accelerates training, and can also act as a regularizer.
+
 ### Mathematical Formulation
 
 For a batch of inputs $`x \in \mathbb{R}^{B \times C \times H \times W}`$ (for CNNs) or $`x \in \mathbb{R}^{B \times D}`$ (for fully connected layers):
@@ -27,11 +30,13 @@ For a batch of inputs $`x \in \mathbb{R}^{B \times C \times H \times W}`$ (for C
 \text{BN}(x) = \gamma \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} + \beta
 ```
 
-Where:
-- $`\mu_B = \frac{1}{B}\sum_{i=1}^{B} x_i`$ (batch mean)
-- $`\sigma_B^2 = \frac{1}{B}\sum_{i=1}^{B} (x_i - \mu_B)^2`$ (batch variance)
-- $`\gamma, \beta`$ are learnable parameters (scale and shift)
-- $`\epsilon`$ is a small constant for numerical stability
+> **Math Breakdown:**
+> - $x$ is the input tensor (could be activations from a previous layer).
+> - $\mu_B$ is the mean of the batch.
+> - $\sigma_B^2$ is the variance of the batch.
+> - $\epsilon$ is a small constant to prevent division by zero.
+> - $\gamma$ and $\beta$ are learnable parameters that allow the network to scale and shift the normalized output.
+> - The normalization is performed per feature/channel, not across all elements.
 
 ### Intuition
 
@@ -50,6 +55,9 @@ Where:
 
 **Inference Mode:**
 - Uses running averages: $`\mu_{\text{running}}, \sigma_{\text{running}}^2`$
+
+> **Explanation:**
+> During training, the mean and variance are computed from the current batch. During inference, the running averages (computed during training) are used to ensure consistent behavior.
 
 ### Python Implementation
 
@@ -100,9 +108,10 @@ class BatchNorm1d(nn.Module):
         return self.weight * x_norm + self.bias
 ```
 
-> **Code Commentary:**
-> - BatchNorm maintains running averages of mean and variance for use during inference.
-> - Learnable parameters $`\gamma`$ and $`\beta`$ allow the network to undo normalization if needed.
+> **Code Walkthrough:**
+> - The class maintains running averages of mean and variance for use during inference.
+> - During training, normalization uses the current batch's statistics; during inference, it uses the running averages.
+> - The learnable parameters $\gamma$ (weight) and $\beta$ (bias) allow the network to undo normalization if needed.
 
 ### BatchNorm in Neural Networks
 
@@ -128,8 +137,9 @@ class CNNWithBatchNorm(nn.Module):
         return x
 ```
 
-> **Try it yourself!**
-> Remove BatchNorm layers from the above network and compare training speed and final accuracy.
+> **Code Walkthrough:**
+> - BatchNorm layers are placed after convolutional or linear layers and before activation functions.
+> - This helps stabilize the distribution of activations throughout the network, improving training speed and performance.
 
 ### Best Practices
 
@@ -146,6 +156,9 @@ class CNNWithBatchNorm(nn.Module):
 
 Layer Normalization normalizes across the features of each sample, rather than across the batch.
 
+> **Explanation:**
+> LayerNorm is especially useful in settings where batch statistics are not reliable, such as in recurrent neural networks (RNNs) or transformers, or when batch sizes are very small. It normalizes each sample independently, making it robust to varying batch statistics.
+
 ### Mathematical Formulation
 
 For input $`x \in \mathbb{R}^{B \times D}`$:
@@ -154,9 +167,12 @@ For input $`x \in \mathbb{R}^{B \times D}`$:
 \text{LayerNorm}(x) = \gamma \frac{x - \mu_L}{\sqrt{\sigma_L^2 + \epsilon}} + \beta
 ```
 
-Where:
-- $`\mu_L = \frac{1}{D}\sum_{j=1}^{D} x_j`$ (mean over features)
-- $`\sigma_L^2 = \frac{1}{D}\sum_{j=1}^{D} (x_j - \mu_L)^2`$ (variance over features)
+> **Math Breakdown:**
+> - $x$ is the input vector for a single sample.
+> - $\mu_L$ is the mean over the features of that sample.
+> - $\sigma_L^2$ is the variance over the features of that sample.
+> - $\gamma$ and $\beta$ are learnable parameters for scaling and shifting.
+> - $\epsilon$ is a small constant for numerical stability.
 
 ### Intuition
 
@@ -180,6 +196,10 @@ class LayerNorm(nn.Module):
         return self.gamma * x_norm + self.beta
 ```
 
+> **Code Walkthrough:**
+> - The normalization is performed across the last dimension (features) for each sample.
+> - Learnable parameters allow the network to scale and shift the normalized output as needed.
+
 > **Did you know?**
 > LayerNorm is the default normalization in transformer architectures (e.g., BERT, GPT).
 
@@ -188,6 +208,9 @@ class LayerNorm(nn.Module):
 ## Instance Normalization
 
 Instance Normalization normalizes each sample and channel independently, commonly used in style transfer and generative models.
+
+> **Explanation:**
+> InstanceNorm is especially useful for tasks like style transfer, where the goal is to normalize the contrast and style of each image independently. By normalizing each sample and channel, it removes instance-specific contrast information, making the model focus on content rather than style.
 
 ### Mathematical Formulation
 
@@ -200,6 +223,10 @@ For input $`x \in \mathbb{R}^{B \times C \times H \times W}`$:
 Where:
 - $`\mu_{IC}`$ is the mean over spatial dimensions for each channel and sample
 - $`\sigma_{IC}^2`$ is the variance over spatial dimensions for each channel and sample
+
+> **Math Breakdown:**
+> - $\mu_{IC}$ and $\sigma_{IC}^2$ are computed for each sample and channel, not across the batch.
+> - This makes normalization independent for each image and channel, which is ideal for style transfer.
 
 ### Intuition
 
@@ -224,6 +251,10 @@ class InstanceNorm2d(nn.Module):
         return self.gamma.view(1, -1, 1, 1) * x_norm + self.beta.view(1, -1, 1, 1)
 ```
 
+> **Code Walkthrough:**
+> - The normalization is performed over the spatial dimensions for each sample and channel.
+> - Learnable parameters allow the network to scale and shift the normalized output.
+
 > **Try it yourself!**
 > Use InstanceNorm in a style transfer network and observe the effect on generated images.
 
@@ -232,6 +263,9 @@ class InstanceNorm2d(nn.Module):
 ## Group Normalization
 
 Group Normalization divides channels into groups and normalizes within each group, providing a compromise between BatchNorm and LayerNorm.
+
+> **Explanation:**
+> GroupNorm is designed to work well even with small batch sizes, making it a good choice for tasks like object detection and segmentation where batch sizes are often limited by memory.
 
 ### Mathematical Formulation
 
@@ -244,6 +278,10 @@ For input $`x \in \mathbb{R}^{B \times C \times H \times W}`$ and $`G`$ groups:
 Where:
 - $`\mu_G`$ is the mean over each group
 - $`\sigma_G^2`$ is the variance over each group
+
+> **Math Breakdown:**
+> - Channels are divided into $G$ groups.
+> - Mean and variance are computed within each group, not across the whole batch or all features.
 
 ### Intuition
 
@@ -273,6 +311,10 @@ class GroupNorm(nn.Module):
         return self.gamma.view(1, -1, 1, 1) * x_norm + self.beta.view(1, -1, 1, 1)
 ```
 
+> **Code Walkthrough:**
+> - The input is reshaped to group channels, and normalization is performed within each group.
+> - This allows normalization to be effective even with very small batch sizes.
+
 > **Did you know?**
 > GroupNorm is the default normalization in many state-of-the-art object detection and segmentation models (e.g., Mask R-CNN).
 
@@ -281,6 +323,9 @@ class GroupNorm(nn.Module):
 ## Weight Normalization
 
 Weight Normalization reparameterizes the weights of a layer to decouple their magnitude from direction, improving optimization.
+
+> **Explanation:**
+> WeightNorm separates the length (magnitude) and direction of weight vectors, making optimization easier and often speeding up convergence.
 
 ### Mathematical Formulation
 
@@ -293,6 +338,10 @@ w = g \frac{v}{\|v\|}
 Where:
 - $`g`$ is a learnable scalar parameter (magnitude)
 - $`v`$ is a learnable vector parameter (direction)
+
+> **Math Breakdown:**
+> - $g$ controls the scale of the weights, $v$ controls the direction.
+> - This reparameterization can make the optimization landscape smoother.
 
 ### Intuition
 
@@ -314,6 +363,10 @@ class WeightNormLinear(nn.Module):
         return F.linear(x, w, self.bias)
 ```
 
+> **Code Walkthrough:**
+> - The weight vector is reparameterized into a direction (`v`) and a magnitude (`g`).
+> - This can help the optimizer make more effective updates.
+
 > **Try it yourself!**
 > Compare training speed and final accuracy with and without WeightNorm on a simple MLP.
 
@@ -328,6 +381,9 @@ class WeightNormLinear(nn.Module):
   - **InstanceNorm:** Best for style transfer and generative models
 - Always use $`\epsilon`$ for numerical stability
 - Tune momentum and group size as hyperparameters
+
+> **Practical Tip:**
+> If your model is unstable or not converging, try switching to a different normalization method or adjusting $\epsilon$.
 
 > **Common Pitfall:**
 > Forgetting to switch normalization layers to evaluation mode (`model.eval()`) can lead to poor inference performance due to incorrect statistics.
