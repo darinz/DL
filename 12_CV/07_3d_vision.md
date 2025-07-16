@@ -1,780 +1,872 @@
 # 3D Vision
 
-3D vision involves understanding and processing three-dimensional data from the world. This guide covers point cloud processing, voxel-based methods, and multi-view geometry.
+## 1. Overview
 
-## Table of Contents
+3D vision involves understanding and processing three-dimensional data, including point clouds, meshes, and volumetric representations. This field is crucial for robotics, autonomous vehicles, augmented reality, and computer graphics.
 
-1. [Point Cloud Processing](#point-cloud-processing)
-2. [Voxel-Based Methods](#voxel-based-methods)
-3. [Multi-View Geometry](#multi-view-geometry)
-4. [3D Reconstruction](#3d-reconstruction)
+**Mathematical Representation:**
+```math
+P = \{p_i = (x_i, y_i, z_i) \in \mathbb{R}^3 : i = 1, 2, ..., N\}
+```
 
-## Point Cloud Processing
+Where $P$ is a point cloud with $N$ points in 3D space.
 
-### PointNet
+## 2. Point Cloud Processing
 
-PointNet directly processes point clouds using symmetric functions:
+### PointNet Architecture
+
+PointNet is a deep learning architecture designed for point cloud processing.
+
+#### Architecture
+**Input Transformation:**
+```math
+T_1 = \text{MLP}(P) \in \mathbb{R}^{N \times 64}
+```
+
+**Feature Transformation:**
+```math
+T_2 = \text{MLP}(T_1) \in \mathbb{R}^{N \times 1024}
+```
+
+**Global Feature:**
+```math
+F_{global} = \max_{i} T_2(i) \in \mathbb{R}^{1024}
+```
+
+**Classification/Regression:**
+```math
+Y = \text{MLP}(F_{global}) \in \mathbb{R}^{C}
+```
+
+#### Permutation Invariance
+**Symmetric Function:**
+```math
+f(\{x_1, ..., x_n\}) = \gamma \circ g(h(x_1), ..., h(x_n))
+```
+
+Where:
+- $h$ is a shared MLP
+- $g$ is a symmetric function (max pooling)
+- $\gamma$ is a final MLP
+
+### PointNet++
+
+PointNet++ extends PointNet with hierarchical feature learning.
+
+#### Hierarchical Sampling
+**Farthest Point Sampling (FPS):**
+```math
+p_{i+1} = \arg\max_{p \in P \setminus \{p_1, ..., p_i\}} \min_{j \leq i} \|p - p_j\|_2
+```
+
+#### Grouping
+**Ball Query:**
+```math
+N(p_i, r) = \{p_j : \|p_i - p_j\|_2 \leq r\}
+```
+
+**K-Nearest Neighbors:**
+```math
+N(p_i, k) = \{p_j : j \in \text{top-k}(\|p_i - p_j\|_2)\}
+```
+
+#### Feature Aggregation
+**Multi-scale Grouping:**
+```math
+F_i = \text{concat}(F_i^1, F_i^2, ..., F_i^S)
+```
+
+Where $F_i^s$ is the feature at scale $s$.
+
+## 3. Voxel-Based Methods
+
+### VoxelNet
+
+VoxelNet converts point clouds to voxels for 3D object detection.
+
+#### Voxelization
+**Point to Voxel Assignment:**
+```math
+v_{ijk} = \{p \in P : \lfloor p_x/v \rfloor = i, \lfloor p_y/v \rfloor = j, \lfloor p_z/v \rfloor = k\}
+```
+
+Where $v$ is the voxel size.
+
+#### Voxel Feature Encoding (VFE)
+**VFE Layer:**
+```math
+F_{out} = \max_{p \in v} \text{concat}(p, F_{in}(p))
+```
+
+#### Convolutional Middle Layers
+**3D Convolution:**
+```math
+F_{i+1} = \text{Conv3D}(F_i, W_i) + b_i
+```
+
+### PointPillars
+
+PointPillars uses pillars (vertical columns) for efficient 3D detection.
+
+#### Pillar Generation
+**Pillar Assignment:**
+```math
+p_{ij} = \{p \in P : \lfloor p_x/d_x \rfloor = i, \lfloor p_y/d_y \rfloor = j\}
+```
+
+Where $d_x, d_y$ are pillar dimensions.
+
+#### Pillar Feature Net
+**Feature Encoding:**
+```math
+F_{pillar} = \text{PFN}(p_{ij}) \in \mathbb{R}^{C}
+```
+
+#### 2D Convolutional Backbone
+**Pseudo-image:**
+```math
+I_{pseudo} = \text{reshape}(F_{pillars}) \in \mathbb{R}^{H \times W \times C}
+```
+
+## 4. Multi-View Geometry
+
+### Epipolar Geometry
+
+#### Fundamental Matrix
+**Epipolar Constraint:**
+```math
+x_2^T F x_1 = 0
+```
+
+**Fundamental Matrix:**
+```math
+F = K_2^{-T} [t]_{\times} R K_1^{-1}
+```
+
+Where $[t]_{\times}$ is the skew-symmetric matrix of translation vector.
+
+#### Essential Matrix
+**Essential Matrix:**
+```math
+E = [t]_{\times} R
+```
+
+**Relationship:**
+```math
+F = K_2^{-T} E K_1^{-1}
+```
+
+### Structure from Motion (SfM)
+
+#### Triangulation
+**Linear Triangulation:**
+```math
+\begin{bmatrix}
+x_1 p_1^3 - p_1^1 \\
+y_1 p_1^3 - p_1^2 \\
+x_2 p_2^3 - p_2^1 \\
+y_2 p_2^3 - p_2^2
+\end{bmatrix}
+\begin{bmatrix}
+X \\
+Y \\
+Z \\
+1
+\end{bmatrix} = 0
+```
+
+Where $p_i^j$ is the $j$-th row of projection matrix $P_i$.
+
+#### Bundle Adjustment
+**Cost Function:**
+```math
+\min_{P_i, X_j} \sum_{i,j} \|x_{ij} - P_i X_j\|_2^2
+```
+
+### SLAM (Simultaneous Localization and Mapping)
+
+#### Visual SLAM
+**Feature Matching:**
+```math
+M_{ij} = \text{match}(f_i, f_j)
+```
+
+**Pose Estimation:**
+```math
+T_{i+1} = \arg\min_T \sum_j \|x_j - \pi(T X_j)\|_2^2
+```
+
+Where $\pi$ is the projection function.
+
+#### Loop Closure
+**Similarity Score:**
+```math
+S_{ij} = \text{similarity}(F_i, F_j)
+```
+
+## 5. 3D Reconstruction
+
+### Stereo Vision
+
+#### Disparity Computation
+**Disparity:**
+```math
+d = x_l - x_r
+```
+
+**Depth:**
+```math
+Z = \frac{f \cdot B}{d}
+```
+
+Where:
+- $f$ is focal length
+- $B$ is baseline
+- $d$ is disparity
+
+#### Stereo Matching
+**Cost Function:**
+```math
+C(x, y, d) = \|I_l(x, y) - I_r(x-d, y)\|
+```
+
+**Semi-Global Matching (SGM):**
+```math
+L_r(p, d) = C(p, d) + \min(L_r(p-r, d), L_r(p-r, d\pm1) + P_1, \min_k L_r(p-r, k) + P_2)
+```
+
+### Multi-View Stereo (MVS)
+
+#### PatchMatch Stereo
+**Patch Similarity:**
+```math
+S(p, q) = \sum_{i,j} w(i, j) \|I_1(p + (i,j)) - I_2(q + (i,j))\|_2
+```
+
+**Depth Refinement:**
+```math
+d_{new} = d_{old} + \Delta d
+```
+
+#### COLMAP
+**Photometric Consistency:**
+```math
+C(p) = \sum_{i,j} \|I_i(p) - I_j(p)\|_2
+```
+
+**Geometric Consistency:**
+```math
+G(p) = \sum_{i,j} \|D_i(p) - D_j(p)\|_2
+```
+
+### Deep Learning for 3D Reconstruction
+
+#### Learning-based MVS
+**Cost Volume:**
+```math
+C(d) = \text{concat}(I_1, I_2(d), I_3(d), ...)
+```
+
+**Depth Prediction:**
+```math
+D = \text{softmax}(\text{Conv3D}(C))
+```
+
+#### NeRF (Neural Radiance Fields)
+**Volume Rendering:**
+```math
+C(r) = \int_{t_n}^{t_f} T(t) \sigma(r(t)) c(r(t), d) dt
+```
+
+**Transmittance:**
+```math
+T(t) = \exp\left(-\int_{t_n}^t \sigma(r(s)) ds\right)
+```
+
+## 6. Python Implementation Examples
+
+### Basic Point Cloud Processing
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.spatial.distance import cdist
+from sklearn.cluster import DBSCAN
 
-def pointnet_simulation():
+# Create synthetic point cloud
+def create_synthetic_point_cloud(num_points=1000):
+    """Create synthetic 3D point cloud."""
+    # Create a simple 3D shape (cube with noise)
+    points = np.random.rand(num_points, 3) * 2 - 1  # Cube from -1 to 1
+    
+    # Add some structure
+    # Create a sphere
+    sphere_center = np.array([0.5, 0.5, 0.5])
+    sphere_radius = 0.3
+    sphere_points = np.random.randn(num_points//2, 3)
+    sphere_points = sphere_points / np.linalg.norm(sphere_points, axis=1, keepdims=True) * sphere_radius
+    sphere_points += sphere_center
+    
+    # Create a plane
+    plane_points = np.random.rand(num_points//2, 3)
+    plane_points[:, 2] = -0.5  # Fixed z-coordinate
+    
+    # Combine points
+    all_points = np.vstack([sphere_points, plane_points])
+    
+    # Add noise
+    noise = np.random.normal(0, 0.05, all_points.shape)
+    all_points += noise
+    
+    return all_points
+
+# Point cloud visualization
+def visualize_point_cloud(points, title="Point Cloud"):
+    """Visualize 3D point cloud."""
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    ax.scatter(points[:, 0], points[:, 1], points[:, 2], c=points[:, 2], cmap='viridis', s=1)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title(title)
+    
+    plt.show()
+
+# Point cloud downsampling
+def downsample_point_cloud(points, target_size=500):
+    """Downsample point cloud using random sampling."""
+    if len(points) <= target_size:
+        return points
+    
+    indices = np.random.choice(len(points), target_size, replace=False)
+    return points[indices]
+
+# Farthest Point Sampling (FPS)
+def farthest_point_sampling(points, num_samples):
+    """Implement Farthest Point Sampling."""
+    if len(points) <= num_samples:
+        return points
+    
+    # Initialize with random point
+    sampled_indices = [np.random.randint(len(points))]
+    remaining_indices = list(range(len(points)))
+    remaining_indices.remove(sampled_indices[0])
+    
+    for _ in range(num_samples - 1):
+        # Calculate distances to sampled points
+        distances = cdist(points[remaining_indices], points[sampled_indices])
+        min_distances = np.min(distances, axis=1)
+        
+        # Find farthest point
+        farthest_idx = remaining_indices[np.argmax(min_distances)]
+        sampled_indices.append(farthest_idx)
+        remaining_indices.remove(farthest_idx)
+    
+    return points[sampled_indices]
+
+# Point cloud clustering
+def cluster_point_cloud(points, eps=0.1, min_samples=5):
+    """Cluster point cloud using DBSCAN."""
+    clustering = DBSCAN(eps=eps, min_samples=min_samples).fit(points)
+    labels = clustering.labels_
+    
+    return labels
+
+# Point cloud registration (ICP)
+def iterative_closest_point(source, target, max_iterations=50, tolerance=1e-6):
+    """Implement Iterative Closest Point algorithm."""
+    # Initialize transformation
+    transformation = np.eye(4)
+    
+    for iteration in range(max_iterations):
+        # Find closest points
+        distances = cdist(source, target)
+        correspondences = np.argmin(distances, axis=1)
+        
+        # Calculate centroids
+        source_centroid = np.mean(source, axis=0)
+        target_centroid = np.mean(target[correspondences], axis=0)
+        
+        # Center points
+        source_centered = source - source_centroid
+        target_centered = target[correspondences] - target_centroid
+        
+        # Calculate rotation matrix
+        H = source_centered.T @ target_centered
+        U, S, Vt = np.linalg.svd(H)
+        R = Vt.T @ U.T
+        
+        # Ensure proper rotation matrix
+        if np.linalg.det(R) < 0:
+            Vt[-1, :] *= -1
+            R = Vt.T @ U.T
+        
+        # Calculate translation
+        t = target_centroid - R @ source_centroid
+        
+        # Update transformation
+        current_transformation = np.eye(4)
+        current_transformation[:3, :3] = R
+        current_transformation[:3, 3] = t
+        
+        transformation = current_transformation @ transformation
+        
+        # Transform source points
+        source_homogeneous = np.hstack([source, np.ones((len(source), 1))])
+        source = (transformation @ source_homogeneous.T).T[:, :3]
+        
+        # Check convergence
+        if np.linalg.norm(t) < tolerance:
+            break
+    
+    return transformation, source
+
+# Voxelization
+def voxelize_point_cloud(points, voxel_size=0.1):
+    """Convert point cloud to voxel grid."""
+    # Calculate voxel indices
+    voxel_indices = np.floor(points / voxel_size).astype(int)
+    
+    # Find unique voxels
+    unique_voxels, inverse_indices = np.unique(voxel_indices, axis=0, return_inverse=True)
+    
+    # Calculate voxel centers
+    voxel_centers = unique_voxels * voxel_size + voxel_size / 2
+    
+    return voxel_centers, unique_voxels
+
+# Point cloud normal estimation
+def estimate_normals(points, k_neighbors=10):
+    """Estimate surface normals using PCA."""
+    from sklearn.neighbors import NearestNeighbors
+    
+    # Find k-nearest neighbors
+    nbrs = NearestNeighbors(n_neighbors=k_neighbors).fit(points)
+    distances, indices = nbrs.kneighbors(points)
+    
+    normals = np.zeros_like(points)
+    
+    for i in range(len(points)):
+        # Get neighbors
+        neighbor_points = points[indices[i]]
+        
+        # Calculate covariance matrix
+        centered_points = neighbor_points - np.mean(neighbor_points, axis=0)
+        cov_matrix = centered_points.T @ centered_points
+        
+        # Find eigenvector with smallest eigenvalue (normal direction)
+        eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+        normal = eigenvectors[:, 0]  # Smallest eigenvalue
+        
+        # Ensure consistent orientation (pointing outward)
+        if normal[2] < 0:
+            normal = -normal
+        
+        normals[i] = normal
+    
+    return normals
+
+# Main demonstration
+def demonstrate_point_cloud_processing():
+    """Demonstrate various point cloud processing techniques."""
     # Create synthetic point cloud
-    np.random.seed(42)
+    points = create_synthetic_point_cloud(2000)
     
-    # Generate points for a cube
-    n_points = 1000
-    points = np.random.rand(n_points, 3) * 2 - 1  # Points in [-1, 1]^3
+    # Visualize original point cloud
+    visualize_point_cloud(points, "Original Point Cloud")
     
-    # Filter points to create cube-like shape
-    cube_mask = np.all(np.abs(points) < 0.8, axis=1)
-    points = points[cube_mask]
+    # Downsampling
+    downsampled = downsample_point_cloud(points, target_size=500)
+    visualize_point_cloud(downsampled, "Downsampled Point Cloud")
     
-    # Add some noise
-    points += np.random.normal(0, 0.05, points.shape)
+    # Farthest Point Sampling
+    fps_points = farthest_point_sampling(points, num_samples=300)
+    visualize_point_cloud(fps_points, "FPS Sampled Point Cloud")
     
-    # Simulate PointNet processing
-    def pointnet_encoder(points, num_features=64):
-        """Simulate PointNet encoder"""
-        # Global feature extraction using max pooling
-        global_features = np.max(points, axis=0)
-        
-        # MLP-like transformation (simplified)
-        features = np.zeros((len(points), num_features))
-        
-        for i, point in enumerate(points):
-            # Simple feature transformation
-            features[i, :3] = point  # Original coordinates
-            features[i, 3:6] = point**2  # Squared coordinates
-            features[i, 6:9] = np.sin(point)  # Trigonometric features
-            features[i, 9:12] = np.cos(point)  # More trigonometric features
-            
-            # Global context features
-            features[i, 12:15] = global_features
-            features[i, 15:18] = point - global_features  # Relative to global
-        
-        # Max pooling to get global feature
-        global_feature = np.max(features, axis=0)
-        
-        return features, global_feature
+    # Clustering
+    labels = cluster_point_cloud(points, eps=0.15, min_samples=10)
     
-    def pointnet_classifier(global_feature, num_classes=10):
-        """Simulate PointNet classifier"""
-        # Simple classification using global features
-        scores = np.dot(global_feature[:20], np.random.randn(20, num_classes))
-        probabilities = np.softmax(scores)
-        return probabilities
+    # Visualize clusters
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
     
-    # Run PointNet pipeline
-    features, global_feature = pointnet_encoder(points)
-    class_probs = pointnet_classifier(global_feature)
+    unique_labels = np.unique(labels)
+    colors = plt.cm.tab10(np.linspace(0, 1, len(unique_labels)))
     
-    # Visualize results
-    fig = plt.figure(figsize=(15, 5))
+    for label, color in zip(unique_labels, colors):
+        if label == -1:  # Noise points
+            mask = labels == label
+            ax.scatter(points[mask, 0], points[mask, 1], points[mask, 2], 
+                      c='black', s=1, alpha=0.3)
+        else:
+            mask = labels == label
+            ax.scatter(points[mask, 0], points[mask, 1], points[mask, 2], 
+                      c=[color], s=2)
     
-    # Original point cloud
-    ax1 = fig.add_subplot(131, projection='3d')
-    ax1.scatter(points[:, 0], points[:, 1], points[:, 2], c='blue', s=1)
-    ax1.set_title('Input Point Cloud')
-    ax1.set_xlabel('X')
-    ax1.set_ylabel('Y')
-    ax1.set_zlabel('Z')
-    
-    # Feature visualization (first 3 dimensions)
-    ax2 = fig.add_subplot(132, projection='3d')
-    colors = features[:, :3]  # Use first 3 features as colors
-    colors = (colors - colors.min()) / (colors.max() - colors.min())  # Normalize
-    ax2.scatter(points[:, 0], points[:, 1], points[:, 2], c=colors, s=1)
-    ax2.set_title('Point Features')
-    ax2.set_xlabel('X')
-    ax2.set_ylabel('Y')
-    ax2.set_zlabel('Z')
-    
-    # Classification results
-    ax3 = fig.add_subplot(133)
-    classes = range(len(class_probs))
-    ax3.bar(classes, class_probs)
-    ax3.set_title('Classification Probabilities')
-    ax3.set_xlabel('Class')
-    ax3.set_ylabel('Probability')
-    
-    plt.tight_layout()
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title('Clustered Point Cloud')
     plt.show()
     
-    print(f"Point cloud size: {len(points)} points")
-    print(f"Feature dimension: {features.shape[1]}")
-    print(f"Predicted class: {np.argmax(class_probs)} (confidence: {np.max(class_probs):.3f})")
-
-pointnet_simulation()
-```
-
-### PointNet++
-
-PointNet++ uses hierarchical sampling and grouping:
-
-```python
-def pointnet_plus_plus_simulation():
-    # Create more complex point cloud
-    np.random.seed(42)
+    # Voxelization
+    voxel_centers, voxel_indices = voxelize_point_cloud(points, voxel_size=0.1)
+    visualize_point_cloud(voxel_centers, "Voxelized Point Cloud")
     
-    # Generate points for multiple objects
-    n_points = 2000
-    points = np.random.rand(n_points, 3) * 4 - 2  # Points in [-2, 2]^3
+    # Normal estimation
+    normals = estimate_normals(points, k_neighbors=15)
     
-    # Create multiple clusters
-    cluster_centers = np.array([
-        [-1, -1, -1],
-        [1, 1, 1],
-        [0, 0, 0]
-    ])
+    # Visualize normals
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
     
-    # Assign points to clusters
-    labels = np.zeros(n_points)
-    for i, point in enumerate(points):
-        distances = np.linalg.norm(point - cluster_centers, axis=1)
-        labels[i] = np.argmin(distances)
+    # Sample points for visualization
+    sample_indices = np.random.choice(len(points), 100, replace=False)
+    sample_points = points[sample_indices]
+    sample_normals = normals[sample_indices]
     
-    # Add cluster-specific noise
-    for i, center in enumerate(cluster_centers):
-        mask = labels == i
-        points[mask] += np.random.normal(0, 0.1, points[mask].shape)
+    ax.scatter(sample_points[:, 0], sample_points[:, 1], sample_points[:, 2], 
+              c='blue', s=10)
     
-    def farthest_point_sampling(points, num_samples):
-        """Farthest Point Sampling"""
-        n_points = len(points)
-        sampled_indices = np.zeros(num_samples, dtype=int)
-        distances = np.full(n_points, np.inf)
-        
-        # Start with random point
-        sampled_indices[0] = np.random.randint(n_points)
-        
-        for i in range(1, num_samples):
-            # Update distances
-            last_point = points[sampled_indices[i-1]]
-            new_distances = np.linalg.norm(points - last_point, axis=1)
-            distances = np.minimum(distances, new_distances)
-            
-            # Find farthest point
-            sampled_indices[i] = np.argmax(distances)
-        
-        return sampled_indices
+    # Draw normals
+    for point, normal in zip(sample_points, sample_normals):
+        end_point = point + normal * 0.1
+        ax.plot([point[0], end_point[0]], 
+                [point[1], end_point[1]], 
+                [point[2], end_point[2]], 'r-', linewidth=1)
     
-    def ball_query(points, query_points, radius, max_points):
-        """Ball Query for grouping"""
-        groups = []
-        
-        for query_point in query_points:
-            distances = np.linalg.norm(points - query_point, axis=1)
-            indices = np.where(distances <= radius)[0]
-            
-            if len(indices) > max_points:
-                indices = np.random.choice(indices, max_points, replace=False)
-            
-            groups.append(indices)
-        
-        return groups
-    
-    def hierarchical_processing(points, num_levels=3):
-        """Simulate PointNet++ hierarchical processing"""
-        current_points = points.copy()
-        current_features = np.zeros((len(points), 3))  # Initial features are coordinates
-        
-        for level in range(num_levels):
-            # Farthest point sampling
-            num_samples = max(10, len(current_points) // (2 ** level))
-            sampled_indices = farthest_point_sampling(current_points, num_samples)
-            sampled_points = current_points[sampled_indices]
-            
-            # Ball query grouping
-            radius = 0.5 * (0.8 ** level)  # Decreasing radius
-            max_points = 32
-            groups = ball_query(current_points, sampled_points, radius, max_points)
-            
-            # Process each group
-            new_features = np.zeros((len(sampled_points), 64))
-            
-            for i, group_indices in enumerate(groups):
-                if len(group_indices) > 0:
-                    group_points = current_points[group_indices]
-                    group_features = current_features[group_indices]
-                    
-                    # PointNet-like processing within group
-                    group_global = np.max(group_features, axis=0)
-                    group_local = group_features - group_global
-                    
-                    # Combine local and global features
-                    combined = np.concatenate([group_local, group_global])
-                    new_features[i, :len(combined)] = combined
-            
-            current_points = sampled_points
-            current_features = new_features
-        
-        return current_features
-    
-    # Run PointNet++ pipeline
-    hierarchical_features = hierarchical_processing(points)
-    
-    # Visualize results
-    fig = plt.figure(figsize=(15, 5))
-    
-    # Original point cloud with clusters
-    ax1 = fig.add_subplot(131, projection='3d')
-    colors = plt.cm.tab10(labels / labels.max())
-    ax1.scatter(points[:, 0], points[:, 1], points[:, 2], c=colors, s=1)
-    ax1.set_title('Input Point Cloud (Clustered)')
-    ax1.set_xlabel('X')
-    ax1.set_ylabel('Y')
-    ax1.set_zlabel('Z')
-    
-    # Sampled points
-    ax2 = fig.add_subplot(132, projection='3d')
-    sampled_indices = farthest_point_sampling(points, 50)
-    sampled_points = points[sampled_indices]
-    ax2.scatter(sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2], 
-               c='red', s=20)
-    ax2.set_title('Farthest Point Sampling')
-    ax2.set_xlabel('X')
-    ax2.set_ylabel('Y')
-    ax2.set_zlabel('Z')
-    
-    # Feature visualization
-    ax3 = fig.add_subplot(133)
-    feature_colors = hierarchical_features[:, :3]
-    feature_colors = (feature_colors - feature_colors.min()) / (feature_colors.max() - feature_colors.min())
-    ax3.scatter(hierarchical_features[:, 0], hierarchical_features[:, 1], c=feature_colors[:, 2])
-    ax3.set_title('Hierarchical Features')
-    ax3.set_xlabel('Feature 1')
-    ax3.set_ylabel('Feature 2')
-    
-    plt.tight_layout()
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title('Point Cloud with Normals')
     plt.show()
     
     print(f"Original points: {len(points)}")
-    print(f"Final features: {len(hierarchical_features)}")
-    print(f"Feature dimension: {hierarchical_features.shape[1]}")
+    print(f"Downsampled points: {len(downsampled)}")
+    print(f"FPS points: {len(fps_points)}")
+    print(f"Voxels: {len(voxel_centers)}")
+    print(f"Clusters: {len(np.unique(labels)) - 1}")  # Exclude noise
 
-pointnet_plus_plus_simulation()
-```
-
-## Voxel-Based Methods
-
-### VoxelNet
-
-VoxelNet processes point clouds through voxelization:
-
-```python
-def voxelnet_simulation():
-    # Create point cloud
-    np.random.seed(42)
-    n_points = 1000
-    points = np.random.rand(n_points, 3) * 2 - 1
+# Stereo vision simulation
+def simulate_stereo_vision():
+    """Simulate stereo vision for 3D reconstruction."""
+    # Create synthetic 3D points
+    x = np.linspace(-2, 2, 50)
+    y = np.linspace(-2, 2, 50)
+    X, Y = np.meshgrid(x, y)
+    Z = 0.5 * np.sin(X) * np.cos(Y)  # Simple surface
     
-    # Create car-like shape
-    car_mask = (np.abs(points[:, 0]) < 0.8) & (np.abs(points[:, 1]) < 0.4) & (points[:, 2] > -0.5)
-    points = points[car_mask]
-    
-    def voxelize_points(points, voxel_size=0.1, max_points_per_voxel=32):
-        """Convert points to voxels"""
-        # Calculate voxel indices
-        voxel_indices = np.floor(points / voxel_size).astype(int)
-        
-        # Create voxel dictionary
-        voxels = {}
-        
-        for i, point in enumerate(points):
-            voxel_key = tuple(voxel_indices[i])
-            
-            if voxel_key not in voxels:
-                voxels[voxel_key] = []
-            
-            if len(voxels[voxel_key]) < max_points_per_voxel:
-                voxels[voxel_key].append(point)
-        
-        return voxels
-    
-    def voxel_feature_learning(voxels, voxel_size=0.1):
-        """Simulate Voxel Feature Learning (VFL)"""
-        voxel_features = {}
-        
-        for voxel_key, voxel_points in voxels.items():
-            if len(voxel_points) > 0:
-                voxel_points = np.array(voxel_points)
-                
-                # Calculate voxel features
-                centroid = np.mean(voxel_points, axis=0)
-                relative_coords = voxel_points - centroid
-                
-                # Simple feature extraction
-                features = np.concatenate([
-                    centroid,  # Voxel centroid
-                    np.std(voxel_points, axis=0),  # Standard deviation
-                    np.max(relative_coords, axis=0),  # Max relative coordinates
-                    np.min(relative_coords, axis=0),  # Min relative coordinates
-                    [len(voxel_points)]  # Point count
-                ])
-                
-                voxel_features[voxel_key] = features
-        
-        return voxel_features
-    
-    def sparse_convolution(voxel_features, conv_size=3):
-        """Simulate sparse convolution"""
-        # Create 3D grid
-        voxel_keys = list(voxel_features.keys())
-        if len(voxel_keys) == 0:
-            return {}
-        
-        coords = np.array(voxel_keys)
-        min_coords = np.min(coords, axis=0)
-        max_coords = np.max(coords, axis=0)
-        
-        grid_size = max_coords - min_coords + 1
-        feature_grid = np.zeros((*grid_size, len(next(iter(voxel_features.values())))))
-        
-        # Fill grid with features
-        for voxel_key, features in voxel_features.items():
-            grid_idx = np.array(voxel_key) - min_coords
-            feature_grid[tuple(grid_idx)] = features
-        
-        # Simple 3D convolution (simplified)
-        convolved_features = {}
-        
-        for voxel_key in voxel_features:
-            grid_idx = np.array(voxel_key) - min_coords
-            
-            # Extract local neighborhood
-            start_idx = np.maximum(0, grid_idx - conv_size // 2)
-            end_idx = np.minimum(grid_size, grid_idx + conv_size // 2 + 1)
-            
-            neighborhood = feature_grid[start_idx[0]:end_idx[0], 
-                                      start_idx[1]:end_idx[1], 
-                                      start_idx[2]:end_idx[2]]
-            
-            # Simple convolution: average pooling
-            if neighborhood.size > 0:
-                convolved_feature = np.mean(neighborhood.reshape(-1, neighborhood.shape[-1]), axis=0)
-                convolved_features[voxel_key] = convolved_feature
-        
-        return convolved_features
-    
-    # Run VoxelNet pipeline
-    voxels = voxelize_points(points)
-    voxel_features = voxel_feature_learning(voxels)
-    convolved_features = sparse_convolution(voxel_features)
-    
-    # Visualize results
-    fig = plt.figure(figsize=(15, 5))
-    
-    # Original point cloud
-    ax1 = fig.add_subplot(131, projection='3d')
-    ax1.scatter(points[:, 0], points[:, 1], points[:, 2], c='blue', s=1)
-    ax1.set_title('Input Point Cloud')
-    ax1.set_xlabel('X')
-    ax1.set_ylabel('Y')
-    ax1.set_zlabel('Z')
-    
-    # Voxelization
-    ax2 = fig.add_subplot(132, projection='3d')
-    voxel_centers = []
-    for voxel_key in voxels:
-        if len(voxels[voxel_key]) > 0:
-            center = np.mean(voxels[voxel_key], axis=0)
-            voxel_centers.append(center)
-    
-    if voxel_centers:
-        voxel_centers = np.array(voxel_centers)
-        ax2.scatter(voxel_centers[:, 0], voxel_centers[:, 1], voxel_centers[:, 2], 
-                   c='red', s=20)
-    ax2.set_title('Voxel Centers')
-    ax2.set_xlabel('X')
-    ax2.set_ylabel('Y')
-    ax2.set_zlabel('Z')
-    
-    # Feature distribution
-    ax3 = fig.add_subplot(133)
-    if convolved_features:
-        features_array = np.array(list(convolved_features.values()))
-        ax3.hist(features_array[:, 0], bins=20, alpha=0.7, label='Centroid X')
-        ax3.hist(features_array[:, 1], bins=20, alpha=0.7, label='Centroid Y')
-        ax3.hist(features_array[:, 2], bins=20, alpha=0.7, label='Centroid Z')
-        ax3.legend()
-    ax3.set_title('Feature Distribution')
-    ax3.set_xlabel('Feature Value')
-    ax3.set_ylabel('Frequency')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"Input points: {len(points)}")
-    print(f"Voxels: {len(voxels)}")
-    print(f"Features after convolution: {len(convolved_features)}")
-
-voxelnet_simulation()
-```
-
-## Multi-View Geometry
-
-### Structure from Motion (SfM)
-
-```python
-def structure_from_motion_simulation():
-    # Create 3D points
-    np.random.seed(42)
-    n_points = 50
-    points_3d = np.random.rand(n_points, 3) * 2 - 1
-    
-    # Create camera poses
-    n_cameras = 5
-    camera_poses = []
-    
-    for i in range(n_cameras):
-        # Random camera position
-        position = np.random.rand(3) * 4 - 2
-        position[2] = 2  # Camera above the scene
-        
-        # Look at origin
-        look_at = np.array([0, 0, 0])
-        up = np.array([0, 0, 1])
-        
-        # Create rotation matrix
-        z_axis = look_at - position
-        z_axis = z_axis / np.linalg.norm(z_axis)
-        
-        x_axis = np.cross(up, z_axis)
-        x_axis = x_axis / np.linalg.norm(x_axis)
-        
-        y_axis = np.cross(z_axis, x_axis)
-        
-        rotation = np.column_stack([x_axis, y_axis, z_axis])
-        
-        camera_poses.append({
-            'position': position,
-            'rotation': rotation
-        })
-    
-    def project_points(points_3d, camera_pose, focal_length=1000):
-        """Project 3D points to 2D"""
-        # Transform points to camera coordinates
-        points_cam = []
-        for point in points_3d:
-            # Translate
-            point_translated = point - camera_pose['position']
-            # Rotate
-            point_cam = camera_pose['rotation'].T @ point_translated
-            points_cam.append(point_cam)
-        
-        points_cam = np.array(points_cam)
-        
-        # Project to 2D
-        points_2d = []
-        for point_cam in points_cam:
-            if point_cam[2] > 0:  # Point in front of camera
-                x = focal_length * point_cam[0] / point_cam[2]
-                y = focal_length * point_cam[1] / point_cam[2]
-                points_2d.append([x, y])
-            else:
-                points_2d.append([np.nan, np.nan])
-        
-        return np.array(points_2d)
-    
-    def estimate_fundamental_matrix(points1, points2):
-        """Estimate fundamental matrix (simplified)"""
-        # Remove NaN points
-        valid_mask = ~(np.isnan(points1).any(axis=1) | np.isnan(points2).any(axis=1))
-        points1_valid = points1[valid_mask]
-        points2_valid = points2[valid_mask]
-        
-        if len(points1_valid) < 8:
-            return None
-        
-        # Normalize points
-        mean1 = np.mean(points1_valid, axis=0)
-        mean2 = np.mean(points2_valid, axis=0)
-        
-        std1 = np.std(points1_valid, axis=0)
-        std2 = np.std(points2_valid, axis=0)
-        
-        points1_norm = (points1_valid - mean1) / std1
-        points2_norm = (points2_valid - mean2) / std2
-        
-        # Build constraint matrix
-        A = np.zeros((len(points1_norm), 9))
-        for i in range(len(points1_norm)):
-            x1, y1 = points1_norm[i]
-            x2, y2 = points2_norm[i]
-            A[i] = [x1*x2, x1*y2, x1, y1*x2, y1*y2, y1, x2, y2, 1]
-        
-        # Solve using SVD
-        U, S, Vt = np.linalg.svd(A)
-        F = Vt[-1].reshape(3, 3)
-        
-        # Enforce rank 2 constraint
-        U, S, Vt = np.linalg.svd(F)
-        S[2] = 0
-        F = U @ np.diag(S) @ Vt
-        
-        return F
-    
-    # Project points to all cameras
-    all_projections = []
-    for camera_pose in camera_poses:
-        projections = project_points(points_3d, camera_pose)
-        all_projections.append(projections)
-    
-    # Estimate fundamental matrix between first two cameras
-    F = estimate_fundamental_matrix(all_projections[0], all_projections[1])
-    
-    # Visualize results
-    fig = plt.figure(figsize=(15, 5))
-    
-    # 3D scene
-    ax1 = fig.add_subplot(131, projection='3d')
-    ax1.scatter(points_3d[:, 0], points_3d[:, 1], points_3d[:, 2], c='blue', s=20)
-    
-    # Draw cameras
-    for i, camera_pose in enumerate(camera_poses):
-        pos = camera_pose['position']
-        ax1.scatter(pos[0], pos[1], pos[2], c='red', s=100, marker='^')
-        ax1.text(pos[0], pos[1], pos[2], f'Cam{i+1}', fontsize=8)
-    
-    ax1.set_title('3D Scene and Cameras')
-    ax1.set_xlabel('X')
-    ax1.set_ylabel('Y')
-    ax1.set_zlabel('Z')
-    
-    # Projections in first camera
-    ax2 = fig.add_subplot(132)
-    projections = all_projections[0]
-    valid_mask = ~np.isnan(projections).any(axis=1)
-    valid_projections = projections[valid_mask]
-    ax2.scatter(valid_projections[:, 0], valid_projections[:, 1], c='blue', s=20)
-    ax2.set_title('Projections in Camera 1')
-    ax2.set_xlabel('X')
-    ax2.set_ylabel('Y')
-    ax2.grid(True)
-    
-    # Projections in second camera
-    ax3 = fig.add_subplot(133)
-    projections = all_projections[1]
-    valid_mask = ~np.isnan(projections).any(axis=1)
-    valid_projections = projections[valid_mask]
-    ax3.scatter(valid_projections[:, 0], valid_projections[:, 1], c='red', s=20)
-    ax3.set_title('Projections in Camera 2')
-    ax3.set_xlabel('X')
-    ax3.set_ylabel('Y')
-    ax3.grid(True)
-    
-    plt.tight_layout()
-    plt.show()
-    
-    print(f"3D points: {len(points_3d)}")
-    print(f"Cameras: {len(camera_poses)}")
-    print(f"Fundamental matrix estimated: {F is not None}")
-
-structure_from_motion_simulation()
-```
-
-## 3D Reconstruction
-
-### Stereo Vision
-
-```python
-def stereo_vision_simulation():
-    # Create 3D scene
-    np.random.seed(42)
-    
-    # Create depth map
-    height, width = 100, 100
-    depth_map = np.zeros((height, width))
-    
-    # Create simple 3D scene
-    for i in range(height):
-        for j in range(width):
-            # Create a plane with some variation
-            depth_map[i, j] = 2.0 + 0.5 * np.sin(i * 0.1) * np.cos(j * 0.1)
-    
-    # Add some objects
-    depth_map[30:50, 30:50] = 1.5  # Closer object
-    depth_map[60:80, 60:80] = 3.0  # Farther object
+    # Flatten and create point cloud
+    points_3d = np.column_stack([X.flatten(), Y.flatten(), Z.flatten()])
     
     # Camera parameters
-    focal_length = 100
-    baseline = 0.1  # Distance between cameras
+    focal_length = 1000
+    baseline = 0.1
+    image_width = 800
+    image_height = 600
     
-    def create_stereo_images(depth_map, focal_length, baseline):
-        """Create left and right stereo images"""
-        height, width = depth_map.shape
-        
-        # Create left image (reference)
-        left_image = np.zeros((height, width))
-        for i in range(height):
-            for j in range(width):
-                # Simple intensity based on depth
-                left_image[i, j] = 255 * np.exp(-depth_map[i, j] / 5.0)
-        
-        # Create right image with disparity
-        right_image = np.zeros((height, width))
-        for i in range(height):
-            for j in range(width):
-                # Calculate disparity
-                disparity = focal_length * baseline / depth_map[i, j]
-                right_j = int(j - disparity)
-                
-                if 0 <= right_j < width:
-                    right_image[i, right_j] = left_image[i, j]
-        
-        return left_image, right_image
+    # Project to left and right cameras
+    left_points = []
+    right_points = []
     
-    def compute_disparity(left_image, right_image, window_size=5):
-        """Compute disparity using block matching"""
-        height, width = left_image.shape
-        disparity_map = np.zeros((height, width))
-        
-        half_window = window_size // 2
-        
-        for i in range(half_window, height - half_window):
-            for j in range(half_window, width - half_window):
-                # Extract left window
-                left_window = left_image[i-half_window:i+half_window+1, 
-                                       j-half_window:j+half_window+1]
-                
-                best_disparity = 0
-                best_cost = float('inf')
-                
-                # Search for best match
-                for d in range(0, min(50, j - half_window)):
-                    right_j = j - d
-                    if right_j >= half_window:
-                        right_window = right_image[i-half_window:i+half_window+1, 
-                                                 right_j-half_window:right_j+half_window+1]
-                        
-                        # Compute similarity (SSD)
-                        cost = np.sum((left_window - right_window)**2)
-                        
-                        if cost < best_cost:
-                            best_cost = cost
-                            best_disparity = d
-                
-                disparity_map[i, j] = best_disparity
-        
-        return disparity_map
+    for point in points_3d:
+        # Left camera (at origin)
+        if point[2] > 0:  # Only points in front of camera
+            x_left = focal_length * point[0] / point[2] + image_width / 2
+            y_left = focal_length * point[1] / point[2] + image_height / 2
+            
+            # Right camera (translated by baseline)
+            x_right = focal_length * (point[0] - baseline) / point[2] + image_width / 2
+            y_right = focal_length * point[1] / point[2] + image_height / 2
+            
+            if (0 <= x_left < image_width and 0 <= y_left < image_height and
+                0 <= x_right < image_width and 0 <= y_right < image_height):
+                left_points.append([x_left, y_left])
+                right_points.append([x_right, y_right])
     
-    def reconstruct_3d(left_image, disparity_map, focal_length, baseline):
-        """Reconstruct 3D points from disparity"""
-        height, width = left_image.shape
-        
-        # Calculate 3D coordinates
-        points_3d = []
-        colors = []
-        
-        for i in range(0, height, 5):  # Sample every 5th pixel
-            for j in range(0, width, 5):
-                if disparity_map[i, j] > 0:
-                    # Calculate depth
-                    depth = focal_length * baseline / disparity_map[i, j]
-                    
-                    # Calculate 3D coordinates
-                    x = (j - width/2) * depth / focal_length
-                    y = (i - height/2) * depth / focal_length
-                    z = depth
-                    
-                    points_3d.append([x, y, z])
-                    colors.append(left_image[i, j])
-        
-        return np.array(points_3d), np.array(colors)
+    left_points = np.array(left_points)
+    right_points = np.array(right_points)
     
-    # Create stereo images
-    left_image, right_image = create_stereo_images(depth_map, focal_length, baseline)
+    # Calculate disparity
+    disparity = left_points[:, 0] - right_points[:, 0]
     
-    # Compute disparity
-    disparity_map = compute_disparity(left_image, right_image)
+    # Reconstruct 3D points
+    reconstructed_z = focal_length * baseline / disparity
+    reconstructed_x = (left_points[:, 0] - image_width / 2) * reconstructed_z / focal_length
+    reconstructed_y = (left_points[:, 1] - image_height / 2) * reconstructed_z / focal_length
     
-    # Reconstruct 3D
-    points_3d, colors = reconstruct_3d(left_image, disparity_map, focal_length, baseline)
+    reconstructed_points = np.column_stack([reconstructed_x, reconstructed_y, reconstructed_z])
     
     # Visualize results
-    fig = plt.figure(figsize=(15, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(15, 12))
     
-    # Original depth map
-    ax1 = fig.add_subplot(231)
-    ax1.imshow(depth_map, cmap='viridis')
-    ax1.set_title('Ground Truth Depth')
-    ax1.axis('off')
+    # Original 3D surface
+    ax1 = fig.add_subplot(2, 2, 1, projection='3d')
+    ax1.scatter(points_3d[:, 0], points_3d[:, 1], points_3d[:, 2], c=points_3d[:, 2], cmap='viridis', s=1)
+    ax1.set_title('Original 3D Surface')
+    ax1.set_xlabel('X')
+    ax1.set_ylabel('Y')
+    ax1.set_zlabel('Z')
     
-    # Left image
-    ax2 = fig.add_subplot(232)
-    ax2.imshow(left_image, cmap='gray')
-    ax2.set_title('Left Image')
-    ax2.axis('off')
+    # Left camera view
+    axes[0, 1].scatter(left_points[:, 0], left_points[:, 1], c=disparity, cmap='viridis', s=1)
+    axes[0, 1].set_title('Left Camera View')
+    axes[0, 1].set_xlabel('X')
+    axes[0, 1].set_ylabel('Y')
+    axes[0, 1].invert_yaxis()
     
-    # Right image
-    ax3 = fig.add_subplot(233)
-    ax3.imshow(right_image, cmap='gray')
-    ax3.set_title('Right Image')
-    ax3.axis('off')
+    # Right camera view
+    axes[1, 0].scatter(right_points[:, 0], right_points[:, 1], c=disparity, cmap='viridis', s=1)
+    axes[1, 0].set_title('Right Camera View')
+    axes[1, 0].set_xlabel('X')
+    axes[1, 0].set_ylabel('Y')
+    axes[1, 0].invert_yaxis()
     
-    # Disparity map
-    ax4 = fig.add_subplot(234)
-    ax4.imshow(disparity_map, cmap='viridis')
-    ax4.set_title('Disparity Map')
-    ax4.axis('off')
-    
-    # 3D reconstruction
-    ax5 = fig.add_subplot(235, projection='3d')
-    if len(points_3d) > 0:
-        scatter = ax5.scatter(points_3d[:, 0], points_3d[:, 1], points_3d[:, 2], 
-                            c=colors, s=1)
-    ax5.set_title('3D Reconstruction')
-    ax5.set_xlabel('X')
-    ax5.set_ylabel('Y')
-    ax5.set_zlabel('Z')
-    
-    # Depth comparison
-    ax6 = fig.add_subplot(236)
-    reconstructed_depth = np.zeros_like(depth_map)
-    for i in range(0, height, 5):
-        for j in range(0, width, 5):
-            if disparity_map[i, j] > 0:
-                reconstructed_depth[i, j] = focal_length * baseline / disparity_map[i, j]
-    
-    ax6.imshow(reconstructed_depth, cmap='viridis')
-    ax6.set_title('Reconstructed Depth')
-    ax6.axis('off')
+    # Reconstructed 3D surface
+    ax4 = fig.add_subplot(2, 2, 4, projection='3d')
+    ax4.scatter(reconstructed_points[:, 0], reconstructed_points[:, 1], reconstructed_points[:, 2], 
+               c=reconstructed_points[:, 2], cmap='viridis', s=1)
+    ax4.set_title('Reconstructed 3D Surface')
+    ax4.set_xlabel('X')
+    ax4.set_ylabel('Y')
+    ax4.set_zlabel('Z')
     
     plt.tight_layout()
     plt.show()
     
-    print(f"Original depth range: {depth_map.min():.2f} - {depth_map.max():.2f}")
-    print(f"Reconstructed points: {len(points_3d)}")
-    if len(points_3d) > 0:
-        print(f"Reconstructed depth range: {points_3d[:, 2].min():.2f} - {points_3d[:, 2].max():.2f}")
+    # Calculate reconstruction error
+    error = np.mean(np.linalg.norm(points_3d[:len(reconstructed_points)] - reconstructed_points, axis=1))
+    print(f"Average reconstruction error: {error:.4f}")
 
-stereo_vision_simulation()
+# Main execution
+if __name__ == "__main__":
+    # Demonstrate point cloud processing
+    demonstrate_point_cloud_processing()
+    
+    # Demonstrate stereo vision
+    simulate_stereo_vision()
 ```
 
-## Summary
+### Advanced 3D Vision Techniques
 
-This guide covered 3D vision techniques:
+```python
+# Multi-view stereo reconstruction
+def multi_view_stereo_reconstruction(images, camera_matrices, depths):
+    """Simulate multi-view stereo reconstruction."""
+    # This is a simplified simulation
+    # In practice, this would involve more complex algorithms
+    
+    # Create cost volume
+    min_depth = np.min(depths)
+    max_depth = np.max(depths)
+    num_depths = 50
+    depth_values = np.linspace(min_depth, max_depth, num_depths)
+    
+    # For each depth hypothesis, compute photometric consistency
+    cost_volume = np.zeros((len(images[0]), len(images[0][0]), num_depths))
+    
+    for d_idx, depth in enumerate(depth_values):
+        for i in range(len(images[0])):
+            for j in range(len(images[0][0])):
+                # Project point to other views
+                costs = []
+                for view_idx in range(1, len(images)):
+                    # Simplified projection
+                    # In practice, this would use proper camera projection
+                    projected_i = int(i + np.random.normal(0, 2))
+                    projected_j = int(j + np.random.normal(0, 2))
+                    
+                    if (0 <= projected_i < len(images[view_idx]) and 
+                        0 <= projected_j < len(images[view_idx][0])):
+                        cost = abs(images[0][i][j] - images[view_idx][projected_i][projected_j])
+                        costs.append(cost)
+                
+                if costs:
+                    cost_volume[i, j, d_idx] = np.mean(costs)
+    
+    # Find best depth for each pixel
+    best_depths = depth_values[np.argmin(cost_volume, axis=2)]
+    
+    return best_depths
 
-1. **Point Cloud Processing**: PointNet, PointNet++ for direct point processing
-2. **Voxel-Based Methods**: VoxelNet for structured 3D representation
-3. **Multi-View Geometry**: SfM for camera pose estimation
-4. **3D Reconstruction**: Stereo vision for depth estimation
+# Point cloud registration with RANSAC
+def ransac_point_cloud_registration(source, target, num_iterations=1000, threshold=0.1):
+    """Implement RANSAC-based point cloud registration."""
+    best_transformation = None
+    best_inliers = 0
+    
+    for _ in range(num_iterations):
+        # Randomly sample 3 points
+        sample_indices = np.random.choice(len(source), 3, replace=False)
+        sample_points = source[sample_indices]
+        
+        # Find corresponding points in target
+        distances = cdist(sample_points, target)
+        correspondences = np.argmin(distances, axis=1)
+        target_points = target[correspondences]
+        
+        # Estimate transformation
+        try:
+            # Calculate transformation using SVD
+            source_centroid = np.mean(sample_points, axis=0)
+            target_centroid = np.mean(target_points, axis=0)
+            
+            source_centered = sample_points - source_centroid
+            target_centered = target_points - target_centroid
+            
+            H = source_centered.T @ target_centered
+            U, S, Vt = np.linalg.svd(H)
+            R = Vt.T @ U.T
+            
+            if np.linalg.det(R) < 0:
+                Vt[-1, :] *= -1
+                R = Vt.T @ U.T
+            
+            t = target_centroid - R @ source_centroid
+            
+            # Transform all source points
+            transformed_source = (R @ source.T).T + t
+            
+            # Count inliers
+            distances = np.linalg.norm(transformed_source - target, axis=1)
+            inliers = np.sum(distances < threshold)
+            
+            if inliers > best_inliers:
+                best_inliers = inliers
+                best_transformation = np.eye(4)
+                best_transformation[:3, :3] = R
+                best_transformation[:3, 3] = t
+                
+        except np.linalg.LinAlgError:
+            continue
+    
+    return best_transformation, best_inliers
 
-### Key Takeaways
+# Surface reconstruction using Poisson
+def poisson_surface_reconstruction(points, normals):
+    """Simulate Poisson surface reconstruction."""
+    # This is a simplified simulation
+    # In practice, this would involve solving a Poisson equation
+    
+    # Create a simple mesh from points and normals
+    from scipy.spatial import Delaunay
+    
+    # Project points to 2D for triangulation
+    # Use PCA to find principal components
+    centered_points = points - np.mean(points, axis=0)
+    cov_matrix = centered_points.T @ centered_points
+    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+    
+    # Project to 2D using first two principal components
+    projection_matrix = eigenvectors[:, :2]
+    points_2d = centered_points @ projection_matrix
+    
+    # Triangulate
+    try:
+        tri = Delaunay(points_2d)
+        triangles = tri.simplices
+    except:
+        # Fallback: create simple triangles
+        triangles = []
+        for i in range(0, len(points) - 2, 3):
+            if i + 2 < len(points):
+                triangles.append([i, i+1, i+2])
+        triangles = np.array(triangles)
+    
+    return triangles
 
-- **PointNet** processes unordered point sets using symmetric functions
-- **PointNet++** uses hierarchical sampling for better local structure
-- **VoxelNet** provides structured 3D representation through voxelization
-- **SfM** estimates camera poses and 3D structure from multiple views
-- **Stereo vision** reconstructs 3D from disparity between two cameras
+# 3D object detection simulation
+def simulate_3d_object_detection(point_cloud):
+    """Simulate 3D object detection in point cloud."""
+    # Simple clustering-based detection
+    
+    # Cluster points
+    labels = cluster_point_cloud(point_cloud, eps=0.2, min_samples=10)
+    
+    # Find bounding boxes for each cluster
+    bounding_boxes = []
+    
+    for label in np.unique(labels):
+        if label == -1:  # Skip noise
+            continue
+        
+        cluster_points = point_cloud[labels == label]
+        
+        if len(cluster_points) < 10:  # Skip small clusters
+            continue
+        
+        # Calculate bounding box
+        min_coords = np.min(cluster_points, axis=0)
+        max_coords = np.max(cluster_points, axis=0)
+        
+        # Calculate center and dimensions
+        center = (min_coords + max_coords) / 2
+        dimensions = max_coords - min_coords
+        
+        bounding_boxes.append({
+            'center': center,
+            'dimensions': dimensions,
+            'points': cluster_points,
+            'label': label
+        })
+    
+    return bounding_boxes
 
-### Next Steps
+# Visualize 3D bounding boxes
+def visualize_3d_bounding_boxes(point_cloud, bounding_boxes):
+    """Visualize 3D bounding boxes."""
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Plot point cloud
+    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], 
+              c='gray', s=1, alpha=0.5)
+    
+    # Plot bounding boxes
+    colors = plt.cm.tab10(np.linspace(0, 1, len(bounding_boxes)))
+    
+    for bbox, color in zip(bounding_boxes, colors):
+        center = bbox['center']
+        dimensions = bbox['dimensions']
+        
+        # Create bounding box vertices
+        x_min, y_min, z_min = center - dimensions / 2
+        x_max, y_max, z_max = center + dimensions / 2
+        
+        # Define vertices
+        vertices = np.array([
+            [x_min, y_min, z_min],
+            [x_max, y_min, z_min],
+            [x_max, y_max, z_min],
+            [x_min, y_max, z_min],
+            [x_min, y_min, z_max],
+            [x_max, y_min, z_max],
+            [x_max, y_max, z_max],
+            [x_min, y_max, z_max]
+        ])
+        
+        # Define edges
+        edges = [
+            (0, 1), (1, 2), (2, 3), (3, 0),  # bottom
+            (4, 5), (5, 6), (6, 7), (7, 4),  # top
+            (0, 4), (1, 5), (2, 6), (3, 7)   # vertical
+        ]
+        
+        # Draw edges
+        for edge in edges:
+            start = vertices[edge[0]]
+            end = vertices[edge[1]]
+            ax.plot([start[0], end[0]], [start[1], end[1]], [start[2], end[2]], 
+                   color=color, linewidth=2)
+    
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title('3D Object Detection')
+    plt.show()
+```
 
-With 3D vision mastered, explore:
-- SLAM and visual odometry
-- 3D object detection
-- Point cloud registration
-- Neural radiance fields (NeRF) 
+This comprehensive guide covers various 3D vision techniques, from basic point cloud processing to advanced reconstruction methods. The mathematical foundations provide understanding of the algorithms, while the Python implementations demonstrate practical applications in 3D computer vision. 
