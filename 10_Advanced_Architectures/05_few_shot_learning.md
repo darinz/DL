@@ -2,12 +2,18 @@
 
 Few-shot learning is a paradigm in machine learning where models are trained to generalize from a very small number of examples per class. This is crucial for applications where labeled data is scarce or expensive to obtain.
 
+> **Key Insight:** Few-shot learning enables AI systems to learn new concepts rapidly, much like humans do, with only a handful of examples.
+
+> **Did you know?** Few-shot learning is essential for fields like medicine, where collecting large labeled datasets is often impractical.
+
 ## 1. Motivation
 
 Traditional deep learning models require large labeled datasets. Few-shot learning aims to:
 - Enable learning from a handful of examples
 - Mimic human-like learning
 - Improve generalization in low-data regimes
+
+> **Geometric Intuition:** Imagine plotting a few points for each class in a high-dimensional space. Few-shot learning methods try to "draw boundaries" that generalize well, even with very few points.
 
 ## 2. Problem Setting
 
@@ -16,6 +22,8 @@ The most common few-shot learning scenario is $`N`$-way $`K`$-shot classificatio
 - $`K`$: Number of examples per class
 
 For example, in 5-way 1-shot learning, the model must classify among 5 classes, given only 1 example per class.
+
+> **Common Pitfall:** If the support set (examples per class) is not representative, the model may overfit or fail to generalize.
 
 ## 3. Approaches to Few-Shot Learning
 
@@ -34,6 +42,8 @@ Classify a query $`\mathbf{x}`$ by finding the nearest prototype:
 \hat{y} = \underset{c}{\mathrm{argmin}}\; d(f_\phi(\mathbf{x}), \mathbf{p}_c)
 ```
 where $`d(\cdot, \cdot)`$ is a distance metric (e.g., Euclidean).
+
+> **Try it yourself!** Visualize the learned embedding space with t-SNE or PCA. Do examples from the same class cluster together?
 
 **Python Example: Prototypical Networks**
 ```python
@@ -68,17 +78,24 @@ class ProtoNet(nn.Module):
         # Predict
         return -dists
 ```
+*This code computes class prototypes and classifies queries by their distance to each prototype.*
 
 ### 3.2 Optimization-Based Methods
 These methods, like MAML, learn initial parameters that can be quickly adapted to new tasks with a few gradient steps (see Meta-Learning guide).
 
+> **Key Insight:** Optimization-based methods are powerful for tasks where rapid adaptation is needed.
+
 ### 3.3 Memory-Based Methods
 Models like Matching Networks use external memory to store and retrieve examples for comparison.
+
+> **Did you know?** Memory-augmented networks can "remember" rare or previously unseen classes by storing examples in an external memory.
 
 ## 4. Applications
 - Medical image classification
 - Language modeling with rare words
 - Robotics (learning new tasks quickly)
+
+> **Key Insight:** Few-shot learning is a stepping stone towards more general and flexible AI.
 
 ## 5. Further Reading
 - [Snell et al., 2017: Prototypical Networks for Few-shot Learning](https://arxiv.org/abs/1703.05175)
