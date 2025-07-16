@@ -2,9 +2,15 @@
 
 Graph Attention Networks (GATs) introduce attention mechanisms to graph neural networks, allowing nodes to assign different importances (weights) to their neighbors during feature aggregation.
 
+> **Key Insight:** GATs enable each node to "focus" on the most relevant neighbors, improving performance on graphs with noisy or heterogeneous connections.
+
+> **Did you know?** The attention mechanism in GATs is inspired by the same principles as attention in transformers for NLP!
+
 ## 1. Motivation
 
 In standard GCNs, all neighbors contribute equally (after normalization). However, in many real-world graphs, some neighbors are more important than others. GATs address this by learning attention coefficients for each edge.
+
+> **Geometric Intuition:** Imagine a social network where some friends influence you more than others. GATs learn these influence weights automatically.
 
 ## 2. GAT Layer: The Math
 
@@ -26,6 +32,15 @@ h_i' = \sigma\left( \sum_{j \in \mathcal{N}(i)} \alpha_{ij} W h_j \right)
 ```
 where $`\sigma`$ is an activation function (e.g., ELU).
 
+### Step-by-Step Breakdown
+1. **Linear transformation:** Project node features with $`W`$.
+2. **Compute attention scores:** For each edge $`(i, j)`$, concatenate $`W h_i`$ and $`W h_j`$, then apply $`a(\cdot)`$ and a nonlinearity (e.g., LeakyReLU).
+3. **Normalize:** Apply softmax over all neighbors $`j`$ of node $`i`$ to get $`\alpha_{ij}`$.
+4. **Aggregate:** Weighted sum of neighbors' features using $`\alpha_{ij}`$.
+5. **Nonlinearity:** Apply $`\sigma`$ (e.g., ELU) to the result.
+
+> **Common Pitfall:** Forgetting to mask non-existent edges when computing attention can lead to incorrect aggregation.
+
 ## 3. Multi-Head Attention
 
 GATs often use multiple attention heads to stabilize learning and capture diverse patterns:
@@ -33,6 +48,8 @@ GATs often use multiple attention heads to stabilize learning and capture divers
 h_i' = \Vert_{k=1}^K \sigma\left( \sum_{j \in \mathcal{N}(i)} \alpha_{ij}^k W^k h_j \right)
 ```
 where $`\Vert`$ denotes concatenation and $`K`$ is the number of heads.
+
+> **Key Insight:** Multi-head attention allows the model to attend to different aspects of the neighborhood simultaneously.
 
 ## 4. GAT Layer Implementation (Python)
 
@@ -52,17 +69,19 @@ class GATLayer(nn.Module):
     def forward(self, X, adj):
         Wh = self.W(X)  # (N, out_features)
         N = Wh.size(0)
+        # Prepare attention mechanism input
         a_input = torch.cat([
-            Wh.repeat(1, N).view(N * N, -1),
+            Wh.repeat(1, N).view(N * N, -1),  # Repeat for all pairs
             Wh.repeat(N, 1)
         ], dim=1).view(N, N, 2 * Wh.size(1))
-        e = F.leaky_relu(self.a(a_input).squeeze(2))
-        zero_vec = -9e15 * torch.ones_like(e)
-        attention = torch.where(adj > 0, e, zero_vec)
-        attention = F.softmax(attention, dim=1)
-        h_prime = torch.matmul(attention, Wh)
+        e = F.leaky_relu(self.a(a_input).squeeze(2))  # Raw attention scores
+        zero_vec = -9e15 * torch.ones_like(e)  # Mask for non-edges
+        attention = torch.where(adj > 0, e, zero_vec)  # Only attend to neighbors
+        attention = F.softmax(attention, dim=1)  # Normalize
+        h_prime = torch.matmul(attention, Wh)  # Weighted sum
         return F.elu(h_prime)
 ```
+*This layer computes attention scores for each edge, normalizes them, and aggregates neighbor features accordingly.*
 
 ### Usage Example
 Suppose we have a graph with 3 nodes and 2 features per node:
@@ -79,11 +98,16 @@ gat = GATLayer(2, 2)
 output = gat(X, adj)
 print(output)
 ```
+*Try changing the adjacency matrix or node features to see how the attention weights and output change!*
+
+> **Try it yourself!** Visualize the learned attention coefficients. Which neighbors does each node focus on?
 
 ## 5. Applications of GATs
 - Node classification in citation/social networks
 - Traffic prediction on road networks
 - Molecular property prediction
+
+> **Key Insight:** GATs are especially useful when the importance of neighbors varies widely across the graph.
 
 ## 6. Further Reading
 - [Velickovic et al., 2018: Graph Attention Networks](https://arxiv.org/abs/1710.10903)
