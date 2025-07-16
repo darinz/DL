@@ -19,6 +19,8 @@
 
 ## Introduction
 
+> **Intuition:** Backpropagation is like figuring out which ingredient in a recipe caused a bad taste, and adjusting each one to improve the result. The chain rule helps us trace the error back through each layer.
+
 Backward propagation (backpropagation) is the process of computing gradients by working backwards through the network from the output layer to the input layer. The key insight is using the chain rule to efficiently compute gradients for all parameters.
 
 ### Why Backpropagation?
@@ -38,9 +40,13 @@ Given a neural network with parameters $`\theta = \{W^{(1)}, b^{(1)}, W^{(2)}, b
 > **Did you know?**
 > Before backpropagation, training deep networks was nearly impossible due to the computational cost of calculating gradients for each parameter individually.
 
+> **Annotation:** Backpropagation is the key to efficient learning in deep networks. Understanding it unlocks the power of modern AI.
+
 ---
 
 ## Mathematical Foundation
+
+> **Intuition:** The chain rule allows us to break down complex derivatives into simple, local computations at each layer.
 
 ### Chain Rule Review
 
@@ -74,6 +80,9 @@ The derivatives are:
 
 > **Try it yourself!**
 > Take a simple two-layer network and compute the derivatives of the output with respect to each parameter by hand. This will help you understand how the chain rule is applied in practice.
+
+> **Common Pitfall:**
+> Forgetting to use the correct activation function derivative for each layer can lead to incorrect gradients and failed training.
 
 ---
 
@@ -135,6 +144,8 @@ Simplifying:
 
 ## Backpropagation Algorithm
 
+> **Annotation:** The $`\delta^{(l)}`$ terms represent the error signals for each layer, which are used to update the weights and biases.
+
 ### Step-by-Step Algorithm
 
 1. **Forward Pass:** Compute all $`a^{(l)}`$ and $`z^{(l)}`$ for all layers
@@ -166,6 +177,8 @@ Simplifying:
 ---
 
 ## Gradient Computation
+
+> **Intuition:** The error term $`\delta^{(l)}`$ tells us how much each layer contributed to the final loss. We use it to update the weights and biases in the right direction.
 
 ### Parameter Gradients
 
@@ -209,6 +222,8 @@ For $`L = -\sum_{i=1}^{n} y_i \log(\hat{y}_i)`$:
 ---
 
 ## Implementation in Python
+
+> **Annotation:** Let's walk through the code step by step. Comments are added to clarify each part.
 
 ### Basic Backpropagation Implementation
 
