@@ -8,6 +8,7 @@
 
 Deep learning relies heavily on mathematical foundations from multiple disciplines. This section provides a comprehensive overview of the key mathematical concepts, formulas, and techniques that are essential for understanding and implementing neural networks effectively.
 
+
 ## Table of Contents
 
 1. [Linear Algebra](#linear-algebra)
