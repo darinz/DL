@@ -17,6 +17,9 @@ Given an image $`x \in \mathbb{R}^{H \times W \times C}`$, it is split into $`N`
 N = \frac{HW}{P^2}
 ```
 
+> **Explanation:**
+> The image is divided into non-overlapping patches, each of size $P \times P$. Each patch is then flattened into a vector, so the image can be treated as a sequence of patch vectors, similar to words in a sentence for NLP.
+
 Each patch is flattened and projected to a $`D`$-dimensional embedding.
 
 #### Geometric/Visual Explanation
@@ -49,13 +52,18 @@ patches = patch_embed(img)
 print(patches.shape)  # (1, 196, 768)
 ```
 
-> **Code Commentary:** The convolutional layer with stride and kernel size equal to the patch size efficiently extracts and flattens patches.
+> **Code Walkthrough:**
+> - The convolutional layer with stride and kernel size equal to the patch size efficiently extracts and flattens patches.
+> - The output is a sequence of patch embeddings, ready for input to the Transformer encoder.
 
 > **Try it yourself!** Change the patch size and observe how the number of patches $`N`$ changes for a fixed image size.
 
 ## 3. Position Embedding
 
 As with NLP Transformers, ViT adds position embeddings to the patch embeddings to retain spatial information.
+
+> **Explanation:**
+> Position embeddings give each patch a sense of "where" it is in the image, so the model can reason about spatial relationships. Without them, the model would treat all patches as unordered.
 
 #### Intuitive Explanation
 
@@ -65,11 +73,18 @@ Position embeddings give each patch a sense of "where" it is in the image, so th
 
 The sequence of patch embeddings is processed by a standard Transformer encoder, as described in the Transformer Architecture guide.
 
-> **Common Pitfall:** If you omit position embeddings, the model loses spatial awareness and performs poorly on vision tasks.
+> **Explanation:**
+> The Transformer encoder models relationships between patches using self-attention, allowing the model to capture both local and global context in the image.
+
+> **Common Pitfall:**
+> If you omit position embeddings, the model loses spatial awareness and performs poorly on vision tasks.
 
 ## 5. Classification Head
 
 A special [CLS] token is prepended to the sequence, and its final representation is used for classification.
+
+> **Explanation:**
+> The [CLS] token acts as a summary vector that aggregates information from all patches through self-attention. The final output for this token is used as the image representation for classification.
 
 #### Geometric/Visual Explanation
 
