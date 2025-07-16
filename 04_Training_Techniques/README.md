@@ -1,5 +1,14 @@
 # Training Techniques
 
+[![Training Techniques](https://img.shields.io/badge/Training%20Techniques-Essential-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![Regularization](https://img.shields.io/badge/Regularization-Overfitting-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Normalization](https://img.shields.io/badge/Normalization-BatchNorm-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Initialization](https://img.shields.io/badge/Initialization-Strategies-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Dropout](https://img.shields.io/badge/Dropout-Regularization-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Weight Decay](https://img.shields.io/badge/Weight%20Decay-L2%20Regularization-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Early Stopping](https://img.shields.io/badge/Early%20Stopping-Validation-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+[![Data Augmentation](https://img.shields.io/badge/Data%20Augmentation-Transformation-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/04_Training_Techniques)
+
 This section covers essential techniques for training deep neural networks effectively, including regularization methods, normalization techniques, and initialization strategies.
 
 > **Key Insight:**
