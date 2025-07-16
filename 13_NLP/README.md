@@ -24,7 +24,9 @@ Natural Language Processing (NLP) is a field at the intersection of computer sci
 - Text generation models produce coherent and contextually relevant text given an input prompt. They are used for tasks such as machine translation, summarization, and creative writing.
 - **Autoregressive Generation:**
 
-$`P(x) = \prod_{t=1}^T P(x_t \mid x_{<t})`$
+```math
+P(x) = \prod_{t=1}^T P(x_t \mid x_{<t})
+```
 
 - **Sequence-to-Sequence Models:**
   - Encode input sequence $`x`$ to a context vector, then decode to output sequence $`y`$.
