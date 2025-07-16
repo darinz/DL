@@ -4,9 +4,9 @@ This section covers essential techniques for training deep neural networks effec
 
 ## Table of Contents
 
-1. [Regularization Methods](#regularization-methods)
-2. [Normalization Techniques](#normalization-techniques)
-3. [Initialization Strategies](#initialization-strategies)
+1. [Regularization Methods](#regularization-methods) - [Detailed Guide](01_regularization_methods.md)
+2. [Normalization Techniques](#normalization-techniques) - [Detailed Guide](02_normalization_techniques.md)
+3. [Initialization Strategies](#initialization-strategies) - [Detailed Guide](03_initialization_strategies.md)
 
 ## Regularization Methods
 
@@ -215,6 +215,21 @@ Initializes networks with weights from pre-trained models.
 - **He:** Use with ReLU and variants
 - **Orthogonal:** Use for RNNs and transformers
 - **Pre-trained:** Use when available and applicable
+
+## Detailed Guides
+
+For comprehensive coverage of each topic with mathematical formulations, Python code examples, and practical implementations, see the following detailed guides:
+
+- **[Regularization Methods](01_regularization_methods.md)** - Complete guide covering dropout variants, weight decay implementation, early stopping strategies, and data augmentation techniques for different data types
+- **[Normalization Techniques](02_normalization_techniques.md)** - In-depth exploration of BatchNorm, LayerNorm, InstanceNorm, GroupNorm, and Weight Normalization with performance comparisons
+- **[Initialization Strategies](03_initialization_strategies.md)** - Detailed analysis of Xavier/Glorot, He, Orthogonal, and Pre-trained weight initialization with mathematical foundations
+
+Each guide includes:
+- Mathematical formulations with LaTeX notation
+- Python code examples with PyTorch implementations
+- Practical considerations and best practices
+- Performance comparisons and trade-offs
+- Real-world applications and use cases
 
 ## References
 
