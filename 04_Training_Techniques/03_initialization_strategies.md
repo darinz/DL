@@ -22,8 +22,10 @@ Proper weight initialization is crucial for training deep neural networks effect
 
 Xavier/Glorot initialization is designed for sigmoid and tanh activation functions, maintaining the variance of activations and gradients across layers.
 
+> **Explanation:**
+> The goal of Xavier initialization is to keep the scale of the gradients roughly the same in all layers. If the weights are too small, signals shrink as they pass through each layer (vanishing gradients). If too large, signals explode (exploding gradients). Xavier initialization chooses the variance of the weights so that the output variance matches the input variance, which helps deep networks train more reliably.
+
 > **Did you know?**
-> 
 > The name "Xavier" comes from Xavier Glorot, who introduced this initialization in his influential 2010 paper on deep learning.
 
 ### Mathematical Foundation
@@ -45,8 +47,12 @@ The key insight is to maintain the variance of activations and gradients across 
 \text{Var}(W^{(l)}) = \frac{2}{n_{\text{in}}^{(l-1)} + n_{\text{out}}^{(l)}}
 ```
 
+> **Math Breakdown:**
+> - $n_{\text{in}}$ is the number of input units to the layer.
+> - $n_{\text{out}}$ is the number of output units.
+> - The variance is chosen so that the signal neither shrinks nor grows as it passes through each layer.
+
 > **Common Pitfall:**
-> 
 > Using Xavier initialization with ReLU activations can lead to vanishing gradients. Use He initialization for ReLU!
 
 ### Step-by-Step Derivation
@@ -67,6 +73,10 @@ W_{ij} \sim \mathcal{N}\left(0, \frac{2}{n_{\text{in}} + n_{\text{out}}}\right)
 ```math
 W_{ij} \sim \mathcal{U}\left(-\sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}, \sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}\right)
 ```
+
+> **Math Breakdown:**
+> - The normal distribution version sets the standard deviation to $\sqrt{2/(n_{\text{in}} + n_{\text{out}})}$.
+> - The uniform version sets the range so that the variance matches the normal version.
 
 ### Geometric/Visual Explanation
 
@@ -120,8 +130,12 @@ class XavierInitializer:
         return fan_in, fan_out
 ```
 
+> **Code Walkthrough:**
+> - The `XavierInitializer` class provides both normal and uniform initialization methods.
+> - The variance or range is computed based on the number of input and output units.
+> - This ensures that the initialized weights are neither too small nor too large, helping gradients flow properly.
+
 > **Try it yourself!**
-> 
 > Modify the gain parameter in the code above and observe how the variance of the initialized weights changes. What happens if you set it much higher or lower than 1?
 
 ### Xavier Initialization in Neural Networks
@@ -189,12 +203,15 @@ def test_xavier_forward_pass():
 test_xavier_forward_pass()
 ```
 
+> **Code Walkthrough:**
+> - The `XavierNet` class builds a simple feedforward network with Xavier-initialized weights.
+> - The test function prints the mean and standard deviation of activations at each layer, showing how Xavier initialization helps maintain healthy signal flow.
+
 ## He Initialization
 
 He initialization is optimized for ReLU activation functions, accounting for the fact that ReLU zeroes out negative activations.
 
-> **Key Insight:**
-> 
+> **Explanation:**
 > ReLU activations "kill" about half the signal (all negative values become zero). He initialization compensates for this by increasing the variance of the weights, helping gradients and activations stay healthy as they flow through deep networks.
 
 ### Mathematical Foundation
@@ -407,9 +424,8 @@ compare_xavier_vs_he()
 
 Orthogonal initialization initializes weights as orthogonal matrices to preserve gradient flow and prevent vanishing/exploding gradients.
 
-> **Did you know?**
-> 
-> Orthogonal matrices have all singular values equal to 1, so they perfectly preserve the length of vectors (and gradients) they transform. This is especially useful in RNNs and very deep networks.
+> **Explanation:**
+> Orthogonal matrices preserve the length of vectors they transform, which means gradients neither explode nor vanish as they pass through layers. This is especially important in RNNs and very deep networks, where repeated multiplications can otherwise cause instability.
 
 ### Mathematical Foundation
 
@@ -418,13 +434,9 @@ Orthogonal matrices have the property that $`W^T W = I`$, which means:
 - Preserves gradient magnitude
 - Useful for recurrent networks and transformers
 
-### Mathematical Formulation
-
-```math
-W = U \Sigma V^T
-```
-
-Where $`U`$ and $`V`$ are orthogonal matrices, and $`\Sigma`$ contains singular values.
+> **Math Breakdown:**
+> - $W^T W = I$ means multiplying by $W$ doesn't change the length of a vector.
+> - This property helps maintain stable gradients during backpropagation.
 
 ### Geometric/Visual Explanation
 
@@ -464,8 +476,12 @@ class OrthogonalInitializer:
         return tensor
 ```
 
+> **Code Walkthrough:**
+> - The QR decomposition is used to create an orthogonal matrix.
+> - The gain parameter allows scaling the matrix if needed.
+> - This method is especially useful for initializing RNN weights.
+
 > **Key Insight:**
-> 
 > Orthogonal initialization is especially powerful for RNNs, where repeated multiplications can quickly lead to exploding or vanishing gradients if the weights are not carefully controlled.
 
 ### Orthogonal Initialization in RNNs
@@ -536,12 +552,15 @@ def test_orthogonal_rnn():
 test_orthogonal_rnn()
 ```
 
+> **Code Walkthrough:**
+> - The RNN uses orthogonally initialized weights for both input-to-hidden and hidden-to-hidden connections.
+> - The test function checks output and gradient statistics, demonstrating stable signal and gradient flow.
+
 ## Pre-trained Weights
 
 Pre-trained weights initialize networks with weights from models trained on large datasets, enabling transfer learning.
 
-> **Did you know?**
-> 
+> **Explanation:**
 > Using pre-trained weights is like giving your model a "head start"—it already knows useful features from millions of images or texts, so it can learn your task faster and with less data.
 
 ### Transfer Learning Approaches
@@ -551,7 +570,6 @@ Pre-trained weights initialize networks with weights from models trained on larg
 3. **Progressive Unfreezing**: Gradually unfreeze layers during training
 
 > **Common Pitfall:**
-> 
 > If your new task is very different from the pre-trained task, the transferred features may not help—or could even hurt! Always validate on your own data.
 
 ### Python Implementation
@@ -590,8 +608,12 @@ class TransferLearningModel(nn.Module):
             param.data *= learning_rate_factor
 ```
 
+> **Code Walkthrough:**
+> - Loads a pre-trained ResNet and replaces the final layer for a new task.
+> - Optionally freezes the backbone for feature extraction.
+> - The new layer is initialized with Xavier initialization.
+
 > **Try it yourself!**
-> 
 > Download a pre-trained model (e.g., ResNet, BERT) and fine-tune it on a small dataset. Compare the results to training from scratch!
 
 ### Progressive Unfreezing
@@ -649,22 +671,24 @@ def demonstrate_progressive_unfreezing():
 demonstrate_progressive_unfreezing()
 ```
 
+> **Code Walkthrough:**
+> - The trainer class allows gradual unfreezing of layers for fine-tuning.
+> - This can help prevent catastrophic forgetting and improve transfer learning performance.
+
 ## Advanced Initialization Techniques
 
 ### LSUV (Layer-Sequential Unit-Variance) Initialization
 
 LSUV initialization iteratively adjusts each layer so that its output variance is close to 1, layer by layer. This helps stabilize very deep networks.
 
-> **Key Insight:**
-> 
-> LSUV is like "tuning" each layer so that the signal doesn't get too big or too small as it passes through the network.
+> **Explanation:**
+> LSUV is like "tuning" each layer so that the signal doesn't get too big or too small as it passes through the network. This is especially useful for very deep architectures.
 
 ### Kaiming Initialization Variants
 
 Kaiming initialization (also called "He" initialization) has several variants, including different modes (fan_in, fan_out) and support for different nonlinearities (ReLU, Leaky ReLU, etc.).
 
 > **Did you know?**
-> 
 > PyTorch's `kaiming_normal_` and `kaiming_uniform_` functions let you specify the nonlinearity and mode for maximum flexibility.
 
 ## Practical Guidelines
@@ -679,7 +703,6 @@ Kaiming initialization (also called "He" initialization) has several variants, i
 | Pre-trained      | Transfer learning     | Load from pre-trained model    | Fast convergence, better accuracy | Domain mismatch possible     |
 
 > **Common Pitfall:**
-> 
 > Using the wrong initialization for your activation function can make training much harder or even impossible. Always match your initialization to your activations!
 
 ### Initialization Best Practices
@@ -690,7 +713,6 @@ Kaiming initialization (also called "He" initialization) has several variants, i
 - **Always check activations and gradients:** Plot their distributions at the start of training to catch issues early.
 
 > **Try it yourself!**
-> 
 > Visualize the distribution of activations and gradients in your network after initialization. Are they centered around zero? Is the variance reasonable? Try different strategies and compare!
 
 ---
@@ -715,5 +737,4 @@ Kaiming initialization (also called "He" initialization) has several variants, i
 - **Connect:** See how initialization interacts with normalization and regularization techniques in the next chapters.
 
 > **Key Insight:**
-> 
 > Initialization is the foundation of deep learning optimization. Mastering it will make you a more effective practitioner and researcher! 
