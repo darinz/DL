@@ -22,9 +22,13 @@ A comprehensive guide to understanding Multi-layer Perceptrons, the foundation o
 
 ## Introduction
 
+> **Intuition:** Think of an MLP as a team of specialists, where each layer of specialists builds on the work of the previous layer. The more layers, the more abstract and powerful the representations become.
+
 Multi-layer Perceptrons (MLPs) extend the single perceptron by stacking multiple layers of neurons, enabling the learning of complex, non-linear patterns and representations. They form the foundation of modern deep learning and can approximate any continuous function given sufficient capacity.
 
 ### What is an MLP?
+
+> **Annotation:** The key difference between a single perceptron and an MLP is the ability to learn non-linear patterns. This is achieved by stacking layers and using non-linear activation functions.
 
 An MLP is a feedforward neural network that:
 - Consists of multiple layers of neurons
@@ -47,9 +51,14 @@ An MLP is a feedforward neural network that:
 > **Key Insight:**
 > The power of MLPs comes from their depth (multiple layers) and non-linearity (activation functions). Without non-linearity, stacking layers would be equivalent to a single linear transformation!
 
+> **Common Pitfall:**
+> If you use only linear activation functions, no matter how many layers you stack, the network can only represent linear functions. Always use non-linear activations in hidden layers!
+
 ---
 
 ## Architecture Overview
+
+> **Intuition:** Each layer in an MLP transforms the data into a new space. The input layer senses the data, hidden layers extract features, and the output layer makes decisions.
 
 ### Layer Structure
 
@@ -73,6 +82,8 @@ Input Layer → Hidden Layer 1 → Hidden Layer 2 → ... → Hidden Layer L →
 
 ### Mathematical Representation
 
+> **Annotation:** The notation $`h^{(l)}`$ represents the activations (outputs) of layer $`l`$. $`W^{(l)}`$ and $`b^{(l)}`$ are the weights and biases for that layer. The activation function $`f^{(l)}`$ introduces non-linearity.
+
 For a network with $`L`$ layers:
 
 ```math
@@ -95,7 +106,11 @@ Where:
 3. Apply the activation function $`f^{(l)}`$ to get the activations $`h^{(l)}`$.
 4. Repeat for all layers until the output layer.
 
+> **Intuition:** Each layer is like a filter, extracting more abstract features from the data as it passes through.
+
 ### Layer Dimensions
+
+> **Annotation:** The choice of layer sizes (number of neurons per layer) is a hyperparameter. Too few neurons may underfit, too many may overfit.
 
 For a network with layer sizes $`[n_0, n_1, n_2, \ldots, n_L]`$:
 
@@ -109,6 +124,8 @@ For a network with layer sizes $`[n_0, n_1, n_2, \ldots, n_L]`$:
 ---
 
 ## Mathematical Foundation
+
+> **Intuition:** Forward propagation is like passing a message through a series of translators, each adding their own interpretation (weights and biases) and style (activation function).
 
 ### Forward Propagation
 
@@ -137,6 +154,8 @@ Where:
 
 ### Activation Functions
 
+> **Annotation:** Activation functions are the secret sauce that allow neural networks to model complex, non-linear relationships. See the Activation Functions chapter for a deep dive!
+
 Activation functions introduce non-linearity, enabling the network to learn complex patterns. Here are some common choices:
 
 #### ReLU (Rectified Linear Unit)
@@ -163,7 +182,11 @@ f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 > **Common Pitfall:**
 > Using sigmoid or tanh in deep networks can lead to vanishing gradients, making training slow or unstable. ReLU and its variants are usually better for hidden layers.
 
+> **Intuition:** The choice of activation function can make or break your network's ability to learn. Experiment with different options!
+
 ### Loss Function
+
+> **Annotation:** The loss function is the compass that guides the network during training. It tells the network how far off its predictions are from the true values.
 
 The loss function measures how well the network's predictions match the true targets. It guides the learning process.
 
@@ -209,19 +232,14 @@ For any continuous function $`f: [0,1]^n \rightarrow \mathbb{R}`$ and any $`\eps
 > **Key Insight:**
 > In practice, deep (multi-layer) networks are often easier to train and generalize better than very wide (single hidden layer) networks.
 
-### Proof Sketch
-
-The proof involves:
-1. **Density of Step Functions:** Any continuous function can be approximated by a sum of step functions
-2. **Step Function Representation:** Step functions can be represented by perceptrons
-3. **Linear Combination:** Weighted sum of step functions approximates the target function
-
 > **Did you know?**
 > The Universal Approximation Theorem does *not* say how many neurons are needed, nor how to train the network to find the right parameters!
 
 ---
 
 ## Backpropagation Algorithm
+
+> **Intuition:** Backpropagation is like figuring out which ingredient in a recipe caused a bad taste, and adjusting each one to improve the result. The chain rule helps us trace the error back through each layer.
 
 Backpropagation is the algorithm for efficiently computing gradients in neural networks using the chain rule of calculus. It enables the network to learn by adjusting weights to minimize the loss.
 
@@ -271,6 +289,8 @@ Where $`\odot`$ denotes element-wise multiplication.
 > **Common Pitfall:**
 > Forgetting to use the correct derivative of the activation function for each layer can lead to incorrect gradients and failed learning.
 
+> **Annotation:** The $`\delta^{(l)}`$ terms represent the error signals for each layer, which are used to update the weights and biases.
+
 ### Algorithm Steps
 
 1. **Forward Pass:** Compute all activations and pre-activations for each layer
@@ -283,6 +303,8 @@ Where $`\odot`$ denotes element-wise multiplication.
 ---
 
 ## Implementation in Python
+
+> **Annotation:** Let's walk through the code step by step. Comments are added to clarify each part.
 
 Let's break down a basic implementation of an MLP in Python, step by step, and explain the reasoning behind each design choice.
 
@@ -303,15 +325,15 @@ class MLP:
             activation: Activation function ('relu', 'sigmoid', 'tanh')
             learning_rate: Learning rate for gradient descent
         """
-        self.layer_sizes = layer_sizes
-        self.activation = activation
-        self.learning_rate = learning_rate
-        self.num_layers = len(layer_sizes)
+        self.layer_sizes = layer_sizes  # List of neurons per layer
+        self.activation = activation  # Which activation function to use
+        self.learning_rate = learning_rate  # Step size for updates
+        self.num_layers = len(layer_sizes)  # Total number of layers
         
         # Initialize weights and biases
-        self.weights = []
-        self.biases = []
-        self.initialize_parameters()
+        self.weights = []  # List of weight matrices
+        self.biases = []   # List of bias vectors
+        self.initialize_parameters()  # Call initialization
         
         # Training history
         self.training_loss = []
@@ -325,8 +347,8 @@ class MLP:
             fan_out = self.layer_sizes[i + 1]
             scale = np.sqrt(2.0 / (fan_in + fan_out))
             
-            w = np.random.randn(fan_out, fan_in) * scale
-            b = np.zeros((fan_out, 1))
+            w = np.random.randn(fan_out, fan_in) * scale  # Random weights
+            b = np.zeros((fan_out, 1))  # Zero biases
             
             self.weights.append(w)
             self.biases.append(b)
@@ -365,8 +387,8 @@ class MLP:
         Returns:
             Tuple of (activations, pre_activations)
         """
-        activations = [X]
-        pre_activations = []
+        activations = [X]  # List to store activations layer by layer
+        pre_activations = []  # List to store pre-activation values
         
         for i in range(self.num_layers - 1):
             # Linear transformation
@@ -509,16 +531,11 @@ class MLP:
         plt.show()
 ```
 
-**Code Walkthrough:**
-- `__init__`: Sets up the MLP with the specified architecture, activation, and learning rate.
-- `initialize_parameters`: Uses Xavier initialization for stable training.
-- `activation_function`: Supports ReLU, sigmoid, and tanh, with derivatives for backpropagation.
-- `forward`: Computes activations and pre-activations for each layer.
-- `backward`: Implements the backpropagation algorithm to compute gradients.
-- `update_parameters`: Applies gradient descent to update weights and biases.
-- `fit`: Trains the network, tracks loss, and supports validation.
-- `predict`: Makes predictions on new data.
-- `plot_training_history`: Visualizes training and validation loss over epochs.
+> **Code Annotation:**
+> - The `MLP` class implements a basic multi-layer perceptron with customizable activation functions.
+> - The `forward` method computes activations layer by layer.
+> - The `backward` method computes gradients for all weights and biases using backpropagation.
+> - The `fit` method trains the network using gradient descent.
 
 > **Try it yourself!**
 > Change the number of layers, neurons, or activation functions and observe how the network's learning and performance change.
