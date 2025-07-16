@@ -28,7 +28,7 @@ The core operation in a neural network layer is a linear transformation:
 - In deep networks, this is repeated layer after layer, building up complex functions from simple linear operations and nonlinearities.
 
 **Example:**
-If $W = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $\mathbf{x} = \begin{bmatrix} 5 \\ 6 \end{bmatrix}$, $\mathbf{b} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$, then
+If $`W = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}`$, $`\mathbf{x} = \begin{bmatrix} 5 \\ 6 \end{bmatrix}`$, $`\mathbf{b} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}`$, then
 
 ```math
 \mathbf{y} = W\mathbf{x} + \mathbf{b} = \begin{bmatrix} 1*5 + 2*6 + 1 \\ 3*5 + 4*6 + 1 \end{bmatrix} = \begin{bmatrix} 18 \\ 43 \end{bmatrix}
