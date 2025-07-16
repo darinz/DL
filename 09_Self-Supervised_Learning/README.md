@@ -2,7 +2,7 @@
 
 Self-supervised learning (SSL) is a paradigm in machine learning where the model learns useful representations from unlabeled data by solving pretext tasks. These tasks are designed such that the supervision signal is generated from the data itself, enabling the model to learn without explicit human-annotated labels. SSL has become foundational in modern neural network research, especially in computer vision and natural language processing.
 
-## 1. Contrastive Learning
+## 1. [Contrastive Learning](01_contrastive_learning.md)
 
 Contrastive learning aims to learn representations by bringing similar (positive) pairs closer and pushing dissimilar (negative) pairs apart in the embedding space. The core idea is to maximize agreement between differently augmented views of the same data sample.
 
@@ -19,7 +19,7 @@ The normalized temperature-scaled cross entropy loss (NT-Xent) is commonly used:
 ```
 where $`\mathrm{sim}(z_i, z_j)`$ is the cosine similarity between representations $`z_i`$ and $`z_j`$, and $`\tau`$ is a temperature parameter.
 
-## 2. Masked Autoencoding
+## 2. [Masked Autoencoding](02_masked_autoencoding.md)
 
 Masked autoencoding methods train neural networks to reconstruct missing or masked parts of the input data. This encourages the model to learn global and local structures in the data.
 
@@ -35,7 +35,7 @@ Given an input $`x`$ and a mask $`M`$, the model predicts the masked content:
 ```
 where $`\odot`$ denotes element-wise multiplication.
 
-## 3. Pretext Tasks
+## 3. [Pretext Tasks](03_pretext_tasks.md)
 
 Pretext tasks are designed to create supervised signals from unlabeled data. The model is trained to solve these tasks, which encourages learning of useful features.
 
