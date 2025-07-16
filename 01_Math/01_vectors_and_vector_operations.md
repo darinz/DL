@@ -114,9 +114,9 @@ The **norm** of a vector measures its size or length.
 - The **magnitude** (norm) shows how long it is.
 - The **dot product** relates to the angle between two vectors:
 
-  ```math
-  \mathbf{a} \cdot \mathbf{b} = \|\mathbf{a}\| \|\mathbf{b}\| \cos(\theta)
-  ```
+```math
+\mathbf{a} \cdot \mathbf{b} = \|\mathbf{a}\| \|\mathbf{b}\| \cos(\theta)
+```
   where $`\theta`$ is the angle between $`\mathbf{a}`$ and $`\mathbf{b}`$.
 
 **Visualization:**
