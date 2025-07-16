@@ -6,6 +6,9 @@
 
 Instance segmentation combines object detection and semantic segmentation to identify and segment individual object instances. Unlike semantic segmentation, which assigns class labels to pixels, instance segmentation distinguishes between different instances of the same class.
 
+> **Explanation:**
+> Instance segmentation is like semantic segmentation but with an extra layer of detail. Instead of just saying "this pixel belongs to a car," it says "this pixel belongs to car #1" or "this pixel belongs to car #2." This is crucial when you have multiple objects of the same class in an image.
+
 **Mathematical Definition:**
 ```math
 I(x, y) = \begin{cases}
@@ -13,6 +16,13 @@ I(x, y) = \begin{cases}
 (0, 0) & \text{if pixel } (x, y) \text{ is background}
 \end{cases}
 ```
+> **Math Breakdown:**
+> - $I(x, y)$: Output for pixel at position $(x, y)$.
+> - $c_i$: Class label (e.g., 1 for car, 2 for person).
+> - $m_i$: Instance ID (e.g., car #1, car #2, person #1).
+> - $(0, 0)$: Background pixels have no class or instance.
+> - This creates a two-channel output: one for class, one for instance ID.
+
 Where:
 - $`c_i`$ is the class label of instance $`i`$
 - $`m_i`$ is the instance ID of instance $`i`$
@@ -28,31 +38,76 @@ Where:
 
 Mask R-CNN extends Faster R-CNN by adding a mask prediction branch, enabling pixel-level instance masks.
 
+> **Explanation:**
+> Mask R-CNN builds on the success of Faster R-CNN by adding a third branch that predicts pixel-perfect masks for each detected object. It first detects objects (like Faster R-CNN), then for each detected object, it predicts a binary mask showing exactly which pixels belong to that object.
+
 #### Architecture
 **Backbone Network:**
 $`F = \text{Backbone}(I) \in \mathbb{R}^{H \times W \times C}`$
+> **Math Breakdown:**
+> - $I$: Input image.
+> - $F$: Feature map extracted by backbone (e.g., ResNet).
+> - $H, W$: Height and width of feature map.
+> - $C$: Number of feature channels.
+> - This provides rich features for all downstream tasks.
 
 **Region Proposal Network (RPN):**
 $`\text{RPN}(F) = \{\text{proposals}_i = (x_i, y_i, w_i, h_i) : i = 1, 2, ..., N\}`$
+> **Math Breakdown:**
+> - Generates $N$ region proposals (bounding boxes).
+> - Each proposal $(x_i, y_i, w_i, h_i)$ defines a region of interest.
+> - These proposals are the same as in Faster R-CNN.
+> - The mask branch will work on these proposed regions.
 
 **RoI Align:**
 $`\text{RoIAlign}(F, \text{proposal}) = \text{Resize}(\text{Align}(F, \text{proposal}))`$
+> **Math Breakdown:**
+> - Extracts features from the proposed region.
+> - $\text{Align}$: Bilinear interpolation to handle non-integer coordinates.
+> - $\text{Resize}$: Resizes to fixed size (e.g., 14×14).
+> - This is more precise than RoI Pooling used in Fast R-CNN.
 
 **Mask Head:**
 $`M_i = \text{MaskHead}(\text{RoIAlign}(F, \text{proposal}_i)) \in \mathbb{R}^{28 \times 28}`$
+> **Math Breakdown:**
+> - Takes aligned features for proposal $i$.
+> - Outputs a 28×28 binary mask.
+> - Each pixel is 0 (background) or 1 (object).
+> - This mask is then resized to match the original proposal size.
 
 #### Loss Function
 **Multi-task Loss:**
 $`L = L_{cls} + L_{box} + L_{mask}`$
+> **Math Breakdown:**
+> - $L_{cls}$: Classification loss (what class is the object?).
+> - $L_{box}$: Bounding box regression loss (where is the object?).
+> - $L_{mask}$: Mask prediction loss (what pixels belong to the object?).
+> - All three losses are trained simultaneously.
 
 **Classification Loss:**
 $`L_{cls} = -\log(p_c)`$
+> **Math Breakdown:**
+> - $p_c$: Predicted probability for the correct class.
+> - Standard cross-entropy loss for classification.
+> - Penalizes incorrect class predictions.
 
 **Bounding Box Regression Loss:**
 $`L_{box} = \sum_{i \in \{x, y, w, h\}} \text{smooth}_{L1}(t_i - t_i^*)`$
+> **Math Breakdown:**
+> - $t_i$: Predicted bounding box coordinates.
+> - $t_i^*$: Ground truth bounding box coordinates.
+> - Smooth L1 loss is less sensitive to outliers than L2 loss.
+> - Sums over all four coordinates (x, y, width, height).
 
 **Mask Loss:**
 $`L_{mask} = -\frac{1}{K} \sum_{k=1}^{K} [y_k \log(\hat{y}_k) + (1 - y_k) \log(1 - \hat{y}_k)]`$
+> **Math Breakdown:**
+> - $y_k$: Ground truth mask value for pixel $k$ (0 or 1).
+> - $\hat{y}_k$: Predicted mask value for pixel $k$ (probability).
+> - Binary cross-entropy loss for each pixel.
+> - $K$: Total number of pixels in the mask.
+> - This ensures pixel-perfect mask predictions.
+
 Where $`K`$ is the number of pixels in the mask.
 
 > **Try it yourself!**
@@ -64,22 +119,51 @@ Where $`K`$ is the number of pixels in the mask.
 
 SOLO directly predicts instance masks without bounding box proposals, using a grid-based approach.
 
+> **Explanation:**
+> SOLO takes a different approach by dividing the image into a grid and having each grid cell predict whether it contains an object and what the mask looks like. This eliminates the need for bounding box proposals, making it potentially faster and simpler.
+
 #### Architecture
 **Grid Division:**
 $`G_{ij} = \{(x, y) : \frac{i}{S} \leq x < \frac{i+1}{S}, \frac{j}{S} \leq y < \frac{j+1}{S}\}`$
+> **Math Breakdown:**
+> - $S$: Grid size (e.g., 40×40).
+> - $G_{ij}$: Grid cell at position $(i, j)$.
+> - Each grid cell is responsible for objects whose center falls within it.
+> - This creates $S^2$ potential object locations.
 
 **Category Prediction:**
 $`C_{ij} = \text{CategoryHead}(F_{ij}) \in \mathbb{R}^{K}`$
+> **Math Breakdown:**
+> - $F_{ij}$: Features at grid cell $(i, j)$.
+> - $C_{ij}$: Category probabilities for grid cell $(i, j)$.
+> - $K$: Number of object categories.
+> - Predicts what class of object (if any) is in this grid cell.
 
 **Mask Prediction:**
 $`M_{ij} = \text{MaskHead}(F_{ij}) \in \mathbb{R}^{H \times W}`$
+> **Math Breakdown:**
+> - $M_{ij}$: Full-resolution mask for grid cell $(i, j)$.
+> - $H, W$: Height and width of the input image.
+> - Each grid cell predicts a mask for the entire image.
+> - Only the mask from the grid cell containing the object center is used.
 
 #### Loss Function
 **Category Loss:**
 $`L_{cat} = -\sum_{i,j} y_{ij} \log(\hat{y}_{ij})`$
+> **Math Breakdown:**
+> - $y_{ij}$: Ground truth category for grid cell $(i, j)$.
+> - $\hat{y}_{ij}$: Predicted category probability.
+> - Cross-entropy loss summed over all grid cells.
+> - Only cells containing objects contribute to the loss.
 
 **Mask Loss:**
 $`L_{mask} = -\sum_{i,j} \sum_{p \in \Omega} [y_{ij}^p \log(\hat{y}_{ij}^p) + (1 - y_{ij}^p) \log(1 - \hat{y}_{ij}^p)]`$
+> **Math Breakdown:**
+> - $y_{ij}^p$: Ground truth mask value for pixel $p$ in grid cell $(i, j)$.
+> - $\hat{y}_{ij}^p$: Predicted mask value for pixel $p$ in grid cell $(i, j)$.
+> - Binary cross-entropy loss for each pixel in each grid cell.
+> - $\Omega$: Set of all pixels in the image.
+
 Where $`\Omega`$ is the set of all pixels.
 
 > **Key Insight:**
@@ -91,15 +175,34 @@ Where $`\Omega`$ is the set of all pixels.
 
 YOLACT combines real-time object detection with mask prediction using prototype masks and learned coefficients.
 
+> **Explanation:**
+> YOLACT is designed for real-time instance segmentation. Instead of predicting masks directly, it learns a set of prototype masks and then combines them using learned coefficients for each detected object. This makes it much faster than methods that predict full-resolution masks.
+
 #### Architecture
 **Protonet:**
 $`P = \text{Protonet}(F) \in \mathbb{R}^{H \times W \times k}`$
+> **Math Breakdown:**
+> - $F$: Input feature map.
+> - $P$: $k$ prototype masks of size $H \times W$.
+> - These prototypes are learned during training.
+> - Each prototype captures a common mask pattern (e.g., circular, rectangular).
 
 **Prediction Head:**
 $`\text{Coef}_i = \text{PredictionHead}(\text{RoI}_i) \in \mathbb{R}^k`$
+> **Math Breakdown:**
+> - $\text{RoI}_i$: Region of interest for detected object $i$.
+> - $\text{Coef}_i$: $k$ coefficients for object $i$.
+> - These coefficients determine how to combine the prototypes.
+> - Each detected object gets its own set of coefficients.
 
 **Mask Assembly:**
 $`M_i = \sigma(\text{Coef}_i \cdot P) \in \mathbb{R}^{H \times W}`$
+> **Math Breakdown:**
+> - $\text{Coef}_i \cdot P$: Linear combination of prototypes using coefficients.
+> - $\sigma$: Sigmoid function to get values between 0 and 1.
+> - $M_i$: Final mask for object $i$.
+> - This is much faster than predicting masks from scratch.
+
 Where $`\sigma`$ is the sigmoid function.
 
 > **Did you know?**
@@ -113,22 +216,51 @@ Where $`\sigma`$ is the sigmoid function.
 
 DeepSnake uses deformable contours to refine instance boundaries, inspired by active contour models (snakes).
 
+> **Explanation:**
+> DeepSnake starts with a rough bounding box and then refines the object boundary by evolving a contour (snake) to fit the object's shape. It combines traditional snake models with deep learning to make the process more robust and accurate.
+
 #### Contour Representation
 **Snake Energy:**
 $`E_{\text{snake}} = \int_0^1 [E_{\text{int}}(v(s)) + E_{\text{ext}}(v(s))] ds`$
+> **Math Breakdown:**
+> - $v(s)$: Contour parameterized by arc length $s \in [0, 1]$.
+> - $E_{\text{int}}$: Internal energy (smoothness).
+> - $E_{\text{ext}}$: External energy (alignment to image features).
+> - The snake evolves to minimize this total energy.
 
 **Internal Energy:**
 $`E_{\text{int}}(v) = \alpha(s) |v_s(s)|^2 + \beta(s) |v_{ss}(s)|^2`$
+> **Math Breakdown:**
+> - $v_s(s)$: First derivative (tangent vector).
+> - $v_{ss}(s)$: Second derivative (curvature).
+> - $\alpha(s)$: Weight for stretching (elasticity).
+> - $\beta(s)$: Weight for bending (stiffness).
+> - This encourages smooth, regular contours.
 
 **External Energy:**
 $`E_{\text{ext}}(v) = -|\nabla I(v(s))|^2`$
+> **Math Breakdown:**
+> - $\nabla I(v(s))$: Image gradient at contour point $v(s)$.
+> - Negative sign means the snake is attracted to high gradient regions (edges).
+> - This pulls the contour toward object boundaries.
 
 #### Contour Evolution
 **Gradient Descent:**
 $`\frac{\partial v}{\partial t} = \alpha v_{ss} - \beta v_{ssss} - \nabla E_{\text{ext}}`$
+> **Math Breakdown:**
+> - $\frac{\partial v}{\partial t}$: Rate of change of contour position.
+> - $\alpha v_{ss}$: Elastic force (prevents stretching).
+> - $\beta v_{ssss}$: Bending force (prevents sharp corners).
+> - $\nabla E_{\text{ext}}$: External force (pulls toward edges).
+> - The contour moves to minimize total energy.
 
 **Discrete Form:**
 $`v^{t+1} = v^t + \Delta t \cdot \text{force}(v^t)`$
+> **Math Breakdown:**
+> - $v^t$: Contour at time step $t$.
+> - $\Delta t$: Time step size.
+> - $\text{force}(v^t)$: Combined force from internal and external energies.
+> - This is the practical implementation of contour evolution.
 
 > **Geometric Intuition:**
 > The snake model balances smoothness (internal energy) and alignment to image edges (external energy), evolving the contour to fit object boundaries.
@@ -139,13 +271,26 @@ $`v^{t+1} = v^t + \Delta t \cdot \text{force}(v^t)`$
 
 PolarMask represents instance masks using polar coordinates, predicting the distance from the center to the boundary at each angle.
 
+> **Explanation:**
+> PolarMask represents object shapes in polar coordinates, where each angle corresponds to a ray from the center, and the model predicts how far along that ray the object boundary is. This is particularly effective for star-convex shapes (shapes where any point on the boundary can be reached by a straight line from the center).
+
 #### Polar Representation
 **Polar Coordinates:**
 $`r = \sqrt{(x - x_c)^2 + (y - y_c)^2}`$
 $`\theta = \arctan\left(\frac{y - y_c}{x - x_c}\right)`$
+> **Math Breakdown:**
+> - $(x_c, y_c)$: Center point of the object.
+> - $r$: Distance from center to point $(x, y)$.
+> - $\theta$: Angle from center to point $(x, y)$.
+> - This transforms Cartesian coordinates to polar coordinates.
 
 **Mask Prediction:**
 $`R(\theta) = \text{PolarHead}(F, \theta) \in \mathbb{R}`$
+> **Math Breakdown:**
+> - $F$: Feature map.
+> - $\theta$: Angle (typically discretized into $n$ angles).
+> - $R(\theta)$: Predicted radius at angle $\theta$.
+> - The model predicts $n$ radius values (one for each angle).
 
 **Mask Generation:**
 ```math
@@ -154,6 +299,11 @@ M(x, y) = \begin{cases}
 0 & \text{otherwise}
 \end{cases}
 ```
+> **Math Breakdown:**
+> - For each pixel $(x, y)$, compute its polar coordinates $(r, \theta)$.
+> - If $r \leq R(\theta)$, the pixel is inside the object.
+> - Otherwise, the pixel is outside the object.
+> - This creates a binary mask from the predicted radii.
 
 > **Try it yourself!**
 > Implement a simple polar mask generator for circular objects. How does it perform on non-circular shapes?
@@ -166,28 +316,63 @@ M(x, y) = \begin{cases}
 
 **Instance-wise AP:**
 $`AP = \frac{1}{N} \sum_{i=1}^{N} AP_i`$
+> **Math Breakdown:**
+> - $N$: Number of instances.
+> - $AP_i$: Average precision for instance $i$.
+> - This averages AP across all instances.
+> - Similar to object detection AP but computed on masks.
 
 **Mask IoU:**
 $`\text{mIoU} = \frac{|M_{pred} \cap M_{gt}|}{|M_{pred} \cup M_{gt}|}`$
+> **Math Breakdown:**
+> - $M_{pred}$: Predicted mask.
+> - $M_{gt}$: Ground truth mask.
+> - $|M_{pred} \cap M_{gt}|$: Number of pixels in intersection.
+> - $|M_{pred} \cup M_{gt}|$: Number of pixels in union.
+> - Higher mIoU means better mask overlap.
 
 ### Panoptic Quality (PQ)
 
 **PQ Components:**
 $`PQ = \frac{\sum_{(p,g) \in TP} \text{IoU}(p,g)}{|TP| + \frac{1}{2}|FP| + \frac{1}{2}|FN|}`$
+> **Math Breakdown:**
+> - $TP$: True positive matches between predicted and ground truth instances.
+> - $FP$: False positive predictions (extra instances).
+> - $FN$: False negative predictions (missed instances).
+> - $\text{IoU}(p,g)$: Intersection over Union between matched instances.
+> - This combines segmentation quality and recognition quality.
 
 **Segmentation Quality (SQ):**
 $`SQ = \frac{\sum_{(p,g) \in TP} \text{IoU}(p,g)}{|TP|}`$
+> **Math Breakdown:**
+> - Average IoU of correctly matched instances.
+> - Measures how well the masks align with ground truth.
+> - Higher SQ means better pixel-level accuracy.
 
 **Recognition Quality (RQ):**
 $`RQ = \frac{|TP|}{|TP| + \frac{1}{2}|FP| + \frac{1}{2}|FN|}`$
+> **Math Breakdown:**
+> - Measures how well instances are detected and matched.
+> - Similar to F1 score but with different weighting.
+> - Higher RQ means better instance-level accuracy.
 
 ### Boundary Accuracy
 
 **Boundary F1 Score:**
 $`F1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}`$
+> **Math Breakdown:**
+> - $\text{Precision}$: Fraction of predicted boundary pixels that are correct.
+> - $\text{Recall}$: Fraction of ground truth boundary pixels that are detected.
+> - F1 score balances precision and recall.
+> - Important for applications needing precise boundaries.
 
 **Boundary Distance:**
 $`d(B_1, B_2) = \frac{1}{|B_1|} \sum_{p \in B_1} \min_{q \in B_2} \|p - q\|`$
+> **Math Breakdown:**
+> - $B_1, B_2$: Two boundary curves.
+> - For each point $p$ on boundary $B_1$, find the closest point $q$ on boundary $B_2$.
+> - Average distance measures how close the boundaries are.
+> - Lower distance means better boundary alignment.
 
 > **Common Pitfall:**
 > High mIoU does not always mean good boundary accuracy. Always check boundary metrics for applications needing precise outlines.
