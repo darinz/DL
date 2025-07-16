@@ -2,6 +2,10 @@
 
 Distributed training enables training large models across multiple devices, machines, or clusters by distributing computation and data across multiple workers.
 
+> **Key Insight:** Distributed training is essential for scaling deep learning to massive datasets and models that cannot fit on a single device.
+
+> **Did you know?** The largest language models (like GPT-3) are trained on thousands of GPUs using advanced distributed training techniques!
+
 ## Overview
 
 Distributed training addresses the limitations of single-device training by:
@@ -9,6 +13,8 @@ Distributed training addresses the limitations of single-device training by:
 - **Reducing training time through parallelization**
 - **Enabling training of larger models**
 - **Improving resource utilization**
+
+> **Geometric Intuition:** Imagine a team of workers building a house. If each worker builds a different part at the same time, the house is finished much faster than if one person did all the work. Distributed training works the same way for neural networks.
 
 ## Types of Parallelism
 
@@ -20,6 +26,8 @@ Splits the model across multiple devices, with each device responsible for diffe
 
 ### 3. Pipeline Parallelism
 Divides the model into stages that are processed sequentially across different devices.
+
+> **Common Pitfall:** Communication overhead can become a bottleneck if not managed properly, especially in model and pipeline parallelism.
 
 ## Mathematical Foundation
 
@@ -45,6 +53,8 @@ f(x) = f_K(f_{K-1}(\ldots f_1(x)))
 ```math
 T_{\text{comm}} = \frac{\text{Model Size}}{\text{Bandwidth}} + \text{Latency}
 ```
+
+> **Key Insight:** The speedup from distributed training depends on both computation and communication costs. Efficient communication is crucial for scaling.
 
 ## Implementation Strategies
 
@@ -90,42 +100,8 @@ class DistributedTrainer:
         self.optimizer.step()
         
         return loss.item()
-
-# Usage
-def main():
-    # Initialize distributed training
-    setup_distributed()
-    
-    # Create model and optimizer
-    model = nn.Sequential(
-        nn.Linear(784, 512),
-        nn.ReLU(),
-        nn.Linear(512, 10)
-    ).cuda()
-    
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    
-    # Create distributed trainer
-    trainer = DistributedTrainer(model, optimizer, world_size, rank)
-    
-    # Training loop
-    for epoch in range(num_epochs):
-        for batch_idx, (data, target) in enumerate(train_loader):
-            loss = trainer.train_step(data, target)
-            
-            if batch_idx % 100 == 0 and rank == 0:
-                print(f'Epoch {epoch}, Batch {batch_idx}, Loss: {loss:.4f}')
-    
-    cleanup_distributed()
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--local_rank", type=int, default=0)
-    args = parser.parse_args()
-    
-    main()
 ```
+*PyTorch DDP synchronizes gradients across devices after each backward pass, ensuring consistent model updates.*
 
 ### 2. Horovod Implementation
 
@@ -170,34 +146,8 @@ class HorovodTrainer:
         self.optimizer.step()
         
         return loss.item()
-
-# Usage
-def main():
-    setup_horovod()
-    
-    # Create model and optimizer
-    model = nn.Sequential(
-        nn.Linear(784, 512),
-        nn.ReLU(),
-        nn.Linear(512, 10)
-    ).cuda()
-    
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    
-    # Create Horovod trainer
-    trainer = HorovodTrainer(model, optimizer)
-    
-    # Training loop
-    for epoch in range(num_epochs):
-        for batch_idx, (data, target) in enumerate(train_loader):
-            loss = trainer.train_step(data, target)
-            
-            if batch_idx % 100 == 0 and hvd.rank() == 0:
-                print(f'Epoch {epoch}, Batch {batch_idx}, Loss: {loss:.4f}')
-
-if __name__ == "__main__":
-    main()
 ```
+*Horovod provides a simple interface for distributed training and can scale to thousands of GPUs.*
 
 ### 3. TensorFlow Distribution Strategies
 
@@ -220,41 +170,14 @@ def create_distributed_model(strategy):
         )
         
     return model
-
-# Multi-GPU training
-def multi_gpu_training():
-    strategy = tf.distribute.MirroredStrategy()
-    
-    with strategy.scope():
-        model = create_distributed_model(strategy)
-    
-    # Training
-    model.fit(x_train, y_train, epochs=10, batch_size=32)
-
-# Multi-worker training
-def multi_worker_training():
-    strategy = tf.distribute.MultiWorkerMirroredStrategy()
-    
-    with strategy.scope():
-        model = create_distributed_model(strategy)
-    
-    # Training
-    model.fit(x_train, y_train, epochs=10, batch_size=32)
-
-# TPU training
-def tpu_training():
-    resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
-    tf.config.experimental_connect_to_cluster(resolver)
-    tf.tpu.experimental.initialize_tpu_system(resolver)
-    
-    strategy = tf.distribute.TPUStrategy(resolver)
-    
-    with strategy.scope():
-        model = create_distributed_model(strategy)
-    
-    # Training
-    model.fit(x_train, y_train, epochs=10, batch_size=32)
 ```
+*TensorFlow's distribution strategies make it easy to scale training across multiple GPUs, machines, or TPUs.*
+
+---
+
+> **Try it yourself!** Benchmark your model with and without distributed training. How much faster can you train with multiple GPUs or nodes?
+
+> **Key Insight:** Distributed training is a cornerstone of modern deep learning, enabling breakthroughs in scale and performance.
 
 ## Communication Patterns
 
