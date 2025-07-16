@@ -8,6 +8,9 @@ This guide covers three influential large language models based on the Transform
 
 BERT uses only the encoder part of the Transformer and is trained to understand bidirectional context.
 
+> **Explanation:**
+> BERT is designed to read text in both directions (left-to-right and right-to-left) at once, allowing it to capture context from both sides of each word. This is different from traditional models that only look at previous words.
+
 > **Did you know?** BERT's bidirectional training allows it to capture context from both the left and right of each token, unlike traditional left-to-right models.
 
 ### 1.1. Masked Language Modeling (MLM)
@@ -17,6 +20,12 @@ BERT randomly masks some tokens in the input and trains the model to predict the
 \text{Loss}_{MLM} = -\sum_{i \in M} \log P(x_i | X_{\setminus M})
 ```
 where $`M`$ is the set of masked positions.
+
+> **Math Breakdown:**
+> - $M$: Set of positions in the input that are masked.
+> - $x_i$: The masked token at position $i$.
+> - $X_{\setminus M}$: The input sequence with the masked tokens removed.
+> - The loss encourages the model to predict the correct token at each masked position, given the rest of the sequence.
 
 #### Intuitive Explanation
 
@@ -30,7 +39,13 @@ BERT is also trained to predict if one sentence follows another:
 ```
 where $`y`$ is a binary label for whether sentence $`B`$ follows $`A`$.
 
-> **Common Pitfall:** When fine-tuning BERT, always preprocess your data to match the pretraining objectives (e.g., use [CLS] and [SEP] tokens).
+> **Math Breakdown:**
+> - $A, B$: Two sentences from the input.
+> - $y$: Binary label (1 if $B$ follows $A$, 0 otherwise).
+> - The loss encourages the model to learn relationships between sentences, not just within them.
+
+> **Common Pitfall:**
+> When fine-tuning BERT, always preprocess your data to match the pretraining objectives (e.g., use [CLS] and [SEP] tokens).
 
 ### 1.3. Python Example: Using HuggingFace Transformers
 ```python
@@ -43,11 +58,19 @@ outputs = model(**inputs)
 print(outputs.last_hidden_state.shape)  # (1, seq_len, hidden_size)
 ```
 
+> **Code Walkthrough:**
+> - The tokenizer converts text to input IDs and attention masks.
+> - The model processes the input and returns hidden states for each token.
+> - The output shape shows the batch size, sequence length, and hidden size.
+
 > **Try it yourself!** Mask different words in a sentence and see how BERT predicts them.
 
 ## 2. GPT (Generative Pre-trained Transformer)
 
 GPT uses only the decoder part of the Transformer and is trained with left-to-right language modeling.
+
+> **Explanation:**
+> GPT is trained to predict the next word in a sequence, given all previous words. This makes it ideal for text generation tasks, where the model generates text one word at a time.
 
 > **Key Insight:** GPT's autoregressive training makes it ideal for text generation, as it predicts the next word given previous words.
 
@@ -56,6 +79,11 @@ GPT uses only the decoder part of the Transformer and is trained with left-to-ri
 ```math
 \text{Loss}_{LM} = -\sum_{t=1}^T \log P(x_t | x_{<t})
 ```
+
+> **Math Breakdown:**
+> - $x_t$: The word at position $t$.
+> - $x_{<t}$: All previous words in the sequence.
+> - The loss encourages the model to predict the next word, given the context so far.
 
 #### Intuitive Explanation
 
@@ -72,11 +100,19 @@ outputs = model.generate(**inputs, max_length=20)
 print(tokenizer.decode(outputs[0]))
 ```
 
+> **Code Walkthrough:**
+> - The tokenizer encodes the prompt and prepares it for the model.
+> - The model generates new tokens, one at a time, until the maximum length is reached.
+> - The output is decoded back into human-readable text.
+
 > **Did you know?** GPT-2 and GPT-3 can generate entire articles, stories, and even code by sampling one token at a time.
 
 ## 3. T5 (Text-to-Text Transfer Transformer)
 
 T5 frames every NLP task as a text-to-text problem, using an encoder-decoder architecture.
+
+> **Explanation:**
+> T5 is trained to convert any input text into output text, regardless of the task. This unified approach allows T5 to be fine-tuned for translation, summarization, classification, and more, all with the same model.
 
 > **Key Insight:** By casting all tasks as text-to-text, T5 can be fine-tuned for translation, summarization, classification, and more with a single model.
 
@@ -86,6 +122,9 @@ T5 is trained on a mixture of tasks, all cast as text-to-text:
 - Translation: "translate English to German: ..."
 - Summarization: "summarize: ..."
 - Classification: "cola sentence: ..."
+
+> **Explanation:**
+> The input prompt tells T5 what task to perform, and the model generates the appropriate output as text.
 
 #### Intuitive Explanation
 
@@ -101,6 +140,10 @@ inputs = tokenizer("summarize: The quick brown fox jumps over the lazy dog.", re
 outputs = model.generate(**inputs)
 print(tokenizer.decode(outputs[0]))
 ```
+
+> **Code Walkthrough:**
+> - The input prompt specifies the task (e.g., summarization).
+> - The model generates the output text, which is then decoded to a string.
 
 > **Try it yourself!** Use T5 to translate, summarize, or classify text by changing the input prompt.
 
