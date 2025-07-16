@@ -17,6 +17,12 @@ A **linear transformation** is a function $`T: \mathbb{R}^n \to \mathbb{R}^m`$ t
    T(c\mathbf{u}) = cT(\mathbf{u})
    `$ 
 
+**Intuition:**
+- A linear transformation preserves vector addition and scalar multiplication.
+- It always maps the origin to the origin.
+- Examples: rotations, scalings, reflections, projections.
+- Non-examples: translations, nonlinear warps.
+
 Every linear transformation can be represented as a matrix multiplication.
 
 ---
@@ -30,6 +36,9 @@ T(\mathbf{x}) = A\mathbf{x}
 ```
 
 This means that applying a linear transformation is the same as multiplying by a matrix.
+
+**Example:**
+If $`A = \begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix}`$ and $`\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}`$, then $`A\mathbf{x} = \begin{bmatrix} 2 \\ 3 \end{bmatrix}`$ (scaling $`x`$ by 2 and $`y`$ by 3).
 
 ---
 
@@ -59,13 +68,22 @@ Horizontal shear by $`k`$:
 H = \begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix}
 ```
 
+**Other examples:**
+- **Reflection:** $`\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}`$ reflects across the $`x`$-axis.
+- **Projection:** $`\begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}`$ projects onto the $`x`$-axis.
+
 ---
 
 ## Geometric Interpretation
 
 - **Rotation** changes the direction of vectors but not their length (if $`s_x = s_y = 1`$).
-- **Scaling** changes the length of vectors.
-- **Shear** skews the shape of objects.
+- **Scaling** changes the length of vectors (stretches or shrinks).
+- **Shear** skews the shape of objects (slants rectangles into parallelograms).
+- **Reflection** flips vectors over a line.
+- **Projection** "flattens" vectors onto a subspace.
+
+**Visualization:**
+- Imagine a grid of points in 2D. A linear transformation moves every point, but straight lines remain straight, and the origin stays fixed.
 
 ---
 
@@ -96,27 +114,40 @@ k = 1
 H = np.array([[1, k], [0, 1]])
 sheared_square = H @ square
 
-# Plot
-plt.figure(figsize=(18, 4))
+# Reflection over x-axis
+F = np.array([[1, 0], [0, -1]])
+reflected_square = F @ square
 
-plt.subplot(1, 4, 1)
+# Projection onto x-axis
+P = np.array([[1, 0], [0, 0]])
+projected_square = P @ square
+
+# Plot
+plt.figure(figsize=(20, 4))
+
+plt.subplot(1, 5, 1)
 plt.plot(square[0], square[1], 'b-', linewidth=2)
 plt.title('Original Square')
 plt.axis('equal'); plt.grid(True)
 
-plt.subplot(1, 4, 2)
+plt.subplot(1, 5, 2)
 plt.plot(rotated_square[0], rotated_square[1], 'r-', linewidth=2)
 plt.title('Rotated (45°)')
 plt.axis('equal'); plt.grid(True)
 
-plt.subplot(1, 4, 3)
+plt.subplot(1, 5, 3)
 plt.plot(scaled_square[0], scaled_square[1], 'g-', linewidth=2)
 plt.title('Scaled (2x, 1.5y)')
 plt.axis('equal'); plt.grid(True)
 
-plt.subplot(1, 4, 4)
+plt.subplot(1, 5, 4)
 plt.plot(sheared_square[0], sheared_square[1], 'm-', linewidth=2)
 plt.title('Sheared (k=1)')
+plt.axis('equal'); plt.grid(True)
+
+plt.subplot(1, 5, 5)
+plt.plot(reflected_square[0], reflected_square[1], 'c-', linewidth=2)
+plt.title('Reflected (x-axis)')
 plt.axis('equal'); plt.grid(True)
 
 plt.tight_layout()
@@ -127,8 +158,10 @@ plt.show()
 
 ## Why Linear Transformations Matter in Deep Learning
 
-- **Neural network layers**: Each layer applies a linear transformation to its input.
-- **Feature extraction**: Transforming data to new spaces for better learning.
+- **Neural network layers**: Each layer applies a linear transformation to its input (followed by a nonlinearity).
+- **Feature extraction**: Transforming data to new spaces for better learning (e.g., PCA, learned embeddings).
 - **Data augmentation**: Rotations, scalings, and shears are used to augment image data.
+- **Understanding learned representations**: The weights of a neural network layer define a linear transformation of the input space.
 
-Understanding linear transformations helps you see how neural networks manipulate and learn from data! 
+**Summary:**
+Understanding linear transformations helps you see how neural networks manipulate and learn from data! They are the mathematical backbone of all neural network computations. 
