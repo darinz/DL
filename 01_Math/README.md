@@ -1,14 +1,14 @@
 # Mathematical Foundations for Deep Learning
 
 [![Mathematics](https://img.shields.io/badge/Mathematics-Foundations-blue?style=for-the-badge&logo=mathworks)](https://github.com/yourusername/DL)
-[![Linear Algebra](https://img.shields.io/badge/Linear%20Algebra-Essential-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/01_Math)
-[![Calculus](https://img.shields.io/badge/Calculus-Multivariable-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/01_Math)
-[![Probability](https://img.shields.io/badge/Probability-Statistics-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/01_Math)
-[![Information Theory](https://img.shields.io/badge/Information%20Theory-Entropy-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/01_Math)
-[![Numerical Methods](https://img.shields.io/badge/Numerical%20Methods-Optimization-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/01_Math)
+[![Linear Algebra](https://img.shields.io/badge/Linear%20Algebra-Essential-green?style=for-the-badge&logo=matrix)](https://github.com/yourusername/DL/tree/main/01_Math)
+[![Calculus](https://img.shields.io/badge/Calculus-Multivariable-orange?style=for-the-badge&logo=function)](https://github.com/yourusername/DL/tree/main/01_Math)
+[![Probability](https://img.shields.io/badge/Probability-Statistics-purple?style=for-the-badge&logo=chart-bar)](https://github.com/yourusername/DL/tree/main/01_Math)
+[![Information Theory](https://img.shields.io/badge/Information%20Theory-Entropy-red?style=for-the-badge&logo=info-circle)](https://github.com/yourusername/DL/tree/main/01_Math)
+[![Numerical Methods](https://img.shields.io/badge/Numerical%20Methods-Optimization-yellow?style=for-the-badge&logo=calculator)](https://github.com/yourusername/DL/tree/main/01_Math)
 [![NumPy](https://img.shields.io/badge/NumPy-Computing-blue?style=for-the-badge&logo=numpy)](https://numpy.org/)
 [![SciPy](https://img.shields.io/badge/SciPy-Scientific-blue?style=for-the-badge&logo=scipy)](https://scipy.org/)
-[![SymPy](https://img.shields.io/badge/SymPy-Symbolic-green?style=for-the-badge)](https://www.sympy.org/)
+[![SymPy](https://img.shields.io/badge/SymPy-Symbolic-green?style=for-the-badge&logo=code)](https://www.sympy.org/)
 
 > **Key Insight:** Mathematics is the language of deep learning. Mastering these foundations unlocks a deeper understanding of how and why neural networks work.
 
