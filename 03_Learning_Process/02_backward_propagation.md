@@ -129,14 +129,14 @@ Simplifying:
 1. **Forward Pass**: Compute all $a^{(l)}$ and $z^{(l)}$ for all layers
 2. **Initialize Output Error**: $\delta^{(L)} = \frac{\partial L}{\partial a^{(L)}} \odot f'^{(L)}(z^{(L)})$
 3. **Backward Pass**: For $l = L-1, L-2, \ldots, 1$:
-   ```math
-   \delta^{(l)} = (W^{(l+1)})^T \delta^{(l+1)} \odot f'^{(l)}(z^{(l)})
-   ```
+```math
+\delta^{(l)} = (W^{(l+1)})^T \delta^{(l+1)} \odot f'^{(l)}(z^{(l)})
+```
 4. **Compute Gradients**:
-   ```math
-   \frac{\partial L}{\partial W^{(l)}} = \delta^{(l)} (a^{(l-1)})^T
-   \frac{\partial L}{\partial b^{(l)}} = \delta^{(l)}
-   ```
+```math
+\frac{\partial L}{\partial W^{(l)}} = \delta^{(l)} (a^{(l-1)})^T
+\frac{\partial L}{\partial b^{(l)}} = \delta^{(l)}
+```
 
 ### Matrix Dimensions
 
