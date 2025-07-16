@@ -17,6 +17,8 @@ GANs consist of two neural networks, a **generator** $`G`$ and a **discriminator
 - **CycleGAN**: Enables image-to-image translation without paired data using cycle-consistency loss.
 - **Conditional GANs**: Incorporate label information to generate class-conditional samples.
 
+[Read the comprehensive GANs guide &rarr;](01_gans.md)
+
 ## 2. Variational Autoencoders (VAEs)
 
 VAEs are probabilistic generative models that learn a latent variable model for data. They encode data into a latent space and decode samples from this space back to data.
@@ -26,6 +28,8 @@ VAEs are probabilistic generative models that learn a latent variable model for 
 \mathcal{L}(\theta, \phi; x) = \mathbb{E}_{q_\phi(z|x)} [\log p_\theta(x|z)] - D_{\mathrm{KL}}(q_\phi(z|x) \| p(z))
 ```
 where $`q_\phi(z|x)`$ is the encoder, $`p_\theta(x|z)`$ is the decoder, and $`p(z)`$ is the prior.
+
+[Read the comprehensive VAEs guide &rarr;](02_vaes.md)
 
 ## 3. Diffusion Models
 
@@ -44,6 +48,8 @@ q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t \mathbf{I}
 p_\theta(x_{t-1} | x_t)
 ```
 
+[Read the comprehensive Diffusion Models guide &rarr;](03_diffusion_models.md)
+
 ## 4. Flow-based Models
 
 Flow-based models use invertible transformations to map data to latent variables, allowing exact likelihood computation and efficient sampling.
@@ -56,6 +62,8 @@ Flow-based models use invertible transformations to map data to latent variables
 \log p(x) = \log p(z) + \sum_{i=1}^K \log \left| \det \frac{\partial f_i}{\partial h_{i-1}} \right|
 ```
 where $`x = f_K \circ \cdots \circ f_1(z)`$.
+
+[Read the comprehensive Flow-based Models guide &rarr;](04_flow_based_models.md)
 
 ---
 
