@@ -1,5 +1,14 @@
 # Optimization & Training
 
+[![Optimization](https://img.shields.io/badge/Optimization-Training%20Efficiency-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
+[![Mixed Precision](https://img.shields.io/badge/Mixed%20Precision-FP16%20BF16-green?style=for-the-badge&logo=calculator)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![Gradient Accumulation](https://img.shields.io/badge/Gradient%20Accumulation-Large%20Batch-orange?style=for-the-badge&logo=plus-circle)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![Distributed Training](https://img.shields.io/badge/Distributed%20Training-Multi%20GPU-purple?style=for-the-badge&logo=server)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![Federated Learning](https://img.shields.io/badge/Federated%20Learning-Privacy-red?style=for-the-badge&logo=shield-alt)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![Knowledge Distillation](https://img.shields.io/badge/Knowledge%20Distillation-Teacher%20Student-yellow?style=for-the-badge&logo=graduation-cap)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![AMP](https://img.shields.io/badge/AMP-Automatic%20Mixed%20Precision-blue?style=for-the-badge&logo=bolt)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+[![Scalability](https://img.shields.io/badge/Scalability-Performance-orange?style=for-the-badge&logo=rocket)](https://github.com/yourusername/DL/tree/main/11_Optimization)
+
 This section covers advanced optimization techniques and training strategies for deep learning models, focusing on efficiency, scalability, and performance improvements.
 
 > **Key Insight:** Mastering optimization techniques is crucial for training state-of-the-art models efficiently and at scale.
