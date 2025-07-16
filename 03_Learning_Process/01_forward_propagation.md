@@ -63,15 +63,15 @@ For a network with layer sizes $[n_0, n_1, n_2, \ldots, n_L]$:
 
 1. **Input Layer**: $a^{(0)} = x$ (input data)
 2. **Hidden Layers**: For $l = 1, 2, \ldots, L-1$:
-   ```math
-   z^{(l)} = W^{(l)}a^{(l-1)} + b^{(l)}
-   a^{(l)} = f^{(l)}(z^{(l)})
-   ```
+```math
+z^{(l)} = W^{(l)}a^{(l-1)} + b^{(l)}
+a^{(l)} = f^{(l)}(z^{(l)})
+```
 3. **Output Layer**: 
-   ```math
-   z^{(L)} = W^{(L)}a^{(L-1)} + b^{(L)}
-   \hat{y} = a^{(L)} = f^{(L)}(z^{(L)})
-   ```
+```math
+z^{(L)} = W^{(L)}a^{(L-1)} + b^{(L)}
+\hat{y} = a^{(L)} = f^{(L)}(z^{(L)})
+```
 
 ### Example: 3-Layer Network
 
