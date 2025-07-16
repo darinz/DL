@@ -1,5 +1,14 @@
 # Natural Language Processing (NLP)
 
+[![NLP](https://img.shields.io/badge/NLP-Natural%20Language-blue?style=for-the-badge&logo=language)](https://github.com/yourusername/DL)
+[![LLMs](https://img.shields.io/badge/LLMs-Large%20Language-green?style=for-the-badge&logo=robot)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![Multimodal](https://img.shields.io/badge/Multimodal-Text%20Image-orange?style=for-the-badge&logo=link)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![Text Generation](https://img.shields.io/badge/Text%20Generation-GPT%20BART-purple?style=for-the-badge&logo=pen-fancy)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![Question Answering](https://img.shields.io/badge/Question%20Answering-BERT%20RoBERTa-red?style=for-the-badge&logo=question-circle)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![CLIP](https://img.shields.io/badge/CLIP-Contrastive%20Learning-yellow?style=for-the-badge&logo=eye)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![DALL-E](https://img.shields.io/badge/DALL-E-Text%20to%20Image-blue?style=for-the-badge&logo=magic)](https://github.com/yourusername/DL/tree/main/13_NLP)
+[![Transformers](https://img.shields.io/badge/Transformers-Self%20Attention-orange?style=for-the-badge&logo=bolt)](https://github.com/yourusername/DL/tree/main/13_NLP)
+
 Natural Language Processing (NLP) is a field at the intersection of computer science, artificial intelligence, and linguistics, focused on enabling machines to understand, interpret, and generate human language. This section covers foundational and advanced topics in NLP, with a focus on modern deep learning approaches.
 
 ## Topics Covered
