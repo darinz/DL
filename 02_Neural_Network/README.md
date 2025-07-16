@@ -1,11 +1,11 @@
 # Neural Network Architecture
 
 [![Neural Networks](https://img.shields.io/badge/Neural%20Networks-Architecture-blue?style=for-the-badge&logo=brain)](https://github.com/yourusername/DL)
-[![Perceptrons](https://img.shields.io/badge/Perceptrons-Building%20Blocks-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
-[![MLPs](https://img.shields.io/badge/MLPs-Multi%20Layer-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
-[![Activation Functions](https://img.shields.io/badge/Activation%20Functions-Non%20Linear-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
-[![Network Topologies](https://img.shields.io/badge/Network%20Topologies-Connectivity-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
-[![Skip Connections](https://img.shields.io/badge/Skip%20Connections-Residual-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
+[![Perceptrons](https://img.shields.io/badge/Perceptrons-Building%20Blocks-green?style=for-the-badge&logo=circle-nodes)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
+[![MLPs](https://img.shields.io/badge/MLPs-Multi%20Layer-orange?style=for-the-badge&logo=network-wired)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
+[![Activation Functions](https://img.shields.io/badge/Activation%20Functions-Non%20Linear-purple?style=for-the-badge&logo=wave-square)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
+[![Network Topologies](https://img.shields.io/badge/Network%20Topologies-Connectivity-red?style=for-the-badge&logo=project-diagram)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
+[![Skip Connections](https://img.shields.io/badge/Skip%20Connections-Residual-yellow?style=for-the-badge&logo=route)](https://github.com/yourusername/DL/tree/main/02_Neural_Network)
 [![PyTorch](https://img.shields.io/badge/PyTorch-Neural%20Networks-red?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-orange?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/)
 
