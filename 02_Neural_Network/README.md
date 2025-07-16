@@ -8,11 +8,11 @@ A comprehensive guide to the fundamental building blocks and architectural patte
 
 ## Table of Contents
 
-1. [Perceptrons](#perceptrons) - The building block of neural networks
-2. [Multi-layer Perceptrons (MLPs)](#multi-layer-perceptrons-mlps) - Feedforward neural networks
-3. [Activation Functions](#activation-functions) - Non-linear transformations
-4. [Network Topologies](#network-topologies) - Layer connectivity patterns
-5. [Skip Connections](#skip-connections) - Residual and highway networks
+1. [Perceptrons](01_perceptrons.md) - The building block of neural networks
+2. [Multi-layer Perceptrons (MLPs)](02_multi_layer_perceptrons.md) - Feedforward neural networks
+3. [Activation Functions](03_activation_functions.md) - Non-linear transformations
+4. [Network Topologies](04_network_topologies.md) - Layer connectivity patterns
+5. [Skip Connections](05_skip_connections.md) - Residual and highway networks
 
 ---
 
@@ -636,6 +636,37 @@ Where:
 - [PyTorch Examples](https://github.com/pytorch/examples)
 - [TensorFlow Models](https://github.com/tensorflow/models)
 - [Keras Examples](https://github.com/keras-team/keras/tree/master/examples)
+
+---
+
+## Detailed Learning Guides
+
+For comprehensive, in-depth coverage of each topic with mathematical foundations, code examples, and practical implementations, explore these detailed guides:
+
+### **Core Concepts**
+- **[01_perceptrons.md](01_perceptrons.md)** - Complete guide to perceptrons with biological inspiration, learning algorithms, and XOR problem demonstration
+- **[02_multi_layer_perceptrons.md](02_multi_layer_perceptrons.md)** - Deep dive into MLPs with backpropagation, universal approximation theorem, and training optimization
+
+### **Architectural Components**
+- **[03_activation_functions.md](03_activation_functions.md)** - Comprehensive coverage of ReLU, Sigmoid, Tanh, Swish, GELU, and more with performance analysis
+- **[04_network_topologies.md](04_network_topologies.md)** - Detailed exploration of fully connected, convolutional, recurrent, and attention-based architectures
+- **[05_skip_connections.md](05_skip_connections.md)** - Advanced guide to ResNet, Highway Networks, DenseNet, and gradient flow analysis
+
+### **Learning Path Recommendation**
+
+1. **Start with [Perceptrons](01_perceptrons.md)** - Understand the fundamental building block
+2. **Progress to [MLPs](02_multi_layer_perceptrons.md)** - Learn multi-layer architectures and backpropagation
+3. **Study [Activation Functions](03_activation_functions.md)** - Master non-linear transformations
+4. **Explore [Network Topologies](04_network_topologies.md)** - Understand different architectural patterns
+5. **Master [Skip Connections](05_skip_connections.md)** - Learn advanced techniques for deep networks
+
+Each guide includes:
+- ✅ **Mathematical foundations** with proper LaTeX formatting
+- ✅ **Complete Python implementations** with PyTorch examples
+- ✅ **Visualization tools** and interactive demonstrations
+- ✅ **Practical examples** and real-world applications
+- ✅ **Performance analysis** and best practices
+- ✅ **Historical context** and modern developments
 
 ---
 
