@@ -1,5 +1,14 @@
 # Convolutional Neural Networks (CNNs)
 
+[![CNNs](https://img.shields.io/badge/CNNs-Computer%20Vision-blue?style=for-the-badge&logo=eye)](https://github.com/yourusername/DL)
+[![Convolution](https://img.shields.io/badge/Convolution-Feature%20Extraction-green?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![Pooling](https://img.shields.io/badge/Pooling-Downsampling-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![ResNet](https://img.shields.io/badge/ResNet-Residual%20Connections-purple?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![EfficientNet](https://img.shields.io/badge/EfficientNet-Compound%20Scaling-red?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![MobileNet](https://img.shields.io/badge/MobileNet-Depthwise%20Separable-yellow?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![Image Classification](https://img.shields.io/badge/Image%20Classification-Accuracy-blue?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+[![Object Detection](https://img.shields.io/badge/Object%20Detection-YOLO-orange?style=for-the-badge)](https://github.com/yourusername/DL/tree/main/05_CNN)
+
 Convolutional Neural Networks are specialized neural networks designed for processing grid-like data, particularly images. They leverage the principles of local connectivity, shared weights, and spatial hierarchies to efficiently learn hierarchical feature representations.
 
 > **Key Insight:**
