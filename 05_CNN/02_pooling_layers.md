@@ -32,8 +32,10 @@ Pooling layers serve several important functions:
 3. **Feature Abstraction**: Extract dominant features while suppressing noise
 4. **Overfitting Prevention**: Reduce the number of parameters in subsequent layers
 
+> **Explanation:**
+> Pooling is a downsampling operation that summarizes regions of the input feature map. By reducing the spatial size, pooling helps the network focus on the most important features and makes it less sensitive to the exact position of objects in the image.
+
 > **Did you know?**
-> 
 > Pooling is one reason CNNs can recognize objects even if they move a little in the image!
 
 ### Basic Concept
@@ -43,14 +45,16 @@ Pooling operates on local regions of the input, applying a function to summarize
 ```
 Input:          Pooling Window:   Output:
 ┌─────────┐     ┌─────┐          ┌─────┐
-│ 1 2 3 4 │     │ 2x2 │          │ 4 8 │
-│ 5 6 7 8 │  →  │ max │   =      │12 16│
-│ 9 10 11 12│   └─────┘          └─────┘
+| 1 2 3 4 |     | 2x2 |          | 4 8 |
+| 5 6 7 8 |  →  | max |   =      |12 16|
+| 9 10 11 12|   └─────┘          └─────┘
 └─────────┘
 ```
 
+> **Explanation:**
+> The pooling window slides over the input, and at each position, a summary statistic (like max or average) is computed. This reduces the output size and keeps only the most important information.
+
 > **Try it yourself!**
-> 
 > Change the pooling window size or type (max, average) and see how the output changes. What happens to the details?
 
 ---
@@ -68,6 +72,12 @@ For a pooling window $`R_{i,j}`$ centered at position $`(i, j)`$:
 ```math
 y_{i,j} = \max_{(m,n) \in R_{i,j}} x_{m,n}
 ```
+
+> **Math Breakdown:**
+> - $R_{i,j}$ is the set of indices in the pooling window centered at $(i, j)$.
+> - $x_{m,n}$ are the input values in the window.
+> - $y_{i,j}$ is the output value after pooling.
+> - The maximum value in the window is selected as the output.
 
 #### Properties
 
@@ -87,8 +97,10 @@ During backpropagation, the gradient flows only to the maximum element:
 \end{cases}
 ```
 
+> **Explanation:**
+> Only the input that was the maximum in its window receives the gradient; all others get zero. This can make max pooling less smooth for optimization.
+
 > **Common Pitfall:**
-> 
 > Max pooling can discard useful information if the pooling window is too large. Always check the effect on your feature maps!
 
 ### 2. Average Pooling
@@ -103,6 +115,10 @@ y_{i,j} = \frac{1}{|R_{i,j}|} \sum_{(m,n) \in R_{i,j}} x_{m,n}
 
 Where $`|R_{i,j}|`$ is the number of elements in the pooling window.
 
+> **Math Breakdown:**
+> - $|R_{i,j}|$ is the number of elements in the window.
+> - The output is the average of all values in the window.
+
 #### Properties
 
 - **Smoothing effect**: Reduces noise and provides stable features
@@ -116,8 +132,10 @@ Where $`|R_{i,j}|`$ is the number of elements in the pooling window.
 \frac{\partial L}{\partial x_{m,n}} = \frac{1}{|R_{i,j}|} \frac{\partial L}{\partial y_{i,j}}
 ```
 
+> **Explanation:**
+> The gradient is split equally among all elements in the pooling window, making average pooling smoother for optimization.
+
 > **Key Insight:**
-> 
 > Average pooling is less aggressive than max pooling and can be better for tasks where all features matter, not just the strongest ones.
 
 ### 3. Global Pooling
@@ -130,11 +148,17 @@ Global pooling reduces spatial dimensions to a single value per channel.
 y_c = \frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} x_{i,j,c}
 ```
 
+> **Explanation:**
+> GAP computes the average of all values in each channel, reducing the feature map to a single value per channel. This is often used before the final classification layer.
+
 #### Global Max Pooling (GMP)
 
 ```math
 y_c = \max_{i,j} x_{i,j,c}
 ```
+
+> **Explanation:**
+> GMP selects the maximum value in each channel, summarizing the most prominent activation for each feature map.
 
 #### Applications
 
@@ -143,7 +167,6 @@ y_c = \max_{i,j} x_{i,j,c}
 - **Parameter reduction**: Eliminates the need for fully connected layers
 
 > **Did you know?**
-> 
 > Many modern architectures (like ResNet) use global average pooling instead of fully connected layers at the end!
 
 ---
