@@ -4,11 +4,11 @@ Convolutional Neural Networks are specialized neural networks designed for proce
 
 ## Table of Contents
 
-1. [Convolutional Operations](#convolutional-operations)
-2. [Pooling Layers](#pooling-layers)
-3. [Architecture Evolution](#architecture-evolution)
-4. [Modern Architectures](#modern-architectures)
-5. [Computer Vision Tasks](#computer-vision-tasks)
+1. [Convolutional Operations](#convolutional-operations) - [Detailed Guide](01_convolutional_operations.md)
+2. [Pooling Layers](#pooling-layers) - [Detailed Guide](02_pooling_layers.md)
+3. [Architecture Evolution](#architecture-evolution) - [Detailed Guide](03_architecture_evolution.md)
+4. [Modern Architectures](#modern-architectures) - [Detailed Guide](04_modern_architectures.md)
+5. [Computer Vision Tasks](#computer-vision-tasks) - [Detailed Guide](05_computer_vision_tasks.md)
 
 ## Convolutional Operations
 
@@ -186,4 +186,14 @@ RF_l = RF_{l-1} + (k_l - 1) \prod_{i=1}^{l-1} s_i
 - Model quantization
 - Pruning for efficiency
 - Mobile optimization
-- Edge deployment 
+- Edge deployment
+
+## Detailed Guides
+
+For comprehensive explanations, mathematical formulations, and implementation examples, refer to the following detailed guides:
+
+- **[01_convolutional_operations.md](01_convolutional_operations.md)** - Complete guide to convolutional operations with implementations
+- **[02_pooling_layers.md](02_pooling_layers.md)** - Detailed coverage of pooling layers and techniques
+- **[03_architecture_evolution.md](03_architecture_evolution.md)** - Historical evolution from LeNet to DenseNet
+- **[04_modern_architectures.md](04_modern_architectures.md)** - Modern efficient architectures (EfficientNet, MobileNet, ShuffleNet)
+- **[05_computer_vision_tasks.md](05_computer_vision_tasks.md)** - Task-specific implementations (classification, detection, segmentation) 
