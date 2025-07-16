@@ -14,23 +14,28 @@
 
 ---
 
-## Numerical Stability
+## 1. Numerical Stability
+
+Numerical stability is critical in deep learning to avoid errors due to the limitations of floating-point arithmetic. Instabilities can cause models to diverge, produce NaNs, or yield inaccurate results.
 
 ### Floating Point Arithmetic
 
-Deep learning relies heavily on floating-point arithmetic, which can introduce numerical errors.
+Deep learning relies heavily on floating-point arithmetic, which can introduce numerical errors due to finite precision.
 
 #### Machine Epsilon
-The smallest number $`\epsilon`$ such that $`1 + \epsilon > 1`$ in floating-point arithmetic.
+The smallest number $`\epsilon`$ such that $`1 + \epsilon > 1`$ in floating-point arithmetic. It quantifies the precision limit of the system.
 
 ### Common Numerical Issues
 
 #### Overflow and Underflow
-- **Overflow**: When a number is too large to represent
-- **Underflow**: When a number is too small to represent
+- **Overflow**: When a number is too large to represent (e.g., $`1e308 * 2`$ becomes $`\infty`$)
+- **Underflow**: When a number is too small to represent (e.g., $`1e-324 / 2`$ becomes $`0.0`$)
 
 #### Catastrophic Cancellation
-Loss of precision when subtracting nearly equal numbers.
+Loss of precision when subtracting nearly equal numbers, leading to significant relative error.
+
+#### Accumulation of Rounding Errors
+Repeated operations can accumulate small errors, affecting results in long computations.
 
 ### Python Implementation: Numerical Issues
 
@@ -72,13 +77,22 @@ def numerical_stability_examples():
 numerical_stability_examples()
 ```
 
+**Code Annotations:**
+- Demonstrates machine epsilon, overflow, underflow, and catastrophic cancellation.
+- Shows how floating-point limitations can affect computations.
+
+---
+
 ### Log-Sum-Exp Trick
 
-The log-sum-exp trick prevents overflow when computing $`\log(\sum_i e^{x_i})`$:
+The log-sum-exp trick prevents overflow when computing $`\log(\sum_i e^{x_i})`$ by factoring out the maximum value:
 
 ```math
 \log\left(\sum_{i=1}^{n} e^{x_i}\right) = \max_{i} x_i + \log\left(\sum_{i=1}^{n} e^{x_i - \max_{i} x_i}\right)
 ```
+
+- **Intuition:** Subtracting the maximum keeps exponentials in a safe range.
+- **Deep learning connection:** Used in softmax, log-likelihoods, and partition functions.
 
 ### Python Implementation: Log-Sum-Exp Trick
 
@@ -124,13 +138,22 @@ def log_sum_exp_example():
 log_sum_exp_example()
 ```
 
+**Code Annotations:**
+- Compares naive and stable log-sum-exp implementations.
+- Shows how the trick prevents overflow and maintains accuracy.
+
+---
+
 ### Softmax Function
 
-The softmax function is commonly used in classification:
+The softmax function is commonly used in classification to convert logits to probabilities:
 
 ```math
 \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}
 ```
+
+- **Numerical issue:** Large $`x_i`$ can cause overflow in $`e^{x_i}`$.
+- **Solution:** Subtract $`\max_j x_j`$ from all $`x_i`$ before exponentiating.
 
 ### Python Implementation: Stable Softmax
 
@@ -180,9 +203,15 @@ def softmax_example():
 softmax_example()
 ```
 
+**Code Annotations:**
+- Demonstrates naive and stable softmax implementations.
+- Shows how stability is achieved by shifting inputs.
+
 ---
 
-## Optimization Algorithms
+## 2. Optimization Algorithms
+
+Optimization algorithms are at the heart of training deep learning models. Numerical methods ensure these algorithms are stable and efficient.
 
 ### Gradient Descent Variants
 
@@ -190,6 +219,8 @@ softmax_example()
 ```math
 \theta_{t+1} = \theta_t - \alpha \nabla L(\theta_t, \mathcal{B}_t)
 ```
+- $`\alpha`$: learning rate
+- $`\mathcal{B}_t`$: mini-batch at step $`t`$
 
 #### Momentum
 ```math
@@ -198,6 +229,7 @@ v_{t+1} = \beta v_t + (1-\beta)\nabla L(\theta_t)
 ```math
 \theta_{t+1} = \theta_t - \alpha v_{t+1}
 ```
+- $`\beta`$: momentum coefficient
 
 #### Adam
 ```math
@@ -209,6 +241,7 @@ v_t = \beta_2 v_{t-1} + (1-\beta_2)(\nabla L(\theta_t))^2
 ```math
 \theta_{t+1} = \theta_t - \alpha \frac{m_t}{\sqrt{v_t} + \epsilon}
 ```
+- Combines momentum and adaptive learning rates for each parameter.
 
 ### Python Implementation: Optimization Algorithms
 
@@ -346,13 +379,20 @@ def test_optimizers():
 test_optimizers()
 ```
 
+**Code Annotations:**
+- Implements and compares SGD, Momentum, and Adam optimizers.
+- Visualizes optimization trajectories and convergence.
+
 ---
 
-## Computational Efficiency
+## 3. Computational Efficiency
+
+Efficient computation is essential for training large models and processing big datasets.
 
 ### Vectorization
 
-Vectorization is crucial for efficient computation in deep learning.
+Vectorization uses array operations instead of loops for faster computation.
+- **Deep learning connection:** Libraries like NumPy, PyTorch, and TensorFlow are highly vectorized.
 
 ### Python Implementation: Vectorization
 
@@ -397,9 +437,15 @@ def vectorization_example():
 vectorization_example()
 ```
 
+**Code Annotations:**
+- Compares vectorized and non-vectorized implementations.
+- Shows dramatic speedup from vectorization.
+
+---
+
 ### Matrix Operations
 
-Efficient matrix operations are essential for neural networks.
+Efficient matrix operations are essential for neural networks, which are built on matrix multiplications.
 
 ### Python Implementation: Matrix Operations
 
@@ -437,13 +483,20 @@ def matrix_operations_example():
 matrix_operations_example()
 ```
 
+**Code Annotations:**
+- Compares different matrix multiplication methods and their performance.
+- Shows memory usage for large matrices.
+
 ---
 
-## Memory Management
+## 4. Memory Management
+
+Memory-efficient operations are crucial for training large models and working with big data.
 
 ### Memory-Efficient Operations
-
-Deep learning models can be memory-intensive. Efficient memory management is crucial.
+- Use in-place operations when possible
+- Delete unused variables and call garbage collection
+- Monitor memory usage
 
 ### Python Implementation: Memory Management
 
@@ -490,13 +543,19 @@ def memory_management_example():
 memory_management_example()
 ```
 
+**Code Annotations:**
+- Demonstrates memory usage tracking and in-place operations.
+- Shows how to free memory and avoid leaks.
+
 ---
 
-## GPU Acceleration
+## 5. GPU Acceleration
+
+GPUs can significantly accelerate deep learning computations by parallelizing matrix operations.
 
 ### CUDA and GPU Computing
-
-GPUs can significantly accelerate deep learning computations.
+- CUDA is a parallel computing platform for NVIDIA GPUs.
+- Deep learning frameworks (PyTorch, TensorFlow) use CUDA for GPU acceleration.
 
 ### Python Implementation: GPU Acceleration (with PyTorch)
 
@@ -557,6 +616,10 @@ try:
 except ImportError:
     print("PyTorch not available. Install with: pip install torch")
 ```
+
+**Code Annotations:**
+- Compares CPU and GPU matrix multiplication performance.
+- Shows how to move data to GPU and verify results.
 
 ---
 
