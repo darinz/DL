@@ -21,6 +21,9 @@ LSTM consists of several key components:
    - **Input Gate ($`i_t`$)**: Decides what new information to store
    - **Output Gate ($`o_t`$)**: Decides what parts of cell state to output
 
+> **Explanation:**
+> The LSTM architecture introduces gates that control the flow of information, allowing the network to keep or forget information as needed. This helps solve the vanishing gradient problem and enables learning of long-term dependencies.
+
 #### Geometric/Visual Explanation
 
 Think of the cell state $`C_t`$ as a conveyor belt running through the network, with gates acting as switches that control what information is added, removed, or output at each step. This design allows information to flow unchanged for long periods, mitigating the vanishing gradient problem.
@@ -38,13 +41,25 @@ o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o) \quad \text{(Output gate)}
 h_t = o_t * \tanh(C_t) \quad \text{(Hidden state)}
 ```
 
+> **Math Breakdown:**
+> - $[h_{t-1}, x_t]$: Concatenation of previous hidden state and current input
+> - $\sigma$: Sigmoid activation (outputs values between 0 and 1, used for gates)
+> - $\tanh$: Hyperbolic tangent activation (outputs values between -1 and 1)
+> - $f_t$: Forget gate (what to forget from previous cell state)
+> - $i_t$: Input gate (what new information to add)
+> - $\tilde{C}_t$: Candidate values for new cell state
+> - $C_t$: Updated cell state (memory)
+> - $o_t$: Output gate (what part of cell state to output)
+> - $h_t$: Hidden state (output for this time step)
+
 Where:
 - $`[h_{t-1}, x_t]`$: concatenation of previous hidden state and current input
 - $`\sigma`$: sigmoid activation function
 - $`\tanh`$: hyperbolic tangent activation function
 - $`*`$: element-wise multiplication (Hadamard product)
 
-> **Common Pitfall:** Forgetting to concatenate $`h_{t-1}`$ and $`x_t`$ or using the wrong activation function can break the LSTM's memory mechanism.
+> **Common Pitfall:**
+> Forgetting to concatenate $`h_{t-1}`$ and $`x_t`$ or using the wrong activation function can break the LSTM's memory mechanism.
 
 #### Step-by-Step Derivation
 
@@ -59,7 +74,8 @@ Where:
 5. **Update Hidden State:**
    - $`h_t = o_t * \tanh(C_t)`$
 
-> **Try it yourself!** Write out the LSTM equations for a single time step with sample values to see how the gates interact.
+> **Explanation:**
+> Each gate in the LSTM has a specific role in controlling the flow of information, allowing the network to learn what to remember and what to forget at each time step.
 
 ## Python Implementation
 
@@ -107,7 +123,10 @@ class LSTMCell(nn.Module):
         return h, c
 ```
 
-> **Code Commentary:** Each gate in the LSTM cell has its own set of weights and biases. The cell state $`C_t`$ acts as a memory highway, while the gates control the flow of information.
+> **Code Walkthrough:**
+> - Each gate in the LSTM cell has its own set of weights and biases.
+> - The cell state $C_t$ acts as a memory highway, while the gates control the flow of information.
+> - The forward method shows how the gates interact to update the cell and hidden states at each time step.
 
 ### Complete LSTM Module
 
