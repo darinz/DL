@@ -2,6 +2,10 @@
 
 Convolutional Neural Networks are specialized neural networks designed for processing grid-like data, particularly images. They leverage the principles of local connectivity, shared weights, and spatial hierarchies to efficiently learn hierarchical feature representations.
 
+> **Key Insight:**
+> 
+> CNNs revolutionized computer vision by enabling end-to-end learning of features directly from raw pixels, replacing hand-crafted feature engineering.
+
 ## Table of Contents
 
 1. [Convolutional Operations](#convolutional-operations) - [Detailed Guide](01_convolutional_operations.md)
@@ -10,9 +14,15 @@ Convolutional Neural Networks are specialized neural networks designed for proce
 4. [Modern Architectures](#modern-architectures) - [Detailed Guide](04_modern_architectures.md)
 5. [Computer Vision Tasks](#computer-vision-tasks) - [Detailed Guide](05_computer_vision_tasks.md)
 
+---
+
 ## Convolutional Operations
 
 Convolutional operations are the core building blocks of CNNs, performing feature extraction through sliding filters.
+
+> **Did you know?**
+> 
+> The "convolution" operation in deep learning is usually cross-correlation, not true mathematical convolution!
 
 ### Basic Convolution
 
@@ -35,6 +45,10 @@ Where:
 
 **Feature Maps**: Multiple filters create different feature maps, each detecting specific patterns.
 
+> **Key Insight:**
+> 
+> Local connectivity and weight sharing are what make CNNs so efficient for images and other spatial data.
+
 ### Stride and Padding
 
 **Stride** $`s`$: Controls the step size of the filter:
@@ -46,9 +60,19 @@ Where:
 - **Valid padding**: No padding, output size decreases
 - **Same padding**: Output size equals input size
 
+> **Common Pitfall:**
+> 
+> Forgetting to use padding can cause your feature maps to shrink rapidly with each layer, limiting the depth of your network.
+
+---
+
 ## Pooling Layers
 
 Pooling layers reduce spatial dimensions while preserving important features.
+
+> **Key Insight:**
+> 
+> Pooling helps CNNs become robust to small translations and reduces the risk of overfitting.
 
 ### Max Pooling
 
@@ -72,12 +96,22 @@ Reduces spatial dimensions to a single value:
 - **Global Average Pooling**: $`y = \frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} x_{i,j}`$
 - **Global Max Pooling**: $`y = \max_{i,j} x_{i,j}`$
 
+> **Try it yourself!**
+> 
+> Visualize feature maps before and after pooling to see how details are abstracted away.
+
+---
+
 ## Architecture Evolution
+
+> **Did you know?**
+> 
+> Each new CNN architecture was a response to a specific challenge—deeper networks, better generalization, or more efficient computation.
 
 ### LeNet-5 (1998)
 - First successful CNN for digit recognition
 - 7 layers: 2 convolutional + 2 pooling + 3 fully connected
-- ReLU activation (before it was popular)
+- Tanh activation (ReLU came later)
 
 ### AlexNet (2012)
 - Breakthrough in ImageNet competition
@@ -102,7 +136,19 @@ Reduces spatial dimensions to a single value:
 - Feature reuse and gradient flow
 - Concatenation: $`x_l = H_l([x_0, x_1, ..., x_{l-1}])`$
 
+> **Key Insight:**
+> 
+> Residual and dense connections made it possible to train much deeper networks by improving gradient flow.
+
+---
+
 ## Modern Architectures
+
+Modern CNNs are designed for efficiency and deployment on mobile/edge devices.
+
+> **Did you know?**
+> 
+> EfficientNet, MobileNet, and ShuffleNet are widely used in real-world applications, from smartphones to autonomous vehicles.
 
 ### EfficientNet (2019)
 Compound scaling method optimizing depth, width, and resolution:
@@ -125,7 +171,17 @@ Channel shuffling for efficient group convolutions:
 - Maintains accuracy
 - Mobile-friendly architecture
 
+> **Key Insight:**
+> 
+> Modern architectures use clever tricks to maximize performance per parameter and FLOP.
+
+---
+
 ## Computer Vision Tasks
+
+> **Try it yourself!**
+> 
+> Explore the difference between classification, detection, and segmentation by visualizing model outputs for each task.
 
 ### Image Classification
 - **Input**: Single image
@@ -151,6 +207,12 @@ Channel shuffling for efficient group convolutions:
 - **Architectures**: Mask R-CNN, YOLACT
 - **Combines**: Detection + segmentation
 
+> **Key Insight:**
+> 
+> Each task requires specialized architectures, loss functions, and evaluation metrics.
+
+---
+
 ## Key Concepts
 
 ### Receptive Field
@@ -168,6 +230,12 @@ RF_l = RF_{l-1} + (k_l - 1) \prod_{i=1}^{l-1} s_i
 - Pre-trained models on large datasets
 - Fine-tuning for specific tasks
 - Feature extraction for new domains
+
+> **Did you know?**
+> 
+> Transfer learning allows you to train high-performing models with less data and computation.
+
+---
 
 ## Implementation Considerations
 
@@ -187,6 +255,12 @@ RF_l = RF_{l-1} + (k_l - 1) \prod_{i=1}^{l-1} s_i
 - Pruning for efficiency
 - Mobile optimization
 - Edge deployment
+
+> **Common Pitfall:**
+> 
+> Deploying large models on mobile or edge devices without optimization can lead to slow inference and high memory usage.
+
+---
 
 ## Detailed Guides
 
